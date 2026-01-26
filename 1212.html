@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>技師維修回報系統 - 完整公告版</title>
+    <title>技師維修回報系統 - 完整公告版 (裝機必填修正)</title>
     <style>
         /* =========================================
            1. 全局基礎設定
@@ -26,7 +26,7 @@
         }
         
         /* =========================================
-           2. HEADER 區域樣式 (已增強以支援列點)
+           2. HEADER 區域樣式
            ========================================= */
         .header-card { 
             background: linear-gradient(135deg, #007377 0%, #005a5e 100%); 
@@ -72,7 +72,6 @@
             font-size: 14px;
         }
         
-        /* 新增：公告內的列表樣式 */
         .header-list {
             margin: 5px 0 0 20px; 
             padding: 0;
@@ -95,7 +94,7 @@
         }
         
         .highlight-text {
-            color: #ffb74d; /* 橘黃色高亮 */
+            color: #ffb74d; 
             font-weight: bold;
         }
 
@@ -135,6 +134,7 @@
             align-items: center;
         }
         
+        /* 必填星號樣式 */
         .required { 
             color: #d93025; 
             margin-left: 4px; 
@@ -300,10 +300,32 @@
             </div>
 
             <div class="header-section">
-                <div class="header-title-small">★ 最新作業公告 ★</div>
-                <p>目前已正式上線「新版儀器維修回報系統」，即日起請全面改用新版系統進行回報。</p>
-                <p style="margin-top: 5px;">🔗 新版系統連結：<a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/test.html" class="header-link" target="_blank">點擊前往新版系統</a></p>
-            </div>
+                            <div class="header-title-small">★ 最新作業公告 ★</div>
+                            <p style="margin-bottom: 10px;">目前已正式上線「新版儀器維修回報系統」，即日起請全面改用新版系統。</p>
+                            
+                            <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/test.html" target="_blank" style="display: block; background: rgba(255,255,255,0.2); color: #fff; text-decoration: none; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.3);">
+                                🚀 點擊前往新版系統
+                            </a>
+
+                            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                                <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/%E6%83%9F%E5%93%81%E5%B8%83%E9%81%94%E4%BA%8B%E9%A0%85.pptx" target="_blank" style="flex: 1; background: rgba(0,0,0,0.2); color: #81d4fa; text-decoration: none; padding: 8px; border-radius: 4px; text-align: center; font-size: 13px;">
+                                    📄 惟品布達 PPT
+                                </a>
+                                <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/千山布達注意事項.pptx" target="_blank" style="flex: 1; background: rgba(0,0,0,0.2); color: #81d4fa; text-decoration: none; padding: 8px; border-radius: 4px; text-align: center; font-size: 13px;">
+                                    📄 千山布達 PPT
+                                </a>
+                            </div>
+
+                            <div style="border-top: 1px dashed rgba(255,255,255,0.3); margin: 15px 0;"></div>
+
+                            <div class="header-title-small">💳 現場服務結帳專區</div>
+                            <p style="font-size: 13px; opacity: 0.9; margin-bottom: 8px;">CLAR | 瞬冰瞬熱淨水器 | 技師服務與耗材付款</p>
+                            
+                            <a href="https://www.myclar.com/Service" target="_blank" style="display: flex; justify-content: space-between; align-items: center; background: #004d40; color: #ffeb3b; text-decoration: none; padding: 10px 15px; border-radius: 6px; font-weight: bold;">
+                                <span>前往 CLAR 官方支付</span>
+                                <span>➔</span>
+                            </a>
+                        </div>
 
             <div class="header-section">
                 <div class="header-title-small">📋 填寫須知與規範</div>
@@ -313,25 +335,14 @@
                 </ul>
             </div>
 
-            <div class="header-section">
-                <div class="header-title-small">ℹ️ 服務項目定義參考</div>
-                <ul class="header-list">
-                    <li><strong>新機安裝</strong>：新設備裝設與測試</li>
-                    <li><strong>故障維修</strong>：設備異常排除或零件更換</li>
-                    <li><strong>定期保養</strong>：例行性檢查與清潔</li>
-                    <li><strong>耗材更換</strong>：僅更換濾心或消耗性材料</li>
-                    <li><strong>移機作業</strong>：拆卸舊機並於新地點安裝</li>
-                </ul>
-            </div>
-
             <div class="header-footer">※ 除非您自行提供，否則不會自動收集您的詳細數據。</div>
         </div>
 
         <div class="question-card" id="card-brand">
             <div class="question-title">1. 維修品牌 <span class="required">*</span></div>
             <div class="radio-group">
-                <label class="radio-label"><input type="radio" name="brand" value="惟品" checked onclick="updateForm()"> 惟品 (WS2)</label>
-                <label class="radio-label"><input type="radio" name="brand" value="千山" onclick="updateForm()"> 千山 (WD2)</label>
+                <label class="radio-label"><input type="radio" name="brand" value="惟品" checked onclick="updateForm()"> 惟品 (WS2、WD2系列)</label>
+                <label class="radio-label"><input type="radio" name="brand" value="千山" onclick="updateForm()"> 千山 (淨水系列)</label>
             </div>
         </div>
 
@@ -386,7 +397,7 @@
         </div>
 
         <div class="question-card" id="card-sales-no">
-            <div class="question-title">銷貨單號 <span class="required">*</span></div>
+            <div class="question-title">銷貨單號</div>
             <input type="text" name="sales_no">
         </div>
 
@@ -633,6 +644,35 @@
         repair: 'card-repair-info'
     };
 
+    // 定義裝機時的必填欄位 (WD & WS 通用)
+    const INSTALL_REQUIRED_COMMON = [
+        'card-machine-model', // 機器型號
+        'card-filter-c',      // Filter-C
+        'card-date',          // 服務日期
+        'card-sales-no',      // 銷貨單號
+        'card-client-id',     // 客戶代號
+        'card-client-name',   // 客戶姓名
+        'card-machine-ver',   // 機器版本 (購買機型)
+        'card-firmware',      // 韌體版本
+        'card-raw-pressure',  // 原水水壓
+        'card-temp-group',    // 環境溫度 (實際上包含100/35/10出水溫與流量)
+        'card-ice-waste',     // 冰水廢水水量
+        'card-site-voltage',  // 場地電壓
+        'card-power',         // 最大功率 (熱水/冰水)
+        'card-raw-flow',      // 原水水量
+        'card-raw-temp',      // 原水溫度
+        'card-taste',         // 口感 (技師/客戶)
+        'card-calibration',   // 校正方式
+        'card-app-bind'       // App綁定
+    ];
+
+    // 定義 WS 系列裝機額外必填
+    const INSTALL_REQUIRED_WS_ADDON = [
+        'card-faucet'         // 龍頭型式
+    ];
+
+    let currentRequiredIds = [];
+
     window.onload = function() {
         const d = new Date();
         const yyyy = d.getFullYear();
@@ -741,11 +781,8 @@
             } else if (item === '維修') {
                 add([FIELDS.filterC, FIELDS.faucet, FIELDS.panelVer, FIELDS.rawPressure, FIELDS.tempGroup, FIELDS.voltage, FIELDS.power, FIELDS.panelVolt, FIELDS.taste, FIELDS.battery, FIELDS.repair]);
             } else if (item === '售服') {
-                // ↓↓↓ 修改後：直接加入 FIELDS.panelVolt，這樣不管選什麼細項都會顯示
                 add([FIELDS.filterC, FIELDS.faucet, FIELDS.panelVer, FIELDS.tempGroup, FIELDS.power, FIELDS.taste, FIELDS.battery, FIELDS.repair, FIELDS.panelVolt]);
-                
                 if (detailValue === '協助拆裝機') {
-                    // 下面這裡可以保留 FIELDS.panelVolt 沒關係，重複加入不會有影響，或者也可以拿掉
                     add([FIELDS.rawPressure, FIELDS.voltage]); 
                 }
             }
@@ -779,6 +816,23 @@
             if(el) el.classList.remove('hidden-field'); 
         });
 
+        // 4. 計算並標記必填欄位 (新增邏輯)
+        currentRequiredIds = [];
+        // 基礎必填 (永遠需要)
+        currentRequiredIds.push('card-brand', 'card-service-item', 'card-serial'); 
+
+        if (item === '裝機') {
+            currentRequiredIds = currentRequiredIds.concat(INSTALL_REQUIRED_COMMON);
+            if (brand === '惟品') {
+                currentRequiredIds = currentRequiredIds.concat(INSTALL_REQUIRED_WS_ADDON);
+            }
+        } else {
+             // 維修或售服維持原有的 HTML 靜態標示，這裡可以加入特定規則，
+             // 但原需求只強調裝機，因此這裡僅保留必要的如 Firmwar/Serial 等。
+             // 為了相容原本的HTML結構，我們只針對裝機做嚴格動態控制。
+             // 若非裝機，暫時不強制動態增加必填，依賴HTML原本的 required class。
+        }
+
         renumberQuestions();
         clearErrors();
     }
@@ -786,19 +840,44 @@
     function renumberQuestions() {
         const cards = document.querySelectorAll('.question-card:not(.hidden-field)');
         let count = 1;
+        
+        const item = document.getElementById('service_item').value;
+        const isInstall = (item === '裝機');
+
         cards.forEach((card) => {
             const title = card.querySelector('.question-title');
             if (title) {
+                // 先取得純文字標題 (移除編號和星星)
                 let text = title.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+                
+                // 判斷是否為必填
+                let isRequired = false;
+
+                // 1. 如果在裝機模式，且 ID 在必填清單中 -> 必填
+                if (isInstall && currentRequiredIds.includes(card.id)) {
+                    isRequired = true;
+                }
+                // 2. 如果不是裝機模式，但 HTML 原本就有寫 required -> 必填 (保留舊邏輯)
+                else if (!isInstall && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
+                    isRequired = true;
+                }
+                // 3. 特殊例外：服務細項
+                if (card.id === 'card-service-detail') isRequired = true;
+
+
+                let htmlContent = "";
                 if (card.id === 'card-service-detail') {
-                    title.innerHTML = `2-1. ${text} <span class="required">*</span>`;
+                    htmlContent = `2-1. ${text}`;
                 } else {
-                    title.innerHTML = `${count}. ${text}`;
-                    if (title.innerText.includes('*') || card.innerHTML.includes('required')) {
-                          title.innerHTML = `${count}. ${text} <span class="required">*</span>`;
-                    }
+                    htmlContent = `${count}. ${text}`;
                     count++;
                 }
+
+                if (isRequired) {
+                    htmlContent += ` <span class="required">*</span>`;
+                }
+                
+                title.innerHTML = htmlContent;
             }
         });
     }
@@ -811,16 +890,38 @@
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         visibleCards.forEach(card => {
             const title = card.querySelector('.question-title');
-            if (title && title.innerHTML.includes('required')) {
-                const inputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+            // 檢查標題是否有必填星號
+            if (title && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
+                
                 let hasValue = false;
-                inputs.forEach(input => { if(input.value.trim()) hasValue = true; });
-                const radios = card.querySelectorAll('input[type="radio"]');
-                if (radios.length > 0) {
-                    let radioChecked = false;
-                    radios.forEach(r => { if(r.checked) radioChecked = true; });
-                    hasValue = radioChecked;
+                let inputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                let radios = card.querySelectorAll('input[type="radio"]');
+                
+                // 特殊檢查：如果這張卡片是「溫度群組」或「功率」或「口感」，且被標示為必填
+                // 則要求該卡片內「所有」顯示的輸入框都必須填寫 (嚴格模式)
+                const isStrictCard = ['card-temp-group', 'card-power', 'card-taste'].includes(card.id);
+
+                if (isStrictCard) {
+                    let allFilled = true;
+                    inputs.forEach(input => {
+                        if (!input.value.trim()) allFilled = false;
+                    });
+                    hasValue = allFilled;
+                } else {
+                    // 一般模式：只要有一個欄位有值就算通過 (針對單一 input 或是單選 select)
+                    if (inputs.length > 0) {
+                        inputs.forEach(input => { if(input.value.trim()) hasValue = true; });
+                    }
+                    if (radios.length > 0) {
+                        let radioChecked = false;
+                        radios.forEach(r => { if(r.checked) radioChecked = true; });
+                        if(radioChecked) hasValue = true; 
+                        // 如果有 radio 沒選，那即使有 input 有值(不太可能並存)，也視為 false? 
+                        // 通常 radio group 是獨立的，這裡邏輯是 OR。
+                        // 但在此表單結構中，radio group 只有 brand，是獨立的。
+                    }
                 }
+
                 if (!hasValue) {
                     isValid = false;
                     card.classList.add('error-border');
@@ -932,14 +1033,12 @@
         try {
             await fetch(CLOUD_URL, {
                 method: 'POST',
-                // mode: 'no-cors', // 註解掉以便接收回應
+                // mode: 'no-cors', 
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(data)
             });
             alert("✅ 上傳成功！");
         } catch (e) {
-            // 如果 GAS 部署權限設定正確，通常這裡不會報錯
-            // 若仍報錯但資料有進去，可能是因為跨域攔截，可視情況忽略
             alert("✅ 上傳指令已發送 (若無報錯即成功)");
             console.error(e);
         } finally {
