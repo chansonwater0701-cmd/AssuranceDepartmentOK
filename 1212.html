@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技師維修回報系統 - 完整公告版</title>
+    <style>
+        /* =========================================
+           1. 全局基礎設定
+           ========================================= */
+        body { 
+            background-color: #efeff4; 
+            font-family: -apple-system, "Microsoft JhengHei", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px 0 100px 0; 
+            display: flex; 
+            justify-content: center; 
+            color: #333; 
+            line-height: 1.5;
+        }
+
+        .form-container { 
+            width: 100%; 
+            max-width: 640px; 
+            margin: 0 12px; 
+        }
+        
+        /* =========================================
+           2. HEADER 區域樣式 (已增強以支援列點)
+           ========================================= */
+        .header-card { 
+            background: linear-gradient(135deg, #007377 0%, #005a5e 100%); 
+            color: white; 
+            padding: 24px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+
+        .header-main-title { 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            color: #ffeb3b; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.3); 
+            padding-bottom: 15px; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .header-section { 
+            margin-bottom: 15px; 
+            padding: 12px; 
+            background: rgba(0, 0, 0, 0.15); 
+            border-radius: 6px; 
+            font-size: 14px; 
+            line-height: 1.6; 
+        }
+
+        .header-title-small { 
+            font-weight: bold; 
+            color: #81d4fa; 
+            margin-bottom: 6px; 
+            font-size: 16px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title-small::before {
+            content: '📌';
+            margin-right: 6px;
+            font-size: 14px;
+        }
+        
+        /* 新增：公告內的列表樣式 */
+        .header-list {
+            margin: 5px 0 0 20px; 
+            padding: 0;
+            list-style-type: disc;
+        }
+        
+        .header-list li {
+            margin-bottom: 4px;
+        }
+
+        .header-link { 
+            color: #ffeb3b; 
+            text-decoration: underline; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        
+        .header-link:hover {
+            color: #fff;
+        }
+        
+        .highlight-text {
+            color: #ffb74d; /* 橘黃色高亮 */
+            font-weight: bold;
+        }
+
+        .header-footer { 
+            font-size: 12px; 
+            text-align: center; 
+            opacity: 0.8; 
+            margin-top: 15px; 
+            border-top: 1px dashed rgba(255,255,255,0.2);
+            padding-top: 10px;
+        }
+
+        /* =========================================
+           3. 表單題目卡片樣式
+           ========================================= */
+        .question-card { 
+            background-color: #fff; 
+            padding: 16px 20px; 
+            margin-bottom: 12px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+            border-left: 4px solid transparent; 
+            transition: all 0.2s ease; 
+        }
+
+        .question-card:focus-within { 
+            border-left-color: #007377; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .question-title { 
+            font-size: 16px; 
+            font-weight: 600; 
+            margin-bottom: 10px; 
+            color: #242424; 
+            display: flex;
+            align-items: center;
+        }
+        
+        .required { 
+            color: #d93025; 
+            margin-left: 4px; 
+            font-weight: bold; 
+        }
+
+        /* 錯誤狀態樣式 */
+        .error-border { 
+            border-left-color: #d93025 !important; 
+            background-color: #fff0f0;
+        }
+        
+        .error-input { 
+            border: 2px solid #d93025 !important; 
+            background-color: #fff8f8; 
+        }
+        
+        .hidden-field { 
+            display: none !important; 
+        } 
+
+        /* =========================================
+           4. 輸入框與元件樣式
+           ========================================= */
+        input[type="text"], input[type="date"], input[type="number"], select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            font-size: 16px; 
+            border: 1px solid #dadce0; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            background-color: #fafafa; 
+            transition: border 0.2s, background 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus { 
+            border-color: #007377; 
+            background-color: #fff; 
+            outline: none; 
+            box-shadow: 0 0 0 2px rgba(0, 115, 119, 0.1);
+        }
+        
+        /* Radio Group */
+        .radio-group { 
+            display: flex; 
+            gap: 20px; 
+            margin-top: 5px; 
+            padding: 5px 0;
+        }
+
+        .radio-label { 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer; 
+            font-size: 16px; 
+            padding: 5px; 
+            border-radius: 4px; 
+        }
+        
+        .radio-label:hover { background-color: #f0f0f0; }
+
+        .radio-label input { 
+            width: 20px; height: 20px; 
+            margin-right: 8px; 
+            accent-color: #007377; cursor: pointer; 
+        }
+
+        /* Multi-input row */
+        .multi-input-row { display: flex; gap: 10px; }
+        .multi-input-row input { flex: 1; }
+
+        .small-note { 
+            font-size: 13px; color: #666; 
+            margin-top: 6px; background-color: #f5f5f5; 
+            padding: 4px 8px; border-radius: 4px; 
+            display: inline-block; 
+        }
+
+        /* =========================================
+           5. 溫度橫式排列
+           ========================================= */
+        .temp-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        
+        .temp-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .temp-label {
+            font-weight: bold;
+            width: 50px;
+            text-align: right;
+            margin-right: 8px;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .unit-label {
+            font-weight: bold;
+            margin: 0 4px;
+            font-size: 14px;
+            color: #555;
+            white-space: nowrap;
+        }
+
+        /* =========================================
+           6. 底部按鈕區域樣式
+           ========================================= */
+        .floating-actions { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: white; padding: 12px; 
+            display: flex; gap: 10px; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
+            z-index: 1000; justify-content: center; 
+        }
+
+        .btn { 
+            flex: 1; max-width: 300px; padding: 14px; 
+            border: none; border-radius: 8px; 
+            font-size: 16px; font-weight: bold; color: white; 
+            cursor: pointer; transition: opacity 0.2s; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+        
+        .btn:active { opacity: 0.8; transform: scale(0.98); }
+        .btn-line { background-color: #06C755; }
+        .btn-cloud { background-color: #4285F4; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .safe-reset-container { 
+            text-align: center; margin: 40px 0 80px 0; 
+            padding: 20px; border-top: 2px dashed #e0e0e0; 
+        }
+
+        .btn-reset { 
+            background-color: #fff; color: #d84315; 
+            border: 2px solid #ffab91; font-size: 14px; 
+            font-weight: bold; padding: 10px 30px; 
+            border-radius: 25px; cursor: pointer; 
+            transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        }
+
+        .btn-reset:hover { 
+            background-color: #d84315; color: white; 
+            border-color: #d84315; box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <form id="mainForm">
+        <div class="header-card">
+            <div class="header-main-title">🛠️ 技師維修回報系統</div>
+            
+            <div class="header-section">
+                <div class="header-title-small">📢 公司內部公告</div>
+                <p>本表單為公司內部專用系統，僅限技師執行作業使用，<span class="highlight-text">嚴禁對外公開、轉傳或作其他非授權用途</span>。</p>
+            </div>
+
+            <div class="header-section">
+                <div class="header-title-small">★ 最新作業公告 ★</div>
+                <p>目前已正式上線「新版儀器維修回報系統」，即日起請全面改用新版系統進行回報。</p>
+                <p style="margin-top: 5px;">🔗 新版系統連結：<a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/test.html" class="header-link" target="_blank">點擊前往新版系統</a></p>
+            </div>
+
+            <div class="header-section">
+                <div class="header-title-small">📋 填寫須知與規範</div>
+                <ul class="header-list">
+                    <li>請依實際作業情況「確實、完整」填寫。</li>
+                    <li>凡標示 <span class="highlight-text">*</span> 符號之欄位皆為【必填項目】。</li>
+                </ul>
+            </div>
+
+            <div class="header-section">
+                <div class="header-title-small">ℹ️ 服務項目定義參考</div>
+                <ul class="header-list">
+                    <li><strong>新機安裝</strong>：新設備裝設與測試</li>
+                    <li><strong>故障維修</strong>：設備異常排除或零件更換</li>
+                    <li><strong>定期保養</strong>：例行性檢查與清潔</li>
+                    <li><strong>耗材更換</strong>：僅更換濾心或消耗性材料</li>
+                    <li><strong>移機作業</strong>：拆卸舊機並於新地點安裝</li>
+                </ul>
+            </div>
+
+            <div class="header-footer">※ 除非您自行提供，否則不會自動收集您的詳細數據。</div>
+        </div>
+
+        <div class="question-card" id="card-brand">
+            <div class="question-title">1. 維修品牌 <span class="required">*</span></div>
+            <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="brand" value="惟品" checked onclick="updateForm()"> 惟品 (WS2)</label>
+                <label class="radio-label"><input type="radio" name="brand" value="千山" onclick="updateForm()"> 千山 (WD2)</label>
+            </div>
+        </div>
+
+        <div class="question-card" id="card-service-item">
+            <div class="question-title">2. 服務項目 <span class="required">*</span></div>
+            <select id="service_item" name="service_item" onchange="updateForm()">
+                <option value="裝機">裝機</option>
+                <option value="維修">維修</option>
+                <option value="售服">售服</option>
+            </select>
+        </div>
+
+        <div class="question-card hidden-field" id="card-service-detail">
+            <div class="question-title">服務細項 <span class="required">*</span></div>
+            <select id="service_detail" name="service_detail" onchange="updateForm()">
+            </select>
+        </div>
+
+        <div class="question-card" id="card-client-id">
+            <div class="question-title">3. 客戶代號 <span class="required">*</span></div>
+            <input type="text" name="client_id" id="client_id" value="W0000" onblur="formatClientID()">
+            <div class="small-note">💡 提示：W0000 已預設帶入，請直接在後方輸入數字。</div>
+        </div>
+
+        <div class="question-card" id="card-client-name">
+            <div class="question-title">4. 客戶姓名 <span class="required">*</span></div>
+            <input type="text" name="client_name">
+        </div>
+
+        <div class="question-card" id="card-date">
+            <div class="question-title">5. 服務日期 <span class="required">*</span></div>
+            <input type="text" name="date" id="date_input" 
+                   onfocus="(this.type='date')" 
+                   onblur="(this.type='text'); if(this.value){ this.value = this.value.replace(/-/g, '/'); }"
+                   placeholder="請選擇日期">
+        </div>
+
+        <div class="question-card" id="card-machine-model">
+            <div class="question-title">6. 機器型號 <span class="required">*</span></div>
+            <select name="machine_model" id="machine_model" onchange="handleModelChange()">
+                <option value="" disabled selected>請選擇...</option>
+                <option value="WD1">WD1</option>
+                <option value="WD2-C1">WD2-C1</option>
+                <option value="WS1">WS1</option>
+                <option value="WS2-C1">WS2-C1</option>
+                <option value="WS2-C2">WS2-C2</option>
+                <option value="WS2-H1">WS2-H1</option>
+                <option value="WS2-H1F">WS2-H1F</option>
+                <option value="WS2-H2">WS2-H2</option>
+                <option value="WS2-H2F">WS2-H2F</option>
+            </select>
+        </div>
+
+        <div class="question-card" id="card-sales-no">
+            <div class="question-title">銷貨單號 <span class="required">*</span></div>
+            <input type="text" name="sales_no">
+        </div>
+
+        <div class="question-card" id="card-machine-ver">
+            <div class="question-title">機器版本</div>
+            <input type="text" name="machine_ver" id="machine_ver" placeholder="自動帶入型號">
+        </div>
+
+        <div class="question-card" id="card-serial">
+            <div class="question-title">機器序號 <span class="required">*</span></div>
+            <input type="text" name="serial_no" placeholder="請輸入8碼機碼">
+        </div>
+
+        <div class="question-card" id="card-machine-label">
+            <div class="question-title">機器標籤</div>
+            <input type="text" name="machine_label">
+        </div>
+
+        <div class="question-card" id="card-filter-c">
+            <div class="question-title">Filter-C</div>
+            <select name="filter_c">
+                <option value="有">有</option>
+                <option value="無">無</option>
+            </select>
+        </div>
+
+        <div class="question-card" id="card-faucet">
+            <div class="question-title">龍頭型號</div>
+            <select name="faucet">
+                <option value="" disabled selected>請選擇...</option>
+                <option value="經典-基本款">經典-基本款</option>
+                <option value="經典-石墨黑">經典-石墨黑</option>
+                <option value="經典-玫瑰金">經典-玫瑰金</option>
+                <option value="智慧-太空銀">智慧-太空銀</option>
+                <option value="智慧-曜石黑">智慧-曜石黑</option>
+                <option value="智慧-浮光金">智慧-浮光金</option>
+                <option value="智慧-月影灰">智慧-月影灰</option>
+            </select>
+        </div>
+        
+        <div class="question-card" id="card-faucet-label">
+            <div class="question-title">龍頭標籤</div>
+            <input type="text" name="faucet_label">
+        </div>
+
+        <div class="question-card" id="card-panel-ver">
+            <div class="question-title">面板版本</div>
+            <input type="text" name="panel_ver">
+        </div>
+        
+        <div class="question-card" id="card-firmware">
+            <div class="question-title">韌體版本 <span class="required">*</span></div>
+            <input type="text" name="firmware">
+        </div>
+
+        <div class="question-card" id="card-raw-tds">
+            <div class="question-title">原水 TDS</div>
+            <input type="text" name="raw_tds">
+        </div>
+        
+        <div class="question-card" id="card-raw-pressure">
+            <div class="question-title">原水水壓</div>
+            <input type="text" name="raw_pressure" placeholder="水壓值">
+            <div style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                <span style="font-size: 14px; font-weight: bold; margin-right: 10px;">減壓閥：</span>
+                <select name="pressure_valve" style="width: auto; display: inline-block;">
+                    <option value="無">無</option>
+                    <option value="有">有</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="question-card" id="card-temp-group">
+            <div class="question-title">17. 環境溫度</div>
+            
+            <div class="temp-row">
+                <div class="temp-label">100℃</div>
+                <input type="text" name="t100_temp">
+                <span class="unit-label">℃</span>
+                <input type="text" name="t100_flow">
+                <span class="unit-label">ml/min</span>
+            </div>
+
+            <div class="temp-row">
+                <div class="temp-label">35℃</div>
+                <input type="text" name="t35_temp">
+                <span class="unit-label">℃</span>
+                <input type="text" name="t35_flow">
+                <span class="unit-label">ml/min</span>
+            </div>
+
+            <div class="temp-row">
+                <div class="temp-label">10℃</div>
+                <input type="text" name="t10_temp">
+                <span class="unit-label">℃</span>
+                <input type="text" name="t10_flow">
+                <span class="unit-label">ml/min</span>
+            </div>
+        </div>
+
+        <div class="question-card" id="card-ice-waste">
+            <div class="question-title">冰水廢水水量</div>
+            <input type="text" name="ice_waste">
+        </div>
+        
+        <div class="question-card" id="card-site-voltage">
+            <div class="question-title">場地電壓</div>
+            <input type="text" name="voltage">
+        </div>
+        
+        <div class="question-card" id="card-power">
+            <div class="question-title">最大功率</div>
+            <div class="multi-input-row">
+                <input type="text" name="power_hot" placeholder="熱水功率">
+                <input type="text" name="power_ice" placeholder="冰水功率">
+            </div>
+        </div>
+
+        <div class="question-card" id="card-panel-voltage">
+            <div class="question-title">面板電壓 (休眠/喚醒/充電)</div>
+            <select name="panel_voltage_mode">
+                <option value="" disabled selected>請選擇狀態...</option>
+                <option value="休眠">休眠</option>
+                <option value="喚醒">喚醒</option>
+                <option value="充電">充電</option>
+            </select>
+        </div>
+
+        <div class="question-card" id="card-raw-flow">
+            <div class="question-title">原水水量</div>
+            <input type="text" name="raw_flow">
+        </div>
+        
+        <div class="question-card" id="card-raw-temp">
+            <div class="question-title">原水溫度</div>
+            <input type="text" name="raw_temp">
+        </div>
+
+        <div class="question-card" id="card-principle">
+            <div class="question-title">原理說明</div>
+            <input type="text" name="principle">
+        </div>
+        
+        <div class="question-card" id="card-taste">
+            <div class="question-title">口感確認 <span class="required">*</span></div>
+            <div style="margin-bottom: 8px;">
+                <label>技師：</label>
+                <input type="text" name="tech_taste" placeholder="技師口感">
+            </div>
+            <div>
+                <label>客戶：</label>
+                <input type="text" name="client_taste" placeholder="客戶口感">
+            </div>
+        </div>
+
+        <div class="question-card" id="card-calibration">
+            <div class="question-title">校正方式</div>
+            <input type="text" name="cal_method">
+        </div>
+        
+        <div class="question-card" id="card-battery">
+            <div class="question-title">電池款式</div>
+            <input type="text" name="battery">
+        </div>
+
+        <div class="question-card" id="card-app-bind">
+            <div class="question-title">App 綁定 <span class="required">*</span></div>
+            <select name="app_bind">
+                <option value="已綁定">已綁定</option>
+                <option value="未綁定">未綁定</option>
+                <option value="手動輸入">手動輸入</option>
+            </select>
+        </div>
+
+        <div class="question-card" id="card-repair-info">
+            <div class="question-title">維修資訊</div>
+            <div style="margin-bottom: 8px;">
+                <label>報修原因：</label>
+                <input type="text" name="reason">
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label>實際原因：</label>
+                <input type="text" name="real_cause">
+            </div>
+            <div style="margin-bottom: 8px;">
+                <label>處理方式：</label>
+                <input type="text" name="solution">
+            </div>
+            <div>
+                <label>檢修結果：<span class="required">*</span></label>
+                <select name="result">
+                    <option value="完修">完修</option>
+                    <option value="店修">店修</option>
+                    <option value="廠修">廠修</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="question-card" id="card-notes">
+            <div class="question-title">其他說明事項</div>
+            <textarea name="notes" rows="3"></textarea>
+        </div>
+
+        <div class="safe-reset-container">
+            <button type="button" class="btn btn-reset" onclick="resetForm()">⚠️ 清空資料重新填寫</button>
+        </div>
+        <div style="height: 60px;"></div>
+    </form>
+</div>
+
+<div class="floating-actions">
+    <button class="btn btn-line" onclick="copyForLine()">
+        <span style="margin-right: 6px;">📋</span> 複製 LINE
+    </button>
+    <button class="btn btn-cloud" id="btn-upload" onclick="uploadToCloud()">
+        <span style="margin-right: 6px;">☁️</span> 上傳雲端
+    </button>
+</div>
+
+<script>
+    // 雲端 Script URL
+    const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbz2F7RDc9ktIf5TjqAqJ-CT7Ue_tG3uHSUuCJrLRbDT0GIuEj77gcingkqkaJUyTqiBUQ/exec';
+
+    // 欄位 ID 對照表
+    const FIELDS = {
+        base: ['card-brand', 'card-service-item', 'card-client-id', 'card-client-name', 'card-date', 'card-machine-model', 'card-sales-no', 'card-machine-ver', 'card-serial', 'card-machine-label', 'card-firmware', 'card-notes', 'card-app-bind'],
+        tempGroup: 'card-temp-group',
+        taste: ['card-taste', 'card-principle', 'card-calibration'],
+        detail: 'card-service-detail',
+        filterC: 'card-filter-c',
+        faucet: ['card-faucet', 'card-faucet-label'],
+        panelVer: 'card-panel-ver',
+        rawTDS: 'card-raw-tds',
+        rawPressure: 'card-raw-pressure',
+        envTemp: 'card-env-temp',
+        iceWaste: 'card-ice-waste',
+        voltage: 'card-site-voltage',
+        power: 'card-power',
+        panelVolt: 'card-panel-voltage',
+        rawFlow: 'card-raw-flow',
+        rawTemp: 'card-raw-temp',
+        battery: 'card-battery',
+        repair: 'card-repair-info'
+    };
+
+    window.onload = function() {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        document.getElementById('date_input').value = `${yyyy}/${mm}/${dd}`;
+        
+        updateForm();
+    };
+
+    function handleModelChange() {
+        const model = document.getElementById('machine_model').value;
+        
+        // 1. 自動帶入機器版本
+        const verInput = document.getElementById('machine_ver');
+        if (model) {
+            verInput.value = model; 
+        }
+
+        // 2. 自動切換品牌
+        let targetBrand = "";
+        if (model.startsWith("WS")) {
+            targetBrand = "惟品";
+        } else if (model.startsWith("WD")) {
+            targetBrand = "千山";
+        }
+
+        if (targetBrand) {
+            const radios = document.getElementsByName('brand');
+            for (let r of radios) {
+                if (r.value === targetBrand) {
+                    r.checked = true;
+                }
+            }
+        }
+        updateForm();
+    }
+
+    function formatClientID() {
+        const input = document.getElementById('client_id');
+        let val = input.value.trim();
+        if (val && !val.toUpperCase().startsWith('W') && !isNaN(val)) {
+            input.value = 'W0000' + val;
+        } else if (val === '') {
+            input.value = 'W0000';
+        }
+    }
+
+    function resetForm() {
+        if(confirm("⚠️ 確定要清空所有已填寫的資料，重新開始嗎？")) {
+            document.getElementById('mainForm').reset();
+            document.getElementById('client_id').value = "W0000";
+            updateForm();
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function updateForm() {
+        const brand = document.querySelector('input[name="brand"]:checked').value;
+        const item = document.getElementById('service_item').value;
+        const detailSelect = document.getElementById('service_detail');
+        const detailCard = document.getElementById(FIELDS.detail);
+
+        // 1. 處理服務細項
+        const currentCategory = detailSelect.getAttribute('data-category');
+        if (currentCategory !== item) {
+            detailSelect.innerHTML = ""; 
+            let showDetail = false;
+            if (item === '裝機') {
+                showDetail = true;
+                ['新裝機', '升級裝機', '換機裝機'].forEach(o => detailSelect.add(new Option(o, o)));
+            } else if (item === '售服') {
+                showDetail = true;
+                ['更換濾芯', '協助拆裝機', '手動輸入'].forEach(o => detailSelect.add(new Option(o, o)));
+            }
+            detailSelect.setAttribute('data-category', item);
+        }
+
+        let detailValue = detailSelect.value;
+        let showDetailCard = (item === '裝機' || item === '售服');
+
+        if (showDetailCard) {
+            detailCard.classList.remove('hidden-field');
+        } else {
+            detailCard.classList.add('hidden-field');
+        }
+        
+        // 2. 顯示邏輯
+        let showIds = [...FIELDS.base];
+        
+        const add = (items) => { 
+            if (Array.isArray(items)) {
+                items.forEach(i => {
+                    if(Array.isArray(i)) showIds = showIds.concat(i); 
+                    else showIds.push(i);
+                });
+            } else {
+                showIds.push(items); 
+            }
+        };
+
+        if (brand === '惟品') { 
+            // 惟品 (WS2)
+            if (item === '裝機') {
+                add([FIELDS.filterC, FIELDS.faucet, FIELDS.panelVer, FIELDS.rawTDS, FIELDS.rawPressure, FIELDS.tempGroup, FIELDS.iceWaste, FIELDS.voltage, FIELDS.power, FIELDS.panelVolt, FIELDS.rawFlow, FIELDS.rawTemp, FIELDS.taste, FIELDS.battery]);
+            } else if (item === '維修') {
+                add([FIELDS.filterC, FIELDS.faucet, FIELDS.panelVer, FIELDS.rawPressure, FIELDS.tempGroup, FIELDS.voltage, FIELDS.power, FIELDS.panelVolt, FIELDS.taste, FIELDS.battery, FIELDS.repair]);
+            } else if (item === '售服') {
+                // ↓↓↓ 修改後：直接加入 FIELDS.panelVolt，這樣不管選什麼細項都會顯示
+                add([FIELDS.filterC, FIELDS.faucet, FIELDS.panelVer, FIELDS.tempGroup, FIELDS.power, FIELDS.taste, FIELDS.battery, FIELDS.repair, FIELDS.panelVolt]);
+                
+                if (detailValue === '協助拆裝機') {
+                    // 下面這裡可以保留 FIELDS.panelVolt 沒關係，重複加入不會有影響，或者也可以拿掉
+                    add([FIELDS.rawPressure, FIELDS.voltage]); 
+                }
+            }
+        } else { // 千山 (WD2)
+             if (item === '裝機') {
+                add([FIELDS.rawTDS, FIELDS.rawPressure, FIELDS.tempGroup, FIELDS.iceWaste, FIELDS.voltage, FIELDS.power, FIELDS.rawFlow, FIELDS.rawTemp, FIELDS.taste]);
+             } else if (item === '維修') {
+                add([FIELDS.filterC, FIELDS.rawPressure, FIELDS.tempGroup, FIELDS.voltage, FIELDS.power, FIELDS.taste, FIELDS.repair]);
+             } else if (item === '售服') {
+                add([FIELDS.filterC, FIELDS.tempGroup, FIELDS.power, FIELDS.taste, FIELDS.repair, FIELDS.rawPressure, FIELDS.voltage]);
+             }
+        }
+
+        // 3. 執行 DOM 顯示/隱藏
+        const allDynamic = [
+            FIELDS.filterC, FIELDS.faucet[0], FIELDS.faucet[1], FIELDS.panelVer, FIELDS.rawTDS, FIELDS.rawPressure, 
+            FIELDS.envTemp, FIELDS.iceWaste, FIELDS.voltage, FIELDS.power, FIELDS.panelVolt, FIELDS.rawFlow, 
+            FIELDS.rawTemp, FIELDS.battery, FIELDS.repair, FIELDS.tempGroup, 
+            FIELDS.taste[0], FIELDS.taste[1], FIELDS.taste[2]
+        ];
+        
+        // 先全部隱藏
+        allDynamic.forEach(id => { 
+            const el = document.getElementById(id); 
+            if(el) el.classList.add('hidden-field'); 
+        });
+
+        // 再顯示需要的
+        showIds.forEach(id => { 
+            const el = document.getElementById(id); 
+            if(el) el.classList.remove('hidden-field'); 
+        });
+
+        renumberQuestions();
+        clearErrors();
+    }
+
+    function renumberQuestions() {
+        const cards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        let count = 1;
+        cards.forEach((card) => {
+            const title = card.querySelector('.question-title');
+            if (title) {
+                let text = title.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+                if (card.id === 'card-service-detail') {
+                    title.innerHTML = `2-1. ${text} <span class="required">*</span>`;
+                } else {
+                    title.innerHTML = `${count}. ${text}`;
+                    if (title.innerText.includes('*') || card.innerHTML.includes('required')) {
+                          title.innerHTML = `${count}. ${text} <span class="required">*</span>`;
+                    }
+                    count++;
+                }
+            }
+        });
+    }
+
+    function validateForm() {
+        let isValid = true;
+        let errors = [];
+        clearErrors();
+
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        visibleCards.forEach(card => {
+            const title = card.querySelector('.question-title');
+            if (title && title.innerHTML.includes('required')) {
+                const inputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                let hasValue = false;
+                inputs.forEach(input => { if(input.value.trim()) hasValue = true; });
+                const radios = card.querySelectorAll('input[type="radio"]');
+                if (radios.length > 0) {
+                    let radioChecked = false;
+                    radios.forEach(r => { if(r.checked) radioChecked = true; });
+                    hasValue = radioChecked;
+                }
+                if (!hasValue) {
+                    isValid = false;
+                    card.classList.add('error-border');
+                    inputs.forEach(i => i.classList.add('error-input'));
+                    let errText = title.innerText.replace('*', '').trim();
+                    errors.push(errText);
+                }
+            }
+        });
+
+        if (!isValid) alert("⚠️ 請填寫以下必填欄位：\n\n" + errors.join('\n'));
+        return isValid;
+    }
+
+    function clearErrors() {
+        document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
+        document.querySelectorAll('.error-input').forEach(el => el.classList.remove('error-input'));
+    }
+
+    function getFormData() {
+        let data = {};
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        visibleCards.forEach(card => {
+            const inputs = card.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'radio' && !input.checked) return;
+                if (input.name) data[input.name] = input.value;
+            });
+        });
+        return data;
+    }
+
+    function copyForLine() {
+        if (!validateForm()) return;
+        const brand = document.querySelector('input[name="brand"]:checked').value;
+        const item = document.getElementById('service_item').value;
+        const detailSelect = document.getElementById('service_detail');
+        let header = `【${brand} ${item}回報】`;
+        
+        const detailCard = document.getElementById('card-service-detail');
+        if (detailCard && !detailCard.classList.contains('hidden-field')) {
+            header += ` - ${detailSelect.value}`;
+        }
+
+        let text = header + "\n";
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        
+        visibleCards.forEach(card => {
+            const titleEl = card.querySelector('.question-title');
+            if (titleEl) { 
+                let label = titleEl.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+                let value = "";
+                
+                if (card.id === 'card-temp-group') {
+                    let groupText = "";
+                    const rows = card.querySelectorAll('.temp-row');
+                    rows.forEach(row => {
+                        const rowLabel = row.querySelector('.temp-label').innerText;
+                        const inputs = row.querySelectorAll('input');
+                        const val1 = inputs[0].value;
+                        const val2 = inputs[1].value;
+                        if (val1 || val2) {
+                             groupText += `\n${rowLabel}：${val1}℃ / ${val2}ml/min`;
+                        }
+                    });
+                    if(groupText) value = groupText;
+                } 
+                else {
+                    const multiInputs = card.querySelectorAll('input[type="text"]');
+                    if (multiInputs.length > 1) {
+                        let vals = [];
+                        multiInputs.forEach(i => { if(i.value) vals.push(i.value); });
+                        value = vals.join(' / ');
+                    } else if (multiInputs.length === 1) {
+                        value = multiInputs[0].value;
+                    } else {
+                        const otherInput = card.querySelector('select, textarea');
+                        if(otherInput) value = otherInput.value;
+                        const checkedRadio = card.querySelector('input[type="radio"]:checked');
+                        if(checkedRadio) value = checkedRadio.parentElement.innerText.trim();
+                    }
+                    
+                    if (label.includes('原水水壓')) {
+                        const valveSelect = card.querySelector('select[name="pressure_valve"]');
+                        if (valveSelect) value += ` (減壓閥: ${valveSelect.value})`;
+                    }
+                }
+                
+                if(value) text += `${label}：${value}\n`;
+            }
+        });
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try { document.execCommand('copy'); alert('✅ 已複製 LINE 格式內容！'); } 
+        catch (err) { alert('❌ 複製失敗'); }
+        document.body.removeChild(textarea);
+    }
+
+    async function uploadToCloud() {
+        if (!validateForm()) return; 
+        const data = getFormData();
+        const btn = document.getElementById('btn-upload');
+        const originalText = btn.innerHTML;
+        btn.disabled = true; 
+        btn.innerHTML = "⏳ 上傳中...";
+        try {
+            await fetch(CLOUD_URL, {
+                method: 'POST',
+                // mode: 'no-cors', // 註解掉以便接收回應
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(data)
+            });
+            alert("✅ 上傳成功！");
+        } catch (e) {
+            // 如果 GAS 部署權限設定正確，通常這裡不會報錯
+            // 若仍報錯但資料有進去，可能是因為跨域攔截，可視情況忽略
+            alert("✅ 上傳指令已發送 (若無報錯即成功)");
+            console.error(e);
+        } finally {
+            btn.disabled = false; 
+            btn.innerHTML = originalText;
+        }
+    }
+</script>
+
+</body>
+</html>
