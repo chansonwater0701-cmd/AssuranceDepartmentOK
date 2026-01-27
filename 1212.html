@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>技師維修回報系統 - 完整公告版 (裝機必填修正)</title>
+    <title>技師維修回報系統</title>
     <style>
         /* =========================================
            1. 全局基礎設定
@@ -349,6 +349,7 @@
         <div class="question-card" id="card-service-item">
             <div class="question-title">2. 服務項目 <span class="required">*</span></div>
             <select id="service_item" name="service_item" onchange="updateForm()">
+                <option value="" disabled selected>請選擇...</option>
                 <option value="裝機">裝機</option>
                 <option value="維修">維修</option>
                 <option value="售服">售服</option>
@@ -369,7 +370,7 @@
 
         <div class="question-card" id="card-client-name">
             <div class="question-title">4. 客戶姓名 <span class="required">*</span></div>
-            <input type="text" name="client_name">
+            <input type="text" name="client_name" placeholder="填寫客戶的姓名" >
         </div>
 
         <div class="question-card" id="card-date">
@@ -385,8 +386,8 @@
             <select name="machine_model" id="machine_model" onchange="handleModelChange()">
                 <option value="" disabled selected>請選擇...</option>
                 <option value="WD1">WD1</option>
-                <option value="WD2-C1">WD2-C1</option>
                 <option value="WS1">WS1</option>
+                <option value="WD2-C1">WD2-C1</option>
                 <option value="WS2-C1">WS2-C1</option>
                 <option value="WS2-C2">WS2-C2</option>
                 <option value="WS2-H1">WS2-H1</option>
@@ -398,7 +399,7 @@
 
         <div class="question-card" id="card-sales-no">
             <div class="question-title">銷貨單號</div>
-            <input type="text" name="sales_no">
+            <input type="text" name="sales_no" placeholder="填寫銷貨單號">
         </div>
 
         <div class="question-card" id="card-machine-ver">
@@ -413,12 +414,13 @@
 
         <div class="question-card" id="card-machine-label">
             <div class="question-title">機器標籤</div>
-            <input type="text" name="machine_label">
+            <input type="text" name="machine_label" placeholder="填寫機器標籤號碼">
         </div>
 
         <div class="question-card" id="card-filter-c">
             <div class="question-title">Filter-C</div>
             <select name="filter_c">
+                <option value="" disabled selected>請選擇...</option>
                 <option value="有">有</option>
                 <option value="無">無</option>
             </select>
@@ -440,22 +442,22 @@
         
         <div class="question-card" id="card-faucet-label">
             <div class="question-title">龍頭標籤</div>
-            <input type="text" name="faucet_label">
+            <input type="text" name="faucet_label" placeholder="請說明龍頭的版本" >
         </div>
 
         <div class="question-card" id="card-panel-ver">
             <div class="question-title">面板版本</div>
-            <input type="text" name="panel_ver">
+            <input type="text" name="panel_ver" placeholder="請說明面板的版本" >
         </div>
         
         <div class="question-card" id="card-firmware">
             <div class="question-title">韌體版本 <span class="required">*</span></div>
-            <input type="text" name="firmware">
+            <input type="text" name="firmware"  placeholder="請說明韌體的版本" >
         </div>
 
         <div class="question-card" id="card-raw-tds">
             <div class="question-title">原水 TDS</div>
-            <input type="text" name="raw_tds">
+            <input type="text" name="raw_tds" placeholder="請說明">
         </div>
         
         <div class="question-card" id="card-raw-pressure">
@@ -475,42 +477,42 @@
             
             <div class="temp-row">
                 <div class="temp-label">100℃</div>
-                <input type="text" name="t100_temp">
+                <input type="text" name="t100_temp"  placeholder="溫度">
                 <span class="unit-label">℃</span>
-                <input type="text" name="t100_flow">
+                <input type="text" name="t100_flow"  placeholder="流量">
                 <span class="unit-label">ml/min</span>
             </div>
 
             <div class="temp-row">
                 <div class="temp-label">35℃</div>
-                <input type="text" name="t35_temp">
+                <input type="text" name="t35_temp" placeholder="溫度">
                 <span class="unit-label">℃</span>
-                <input type="text" name="t35_flow">
+                <input type="text" name="t35_flow" placeholder="流量">
                 <span class="unit-label">ml/min</span>
             </div>
 
             <div class="temp-row">
                 <div class="temp-label">10℃</div>
-                <input type="text" name="t10_temp">
+                <input type="text" name="t10_temp"  placeholder="溫度">
                 <span class="unit-label">℃</span>
-                <input type="text" name="t10_flow">
+                <input type="text" name="t10_flow" placeholder="流量">
                 <span class="unit-label">ml/min</span>
             </div>
         </div>
 
         <div class="question-card" id="card-ice-waste">
             <div class="question-title">冰水廢水水量</div>
-            <input type="text" name="ice_waste">
+            <input type="text" name="ice_waste" placeholder="請說明">
         </div>
         
         <div class="question-card" id="card-site-voltage">
             <div class="question-title">場地電壓</div>
-            <input type="text" name="voltage">
+            <input type="text" name="voltage" placeholder="請說明">
         </div>
         
         <div class="question-card" id="card-power">
             <div class="question-title">最大功率</div>
-            <div class="multi-input-row">
+            <div class="multi-input-row" >
                 <input type="text" name="power_hot" placeholder="熱水功率">
                 <input type="text" name="power_ice" placeholder="冰水功率">
             </div>
@@ -528,17 +530,17 @@
 
         <div class="question-card" id="card-raw-flow">
             <div class="question-title">原水水量</div>
-            <input type="text" name="raw_flow">
+            <input type="text" name="raw_flow" placeholder="請說明">
         </div>
         
         <div class="question-card" id="card-raw-temp">
             <div class="question-title">原水溫度</div>
-            <input type="text" name="raw_temp">
+            <input type="text" name="raw_temp" placeholder="請說明">
         </div>
 
         <div class="question-card" id="card-principle">
             <div class="question-title">原理說明</div>
-            <input type="text" name="principle">
+            <input type="text" name="principle" placeholder="請說明">
         </div>
         
         <div class="question-card" id="card-taste">
@@ -555,17 +557,18 @@
 
         <div class="question-card" id="card-calibration">
             <div class="question-title">校正方式</div>
-            <input type="text" name="cal_method">
+            <input type="text" name="cal_method" placeholder="請說明">
         </div>
         
         <div class="question-card" id="card-battery">
             <div class="question-title">電池款式</div>
-            <input type="text" name="battery">
+            <input type="text" name="battery" placeholder="請說明">
         </div>
 
         <div class="question-card" id="card-app-bind">
-            <div class="question-title">App 綁定 <span class="required">*</span></div>
+            <div class="question-title">App 綁定 <span class="required" placeholder="請說明">*</span></div>
             <select name="app_bind">
+                <option value="" disabled selected>請選擇...</option>
                 <option value="已綁定">已綁定</option>
                 <option value="未綁定">未綁定</option>
                 <option value="手動輸入">手動輸入</option>
@@ -576,15 +579,15 @@
             <div class="question-title">維修資訊</div>
             <div style="margin-bottom: 8px;">
                 <label>報修原因：</label>
-                <input type="text" name="reason">
+                <input type="text" name="reason" placeholder="請說明">
             </div>
             <div style="margin-bottom: 8px;">
                 <label>實際原因：</label>
-                <input type="text" name="real_cause">
+                <input type="text" name="real_cause" placeholder="請說明">
             </div>
             <div style="margin-bottom: 8px;">
                 <label>處理方式：</label>
-                <input type="text" name="solution">
+                <input type="text" name="solution" placeholder="請說明">
             </div>
             <div>
                 <label>檢修結果：<span class="required">*</span></label>
@@ -599,7 +602,7 @@
 
         <div class="question-card" id="card-notes">
             <div class="question-title">其他說明事項</div>
-            <textarea name="notes" rows="3"></textarea>
+            <textarea name="notes" rows="3" placeholder="請說明"></textarea>
         </div>
 
         <div class="safe-reset-container">
@@ -655,13 +658,13 @@
         'card-machine-ver',   // 機器版本 (購買機型)
         'card-firmware',      // 韌體版本
         'card-raw-pressure',  // 原水水壓
-        'card-temp-group',    // 環境溫度 (實際上包含100/35/10出水溫與流量)
+        'card-temp-group',    // 環境溫度
         'card-ice-waste',     // 冰水廢水水量
         'card-site-voltage',  // 場地電壓
-        'card-power',         // 最大功率 (熱水/冰水)
+        'card-power',         // 最大功率
         'card-raw-flow',      // 原水水量
         'card-raw-temp',      // 原水溫度
-        'card-taste',         // 口感 (技師/客戶)
+        'card-taste',         // 口感
         'card-calibration',   // 校正方式
         'card-app-bind'       // App綁定
     ];
@@ -680,6 +683,7 @@
         const dd = String(d.getDate()).padStart(2, '0');
         document.getElementById('date_input').value = `${yyyy}/${mm}/${dd}`;
         
+        // 初始化表單狀態
         updateForm();
     };
 
@@ -711,32 +715,65 @@
         updateForm();
     }
 
+    // 1. formatClientID：依據品牌判斷要補 W 還是 A
     function formatClientID() {
         const input = document.getElementById('client_id');
-        let val = input.value.trim();
-        if (val && !val.toUpperCase().startsWith('W') && !isNaN(val)) {
-            input.value = 'W0000' + val;
-        } else if (val === '') {
-            input.value = 'W0000';
+        let val = input.value.trim().toUpperCase();
+        
+        const brand = document.querySelector('input[name="brand"]:checked').value;
+        const prefixChar = (brand === '千山') ? 'A' : 'W';
+        const defaultVal = prefixChar + '0000';
+
+        if (val === '') {
+            input.value = defaultVal;
+        } else if (!isNaN(val)) {
+            input.value = defaultVal + val;
+        } else if (!val.startsWith(prefixChar)) {
+            if (val.startsWith('W') || val.startsWith('A')) {
+                input.value = prefixChar + val.substring(1);
+            } else {
+                input.value = prefixChar + val;
+            }
         }
     }
 
+    // 2. resetForm：重置時依據預設選中的品牌設定代號
     function resetForm() {
         if(confirm("⚠️ 確定要清空所有已填寫的資料，重新開始嗎？")) {
             document.getElementById('mainForm').reset();
-            document.getElementById('client_id').value = "W0000";
+            // 預設為惟品，所以重置回 W0000
+            document.getElementById('client_id').value = "W0000"; 
             updateForm();
             window.scrollTo(0, 0);
         }
     }
 
+    // 3. updateForm：核心邏輯 (含 W/A 切換 + 欄位顯示 + 必填計算)
     function updateForm() {
         const brand = document.querySelector('input[name="brand"]:checked').value;
+        
+        // --- (A) 處理客戶代號 W/A 切換邏輯 ---
+        const clientInput = document.getElementById('client_id');
+        const clientHint = clientInput.parentElement.querySelector('.small-note');
+        let currentVal = clientInput.value.trim().toUpperCase();
+        
+        const targetPrefix = (brand === '千山') ? 'A' : 'W';
+        const oldPrefix = (targetPrefix === 'A') ? 'W' : 'A';
+        const targetDefault = targetPrefix + '0000';
+
+        clientHint.innerHTML = `💡 提示：${targetDefault} 已預設帶入，請直接在後方輸入數字。`;
+
+        if (currentVal === '' || currentVal === 'W0000' || currentVal === 'A0000') {
+            clientInput.value = targetDefault;
+        } else if (currentVal.startsWith(oldPrefix)) {
+            clientInput.value = currentVal.replace(oldPrefix, targetPrefix);
+        }
+
+        // --- (B) 處理服務細項與顯示邏輯 ---
         const item = document.getElementById('service_item').value;
         const detailSelect = document.getElementById('service_detail');
         const detailCard = document.getElementById(FIELDS.detail);
 
-        // 1. 處理服務細項
         const currentCategory = detailSelect.getAttribute('data-category');
         if (currentCategory !== item) {
             detailSelect.innerHTML = ""; 
@@ -760,7 +797,6 @@
             detailCard.classList.add('hidden-field');
         }
         
-        // 2. 顯示邏輯
         let showIds = [...FIELDS.base];
         
         const add = (items) => { 
@@ -796,7 +832,7 @@
              }
         }
 
-        // 3. 執行 DOM 顯示/隱藏
+        // 執行 DOM 顯示/隱藏
         const allDynamic = [
             FIELDS.filterC, FIELDS.faucet[0], FIELDS.faucet[1], FIELDS.panelVer, FIELDS.rawTDS, FIELDS.rawPressure, 
             FIELDS.envTemp, FIELDS.iceWaste, FIELDS.voltage, FIELDS.power, FIELDS.panelVolt, FIELDS.rawFlow, 
@@ -804,21 +840,18 @@
             FIELDS.taste[0], FIELDS.taste[1], FIELDS.taste[2]
         ];
         
-        // 先全部隱藏
         allDynamic.forEach(id => { 
             const el = document.getElementById(id); 
             if(el) el.classList.add('hidden-field'); 
         });
 
-        // 再顯示需要的
         showIds.forEach(id => { 
             const el = document.getElementById(id); 
             if(el) el.classList.remove('hidden-field'); 
         });
 
-        // 4. 計算並標記必填欄位 (新增邏輯)
+        // --- (C) 計算並標記必填欄位 ---
         currentRequiredIds = [];
-        // 基礎必填 (永遠需要)
         currentRequiredIds.push('card-brand', 'card-service-item', 'card-serial'); 
 
         if (item === '裝機') {
@@ -826,11 +859,6 @@
             if (brand === '惟品') {
                 currentRequiredIds = currentRequiredIds.concat(INSTALL_REQUIRED_WS_ADDON);
             }
-        } else {
-             // 維修或售服維持原有的 HTML 靜態標示，這裡可以加入特定規則，
-             // 但原需求只強調裝機，因此這裡僅保留必要的如 Firmwar/Serial 等。
-             // 為了相容原本的HTML結構，我們只針對裝機做嚴格動態控制。
-             // 若非裝機，暫時不強制動態增加必填，依賴HTML原本的 required class。
         }
 
         renumberQuestions();
@@ -847,23 +875,16 @@
         cards.forEach((card) => {
             const title = card.querySelector('.question-title');
             if (title) {
-                // 先取得純文字標題 (移除編號和星星)
                 let text = title.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
-                
-                // 判斷是否為必填
                 let isRequired = false;
 
-                // 1. 如果在裝機模式，且 ID 在必填清單中 -> 必填
                 if (isInstall && currentRequiredIds.includes(card.id)) {
                     isRequired = true;
                 }
-                // 2. 如果不是裝機模式，但 HTML 原本就有寫 required -> 必填 (保留舊邏輯)
                 else if (!isInstall && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
                     isRequired = true;
                 }
-                // 3. 特殊例外：服務細項
                 if (card.id === 'card-service-detail') isRequired = true;
-
 
                 let htmlContent = "";
                 if (card.id === 'card-service-detail') {
@@ -890,15 +911,12 @@
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         visibleCards.forEach(card => {
             const title = card.querySelector('.question-title');
-            // 檢查標題是否有必填星號
             if (title && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
                 
                 let hasValue = false;
                 let inputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
                 let radios = card.querySelectorAll('input[type="radio"]');
                 
-                // 特殊檢查：如果這張卡片是「溫度群組」或「功率」或「口感」，且被標示為必填
-                // 則要求該卡片內「所有」顯示的輸入框都必須填寫 (嚴格模式)
                 const isStrictCard = ['card-temp-group', 'card-power', 'card-taste'].includes(card.id);
 
                 if (isStrictCard) {
@@ -908,7 +926,6 @@
                     });
                     hasValue = allFilled;
                 } else {
-                    // 一般模式：只要有一個欄位有值就算通過 (針對單一 input 或是單選 select)
                     if (inputs.length > 0) {
                         inputs.forEach(input => { if(input.value.trim()) hasValue = true; });
                     }
@@ -916,9 +933,6 @@
                         let radioChecked = false;
                         radios.forEach(r => { if(r.checked) radioChecked = true; });
                         if(radioChecked) hasValue = true; 
-                        // 如果有 radio 沒選，那即使有 input 有值(不太可能並存)，也視為 false? 
-                        // 通常 radio group 是獨立的，這裡邏輯是 OR。
-                        // 但在此表單結構中，radio group 只有 brand，是獨立的。
                     }
                 }
 
