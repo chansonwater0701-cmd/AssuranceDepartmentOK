@@ -846,7 +846,7 @@
     <!-- 環境溫度 -->
     <div class="question-card hidden-field" id="card-env-temp">
         <div class="question-title">環境溫度</div>
-        <input type="text" name="env_temp" placeholder="請輸入環境溫度">
+        <input type="number" name="env_temp" placeholder="請輸入環境溫度">
     </div>
 
     <!-- 溫度與水量組合 (用於WS2-C和WD2-C) -->
@@ -855,25 +855,25 @@
         
         <div class="temp-row" id="temp-100">
             <span class="temp-label">100°C</span>
-            <input type="text" name="temp_100" placeholder="溫度">
+            <input type="number" name="temp_100" placeholder="溫度">
             <span class="temp-unit">℃</span>
-            <input type="text" name="flow_100" placeholder="水量">
+            <input type="number" name="flow_100" placeholder="水量">
             <span class="temp-unit">ml/min</span>
         </div>
         
         <div class="temp-row" id="temp-35">
             <span class="temp-label">35°C</span>
-            <input type="text" name="temp_35" placeholder="溫度">
+            <input type="number" name="temp_35" placeholder="溫度">
             <span class="temp-unit">℃</span>
-            <input type="text" name="flow_35" placeholder="水量">
+            <input type="number" name="flow_35" placeholder="水量">
             <span class="temp-unit">ml/min</span>
         </div>
         
         <div class="temp-row" id="temp-10">
             <span class="temp-label">10°C</span>
-            <input type="text" name="temp_10" placeholder="溫度">
+            <input type="number" name="temp_10" placeholder="溫度">
             <span class="temp-unit">℃</span>
-            <input type="text" name="flow_10" placeholder="水量">
+            <input type="number" name="flow_10" placeholder="水量">
             <span class="temp-unit">ml/min</span>
         </div>
     </div>
@@ -884,13 +884,13 @@
         
         <div class="temp-row" id="temp-100">
             <span class="temp-label">100°C</span>
-            <input type="text" name="temp_100" placeholder="溫度">
+            <input type="number" name="temp_100" placeholder="溫度">
             <span class="temp-unit">℃</span>
         </div>
         
         <div class="temp-row" id="temp-35">
             <span class="temp-label">35°C</span>
-            <input type="text" name="temp_35" placeholder="溫度">
+            <input type="number" name="temp_35" placeholder="溫度">
             <span class="temp-unit">℃</span>
         </div>
 
@@ -899,27 +899,27 @@
     <!-- 調整功率 -->
     <div class="question-card hidden-field" id="card-adjust-power">
         <div class="question-title">調整功率</div>
-        <input type="text" name="adjust_power" placeholder="請輸入調整功率">
+        <input type="number" name="adjust_power" placeholder="請輸入調整功率">
     </div>
 
     <!-- 功率組合 (熱水與冰水最大功率) -->
     <div class="question-card hidden-field" id="card-power">
         <div class="question-title">最大功率 <span class="required">*</span></div>
         <div class="multi-input-row">
-            <input type="text" name="hot_max_power" placeholder="熱水最大功率">
-            <input type="text" name="cold_max_power" placeholder="冰水最大功率">
+            <input type="number" name="hot_max_power" placeholder="熱水最大功率">
+            <input type="number" name="cold_max_power" placeholder="冰水最大功率">
         </div>
     </div>
 
     <div class="question-card hidden-field" id="card-power-hot">
         <div class="question-title">最大功率 <span class="required">*</span></div>
-        <input type="text" name="hot_max_power" placeholder="熱水最大功率">
+        <input type="number" name="hot_max_power" placeholder="熱水最大功率">
     </div>
 
     <!-- 原水水量 -->
     <div class="question-card hidden-field" id="card-raw-flow">
         <div class="question-title">原水水量</div>
-        <input type="text" name="raw_flow" placeholder="請輸入原水水量">
+        <input type="number" name="raw_flow" placeholder="請輸入原水水量">
     </div>
 
     <!-- 原水溫度 -->
@@ -2652,14 +2652,30 @@
     // 獲取表單資料
     function getFormData() {
         let data = {};
+        // 獲取所有「可見卡片」中的輸入項
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        
         visibleCards.forEach(card => {
             const inputs = card.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
+                if (!input.name) return;
                 if (input.type === 'radio' && !input.checked) return;
-                if (input.name) data[input.name] = input.value;
+                
+                // 如果多個 input 共用同一個 name，則串接它們 (例如 fw_1)
+                if (data[input.name]) {
+                    data[input.name] += " - " + input.value;
+                } else {
+                    data[input.name] = input.value;
+                }
             });
         });
+        
+        // 加入基本資訊
+        data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
+        data['service_item'] = document.getElementById('service_item').value;
+        data['service_detail'] = document.getElementById('service_detail').value;
+        data['model'] = document.getElementById('model').value;
+        
         return data;
     }
     function handlePrincipleChange() {
@@ -2680,79 +2696,70 @@
         if (!validateForm()) return;
         
         let header = '';
-        
+        // ... (保持原有的品牌抬頭邏輯) ...
         if (currentBrand === '千山') {
             const item = document.getElementById('service_item').value;
             const detailSelect = document.getElementById('service_detail');
             header = `【${currentBrand} ${item}回報】`;
-            
-            const detailCard = document.getElementById('card-service-detail');
-            if (detailCard && !detailCard.classList.contains('hidden-field')) {
-                header += ` - ${detailSelect.value}`;
-            }
-        } else if (currentBrand === '惟品') {
-            const item = document.getElementById('service_item').value;
-            const detail = document.getElementById('service_detail').value;
-            header = `【${currentBrand} ${item}回報】 - ${detail} - ${currentModel}`;
+            if (detailSelect.value) header += ` - ${detailSelect.value}`;
+        } else {
+            header = `【${currentBrand} ${currentServiceItem}回報】 - ${currentServiceDetail} - ${currentModel}`;
         }
 
         let text = header + "\n";
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         
         visibleCards.forEach(card => {
+            // 跳過前幾個基礎選擇卡片，避免重複
+            if (['card-brand', 'card-service-item', 'card-service-detail', 'card-model'].includes(card.id)) return;
+
             const titleEl = card.querySelector('.question-title');
-            if (titleEl) { 
-                let label = titleEl.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
-                let value = "";
-                
-                if (card.id === 'card-temp-group') {
-                    let groupText = "";
-                    const rows = card.querySelectorAll('.temp-row');
-                    rows.forEach(row => {
-                        if (row.style.display === 'none') return;
-                        
-                        const rowLabel = row.querySelector('.temp-label').innerText;
-                        const inputs = row.querySelectorAll('input');
-                        const val1 = inputs[0].value;
-                        const val2 = inputs[1].value;
-                        if (val1 || val2) {
-                             groupText += `\n${rowLabel}：${val1}℃ / ${val2}ml/min`;
-                        }
-                    });
-                    if(groupText) value = groupText;
-                } 
-                else {
-                    const multiInputs = card.querySelectorAll('input[type="text"]');
-                    if (multiInputs.length > 1) {
-                        let vals = [];
-                        multiInputs.forEach(i => { if(i.value) vals.push(i.value); });
-                        value = vals.join(' / ');
-                    } else if (multiInputs.length === 1) {
-                        value = multiInputs[0].value;
-                    } else {
-                        const otherInput = card.querySelector('select, textarea, input[type="number"]');
-                        if(otherInput) value = otherInput.value;
-                        const checkedRadio = card.querySelector('input[type="radio"]:checked');
-                        if(checkedRadio) value = checkedRadio.parentElement.innerText.trim();
+            if (!titleEl) return;
+
+            let label = titleEl.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+            let value = "";
+
+            // 特殊處理：溫度與水量 (已有邏輯，保留並優化)
+            if (card.id === 'card-temp-group' || card.id === 'card-temp-group-100') {
+                let groupText = "";
+                const rows = card.querySelectorAll('.temp-row');
+                rows.forEach(row => {
+                    if (row.style.display === 'none') return;
+                    const rowLabel = row.querySelector('.temp-label').innerText;
+                    const rowInputs = Array.from(row.querySelectorAll('input')).map(i => i.value).filter(v => v !== "");
+                    if (rowInputs.length > 0) {
+                        groupText += `\n   ${rowLabel}：${rowInputs.join(' / ')}`;
                     }
-                    
-                    if (label.includes('原始水壓')) {
-                        const valveSelect = card.querySelector('select[name="pressure_valve"]');
-                        if (valveSelect && valveSelect.value) value += ` (減壓閥: ${valveSelect.value})`;
-                    }
+                });
+                value = groupText;
+            } 
+            // 通用處理：處理所有包含多個 input/select 的卡片 (如韌體版本、電壓、最大功率)
+            else {
+                const allInputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                const checkedRadio = card.querySelector('input[type="radio"]:checked');
+
+                if (checkedRadio) {
+                    value = checkedRadio.parentElement.innerText.trim();
+                } else if (allInputs.length > 0) {
+                    // 將同一個卡片內所有有填值的框框用 " - " 連接
+                    const values = Array.from(allInputs)
+                        .map(i => i.value.trim())
+                        .filter(v => v !== ""); 
+                    value = values.join(' - ');
                 }
-                
-                if(value) text += `${label}：${value}\n`;
             }
+            
+            if (value) text += `${label}：${value}\n`;
         });
 
+        // 複製到剪貼簿邏輯...
         const textarea = document.createElement('textarea');
         textarea.value = text;
         document.body.appendChild(textarea);
         textarea.select();
-        try { document.execCommand('copy'); alert('✅ 已複製 LINE 格式內容！'); } 
-        catch (err) { alert('❌ 複製失敗'); }
+        document.execCommand('copy');
         document.body.removeChild(textarea);
+        alert('✅ 已複製 LINE 格式內容！');
     }
 
     // 上傳到雲端
