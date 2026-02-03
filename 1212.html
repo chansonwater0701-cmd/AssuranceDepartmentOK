@@ -588,16 +588,20 @@
         <input type="text" name="invoice_number" placeholder="請輸入銷貨單號">
     </div>
     <!-- 機器型號 -->
-    <div class="question-card hidden-field" id="card-machine-model">
+    <div class="question-card hidden-field" id="card-machine-type">
         <div class="question-title">機器型號</div>
         <input type="text" name="machine_model" placeholder="請輸入機器型號">
     </div>
-    <!-- 機器機碼 -->
+    <!-- 機器序號 -->
     <div class="question-card hidden-field" id="card-machine-serial">
-        <div class="question-title">機器機碼</div>
-        <input type="text" name="machine_serial" placeholder="請輸入機器機碼">
+        <div class="question-title">機器序號</div>
+        <input type="text" name="machine_serial" placeholder="請輸入機器序號">
     </div>
-
+    <!-- 機器版本 -->
+    <div class="question-card hidden-field" id="card-machine-model">
+        <div class="question-title">機器版本</div>
+        <input type="text" name="machine_serial" placeholder="請輸入機器版本">
+    </div>
     
     <!-- 安裝位置 -->
     <div class="question-card hidden-field" id="card-install-location">
@@ -1460,7 +1464,7 @@
                     'card-name', 'card-invoice-number', 'card-machine-model','card-service-date', 'card-customer',  'card-customer-code',                     
                     'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app',
                     'card-raw-pressure', 'card-leak-reason','card-wp-customer','card-wp-raw-pressure',
-                    'card-pressure-pump',
+                    'card-pressure-pump','card-repair-reason','card-actual-reason',
                     'card-wp-note','card-principle',
                 ]);
             }else if (detail === '取消') {
@@ -1488,7 +1492,7 @@
                     'card-system', 'card-customer-code',  'card-wp-customer','card-repair-reason','card-actual-reason',
                     'card-leak-circuit', 'card-leak-reason', 'card-payment-method','card-handling',
                     'card-pressure-pump','card-drainage-type','card-drainage-note','card-countertop','card-taste','card-wp-note',
-                    'card-inspection-result','card-app','card-is-payment','card-parts-payment',
+                    'card-inspection-result','card-app','card-is-payment','card-parts-payment','card-parts',
                 ]);
             } else if (detail === '取消') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
@@ -1497,7 +1501,7 @@
                 ]);
             }
         }else if (item === '售服') {
-            if (detail === '一般維修') {
+            if (detail === '一般場勘') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
                     'card-name', 'card-invoice-number','card-machine-model', 'card-service-date', 'card-customer',                     
@@ -1541,7 +1545,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type-repair',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-filter-c', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
@@ -1562,7 +1566,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type-repair',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-filter-c', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
@@ -1583,7 +1587,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type-repair',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-filter-c',
                     'card-wp-customer',
@@ -1603,7 +1607,7 @@
                 currentRequiredIds = ['card-wp-customer'];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-filter-c',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-filter-c',
                     'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-wp-raw-tds', 'card-wp-raw-pressure', 'card-env-temp',
@@ -1619,7 +1623,7 @@
                 currentRequiredIds = ['card-wp-customer'];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-filter-c',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-filter-c',
                     'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-wp-raw-tds', 'card-wp-raw-pressure',
@@ -1635,7 +1639,7 @@
                 currentRequiredIds = ['card-wp-customer'];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-filter-c',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-filter-c',
                     'card-wp-customer', 'card-firmware-version',
                     'card-wp-raw-tds', 'card-wp-raw-pressure', 'card-env-temp',
                     'card-temp-group', 'card-site-voltage',
@@ -1661,7 +1665,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type-repair',                    
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-filter-c', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
                     'card-panel-version', 'card-firmware-version',
@@ -1679,7 +1683,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type-repair',                    
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-filter-c', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
                     'card-panel-version', 'card-firmware-version',
@@ -1696,7 +1700,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type-repair',                    
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-filter-c','card-wp-customer', 'card-site-voltage', 'card-adjust-power', 'card-power',
                     'card-principle', 'card-taste', 'card-calibration','card-temp-group',
                     'card-app', 'card-repair-reason', 'card-actual-reason',
