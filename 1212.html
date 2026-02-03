@@ -585,7 +585,7 @@
     <!-- 銷貨單號 -->
     <div class="question-card hidden-field" id="card-invoice-number">
         <div class="question-title">銷貨單號</div>
-        <input type="text" name="invoice_number" placeholder="請輸入銷貨單號">
+        <input type="number" name="invoice_number" placeholder="請輸入銷貨單號">
     </div>
     <!-- 機器型號 -->
     <div class="question-card hidden-field" id="card-machine-type">
@@ -595,7 +595,7 @@
     <!-- 機器序號 -->
     <div class="question-card hidden-field" id="card-machine-serial">
         <div class="question-title">機器序號</div>
-        <input type="text" name="machine_serial" placeholder="請輸入機器序號">
+        <input type="number" name="machine_serial" placeholder="請輸入機器序號">
     </div>
     <!-- 機器版本 -->
     <div class="question-card hidden-field" id="card-machine-model">
@@ -706,12 +706,12 @@
     <!-- 原水TDS -->
     <div class="question-card hidden-field" id="card-raw-tds">
         <div class="question-title">原水TDS</div>
-        <input type="text" name="raw_tds" placeholder="請輸入原水TDS">
+        <input type="number" name="raw_tds" placeholder="請輸入原水TDS">
     </div>
     <!-- 原始水壓 (用於一般裝機，包含減壓閥選項) -->
     <div class="question-card hidden-field" id="card-original-pressure">
         <div class="question-title">原始水壓</div>
-        <input type="text" name="original_pressure" placeholder="原始水壓值">
+        <input type="number" name="original_pressure" placeholder="原始水壓值">
         <div class="question-title" style="margin-top: 15px;">減壓閥</div>
             <select name="pressure_valve" id="pressure_valve" onchange="handlePressureValveChange()">
             <option value="" disabled selected>請選擇...</option>
@@ -728,7 +728,7 @@
     <!-- 場地電壓 -->
     <div class="question-card hidden-field" id="card-site-voltage">
         <div class="question-title">場地電壓</div>
-        <input type="text" name="water_install_location" placeholder="請輸入場地電壓">
+        <input type="number" name="water_install_location" placeholder="請輸入場地電壓">
     </div>
 
     <!-- 加壓馬達 -->
@@ -808,13 +808,13 @@
         
         <div class="fw-container">
             <div class="fw-inputs">
-                <input type="text" name="fw_1" maxlength="2" placeholder="填寫韌體版本00">
+                <input type="number" name="fw_1" maxlength="2" placeholder="填寫韌體版本00">
                 <span class="dash">-</span>
-                <input type="text" name="fw_2" maxlength="2" placeholder="填寫韌體版本00">
+                <input type="number" name="fw_2" maxlength="2" placeholder="填寫韌體版本00">
                 <span class="dash">-</span>
-                <input type="text" name="fw_3" maxlength="2" placeholder="填寫韌體版本00">
+                <input type="number" name="fw_3" maxlength="2" placeholder="填寫韌體版本00">
                 <span class="dash">-</span>
-                <input type="text" name="fw_4" maxlength="2" placeholder="填寫韌體版本00">
+                <input type="number" name="fw_4" maxlength="2" placeholder="填寫韌體版本00">
             </div>
         </div>
     </div>
@@ -938,13 +938,13 @@
     <div class="question-card hidden-field" id="card-raw-temp">
         <div class="question-title">原水溫度</div>
             <div class="fw-inputs">
-                <input type="text" name="fw_1" maxlength="5" placeholder="0分鐘 ℃">
+                <input type="number" name="fw_1" maxlength="5" placeholder="0分鐘 ℃">
 
-                <input type="text" name="fw_2" maxlength="5" placeholder="1分鐘 ℃">
+                <input type="number" name="fw_2" maxlength="5" placeholder="1分鐘 ℃">
 
-                <input type="text" name="fw_3" maxlength="5" placeholder="2分鐘 ℃">
+                <input type="number" name="fw_3" maxlength="5" placeholder="2分鐘 ℃">
 
-                <input type="text" name="fw_4" maxlength="5" placeholder="3分鐘 ℃">
+                <input type="number" name="fw_4" maxlength="5" placeholder="3分鐘 ℃">
             </div>
     </div>
 
@@ -1459,7 +1459,7 @@
                     'card-name', 'card-invoice-number', 'card-machine-model','card-service-date', 'card-customer',  'card-customer-code',                     
                     'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app',
                     'card-raw-pressure', 'card-leak-reason','card-wp-customer',
-                    'card-pressure-pump','card-repair-reason','card-actual-reason',
+                    'card-pressure-pump','card-repair-reason','card-actual-reason','card-original-pressure',
                     'card-wp-note','card-principle',
                 ]);
             }else if (detail === '取消') {
