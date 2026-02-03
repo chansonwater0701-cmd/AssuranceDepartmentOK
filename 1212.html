@@ -1386,8 +1386,7 @@
                     modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
                     modelSelect.innerHTML += '<option value="WD1">WD1</option>';
                     modelSelect.innerHTML += '<option value="WS1">WS1</option>';
-                    modelSelect.innerHTML += '<option value="WS1→WS2-C">WS1→WS2-C</option>';
-                    modelSelect.innerHTML += '<option value="WS1→WS2-H">WS1→WS2-H</option>';
+
                     modelCard.classList.remove('hidden-field');
                 } else if (detailValue === '更換面板') {
                     modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
@@ -1948,7 +1947,7 @@
                 // 升級裝機-WD1→WD2
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-filter-c', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
@@ -1966,7 +1965,7 @@
                 // 升級裝機-WD1→WD2
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-filter-c', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
@@ -1984,7 +1983,7 @@
                 // 升級裝機-WD1→WS2C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-filter-c', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -2004,7 +2003,7 @@
                 // 升級裝機-WD1→WS2H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-filter-c', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -2024,7 +2023,7 @@
                 // 升級裝機-WD1→WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-filter-c', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -2044,7 +2043,7 @@
                 // 升級裝機-WD1→WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-filter-c', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -2064,7 +2063,7 @@
                 // 拖修-WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-filter-c',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
@@ -2084,7 +2083,7 @@
                 // 拖修-WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-filter-c',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
@@ -2104,7 +2103,7 @@
                 // 拖修-WD2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-filter-c',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
@@ -2122,7 +2121,7 @@
                 // 拖修-WD1
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-filter-c',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
@@ -2140,7 +2139,7 @@
                 // 拖修-WS1(新增)
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-customer-code', 'card-wp-customer',
                     'card-firmware-version', 'card-temp-group', 'card-f11-flow',
                     'card-hot-tank-output', 'card-normal-tank-output','card-power-hot',
@@ -2151,47 +2150,7 @@
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
                 document.getElementById('temp-10').style.display = 'none';
-            } else if (currentServiceDetail === '拖修' && currentModel === 'WS1→WS2-C') {
-                // 拖修-WS1→WS2-C
-                currentRequiredIds = [];
-                showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
-                    'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
-                    'card-machine-serial-2', 'card-machine-type-2', 'card-filter-c',
-                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
-                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
-                     'card-temp-group', 'card-site-voltage',
-                    'card-adjust-power', 'card-power', 'card-panel-voltage',
-                    'card-raw-flow', 'card-raw-temp', 'card-principle',
-                    'card-taste', 'card-calibration', 'card-battery',
-                    'card-app', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note'
-                ]);
-                document.getElementById('temp-100').style.display = 'flex';
-                document.getElementById('temp-35').style.display = 'flex';
-                document.getElementById('temp-10').style.display = 'flex';
-            } else if (currentServiceDetail === '拖修' && currentModel === 'WS1→WS2-H') {
-                // 拖修-WS1→WS2-H
-                currentRequiredIds = [];
-                showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
-                    'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
-                    'card-machine-serial-2', 'card-machine-type-2', 'card-filter-c',
-                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
-                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
-                     'card-temp-group', 'card-site-voltage',
-                    'card-adjust-power', 'card-power-hot', 'card-panel-voltage',
-                    'card-raw-flow', 'card-raw-temp', 'card-principle',
-                    'card-taste', 'card-calibration', 'card-battery',
-                    'card-app', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note'
-                ]);
-                document.getElementById('temp-100').style.display = 'flex';
-                document.getElementById('temp-35').style.display = 'flex';
-                document.getElementById('temp-10').style.display = 'none';
-            }
+            } 
         } else if (currentServiceItem === '售服') {
             // ========== 售服 → 更換濾芯 ==========
             if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-C') {
