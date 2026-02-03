@@ -1374,8 +1374,8 @@
                     modelCard.classList.remove('hidden-field');
                 } else if (detailValue === '升級裝機') {
                     modelSelect.innerHTML += '<option value="WD1→WD2">WD1→WD2</option>';
-                    modelSelect.innerHTML += '<option value="WD1→WS2C">WD1→WS2-C</option>';
-                    modelSelect.innerHTML += '<option value="WD1→WS2H">WD1→WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD1→WS2-C">WD1→WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1→WS2-H">WD1→WS2-H</option>';
                     modelSelect.innerHTML += '<option value="WS1→WD2">WS1→WD2</option>';
                     modelSelect.innerHTML += '<option value="WS1→WS2-C">WS1→WS2-C</option>';
                     modelSelect.innerHTML += '<option value="WS1→WS2-H">WS1→WS2-H</option>';
@@ -2039,7 +2039,7 @@
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
                 document.getElementById('temp-10').style.display = 'flex';
-            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WS1→WS2-H') {
+            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WD1→WS2-H') {
                 // 升級裝機-WD1→WS2-H
                 currentRequiredIds = [];
                 showCards([
