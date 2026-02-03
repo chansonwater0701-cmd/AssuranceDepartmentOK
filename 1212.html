@@ -1573,6 +1573,33 @@
                 // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
             ]);
             }
+        }else if (item === '合約') {
+            if (detail === '換濾芯') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-machine-type','card-machine-model',
+                ]);
+            } else if (detail === '大保拆機') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-machine-type','card-machine-model',
+                ]);
+
+            } else if (detail === '取消') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                ]);
+            } else if (detail === '空值') { 
+            currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+            showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-machine-type','card-machine-model',
+                // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
+            ]);
+            }
         }
     }
 
@@ -1670,7 +1697,7 @@
                     'card-env-temp', 'card-site-voltage', 'card-adjust-power',
                     'card-power-hot',, 'card-temp-group', 'card-raw-flow', 'card-raw-temp', 
                     'card-principle', 'card-taste', 'card-calibration',
-                    'card-battery', 'card-app', 'card-wp-note','card-original-pressure',
+                    'card-battery', 'card-app', 'card-wp-note','card-original-pressure','card-panel-voltage'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
