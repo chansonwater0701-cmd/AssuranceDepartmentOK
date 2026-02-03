@@ -842,12 +842,6 @@
         </div>
     </div>
 
-    <!-- 原水TDS (惟品) -->
-    <div class="question-card hidden-field" id="card-wp-raw-tds">
-        <div class="question-title">原水TDS</div>
-        <input type="text" name="wp_raw_tds" placeholder="請輸入原水TDS">
-    </div>
-
 
     <!-- 環境溫度 -->
     <div class="question-card hidden-field" id="card-env-temp">
@@ -1507,7 +1501,7 @@
             }else if (detail === '取消') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
                 ]);
             }
         } else if (item === '維修') {
@@ -1550,22 +1544,26 @@
                     'card-leak-circuit','card-leak-reason',
                     'card-pressure-pump','card-drainage-type','card-drainage-note','card-taste','card-wp-note','card-handling',
                     'card-inspection-result','card-is-payment','card-water-source','card-pump-photo',
-                    'card-pipe-material','card-signal-strength',
+                    'card-pipe-material','card-signal-strength','card-install-location','card-install-floor','card-countertop',
                 ]);
-            } else if (detail === '全戶維修') {
+            } else if (detail === '全戶場勘') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-name', 'card-invoice-number', 'card-machine-model','card-service-date', 'card-customer',                     
-                    'card-system', 'card-customer-code',  'card-wp-customer','card-repair-reason','card-actual-reason',
-                    'card-leak-circuit', 'card-leak-reason', 'card-payment-method','card-handling',
-                    'card-pressure-pump','card-drainage-type','card-drainage-note','card-countertop','card-taste','card-wp-note',
-                    'card-inspection-result','card-app','card-is-payment',
+                    'card-name', 'card-invoice-number','card-machine-model', 'card-service-date', 'card-customer',                     
+                    'card-system', 'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-warranty', 'card-error', 'card-status','card-site-voltage',
+                    'card-description', 'card-repair-note', 'card-replaced-parts','card-repair-reason','card-actual-reason',
+                    'card-leak-circuit','card-leak-reason',
+                    'card-pressure-pump','card-drainage-type','card-drainage-note','card-taste','card-wp-note','card-handling',
+                    'card-inspection-result','card-is-payment','card-water-source','card-pump-photo',
+                    'card-pipe-material','card-signal-strength','card-install-location','card-install-floor',
+                    'card-pipe-spec','card-pipe-material','card-signal-strength',
                 ]);
 
             } else if (detail === '取消') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
                 ]);
             } else if (detail === '空值') { 
             currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
@@ -1592,7 +1590,7 @@
                     'card-filter-c', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
                     'card-panel-version', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-panel-voltage', 
                     'card-raw-flow', 'card-raw-temp',
@@ -1613,7 +1611,7 @@
                     'card-filter-c', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
                     'card-panel-version', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power-hot',
                     'card-raw-flow', 'card-raw-temp',
@@ -1634,7 +1632,7 @@
                     'card-filter-c',
                     'card-wp-customer',
                     'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power', 'card-power',
                     'card-raw-flow', 'card-raw-temp',
                     'card-principle', 'card-taste', 'card-calibration', 'card-battery',
@@ -1652,7 +1650,7 @@
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-filter-c',
                     'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-panel-voltage', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
@@ -1668,7 +1666,7 @@
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-filter-c',
                     'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
-                    'card-wp-raw-tds', 
+                    'card-raw-tds', 
                     'card-env-temp', 'card-site-voltage', 'card-adjust-power',
                     'card-power-hot',, 'card-temp-group', 'card-raw-flow', 'card-raw-temp', 
                     'card-principle', 'card-taste', 'card-calibration',
@@ -1683,7 +1681,7 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-filter-c',
                     'card-wp-customer', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage',
                     'card-adjust-power', 'card-power', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
@@ -2267,7 +2265,7 @@
                     'card-machine-serial', 'card-machine-type-repair', 'card-filter-c',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-panel-voltage', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
@@ -2285,7 +2283,7 @@
                     'card-machine-serial', 'card-machine-type-repair', 'card-filter-c',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power-hot', 'card-panel-voltage', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
@@ -2302,7 +2300,7 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
                     'card-machine-serial', 'card-machine-type-repair', 'card-filter-c',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
-                    'card-wp-raw-tds',  'card-env-temp',
+                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-raw-flow', 'card-raw-temp',
                     'card-principle', 'card-taste', 'card-calibration',
