@@ -533,7 +533,7 @@
     <!-- 3. 機器型號 -->
     <div class="question-card hidden-field" id="card-model">
         <div class="question-title">機器型式 <span class="required">*</span></div>
-        <select name="model" id="model" onchange="handleModelChange()">
+        <select name="machine_type" id="model" onchange="handleModelChange()">
             <option value="">請選擇</option>
         </select>
     </div>
@@ -589,18 +589,18 @@
     </div>
     <!-- 機器型號 -->
     <div class="question-card hidden-field" id="card-machine-type">
-        <div class="question-title">機器型式<span class="required">*</span></div>
-        <input type="text" name="machine_style_val" placeholder="請輸入機器型式">
+        <div class="question-title">機器型號<span class="required">*</span></div>
+        <input type="text" name="machine_model" placeholder="請輸入機器型號">
     </div>
-
-    <div class="question-card hidden-field" id="card-machine-model">
-        <div class="question-title">機器版本<span class="required">*</span></div>
-        <input type="text" name="machine_version_val" placeholder="請輸入機器版本">
+    <!-- 機器序號 -->
+    <div class="question-card hidden-field" id="card-machine-serial">
+        <div class="question-title">機器序號<span class="required">*</span></div>
+        <input type="number" name="machine_serial" placeholder="請輸入機器序號">
     </div>
     <!-- 機器版本 -->
     <div class="question-card hidden-field" id="card-machine-model">
         <div class="question-title">機器版本<span class="required">*</span></div>
-        <input type="text" name="machine_serial" placeholder="請輸入機器版本">
+        <input type="text" name="machine_version" placeholder="請輸入機器版本">
     </div>
     
     <!-- 安裝位置 -->
@@ -801,25 +801,25 @@
         <div class="question-title">韌體版本<span class="required">*</span></div>
         <div class="fw-container">
             <div class="fw-inputs">
-                <input type="number" name="fw_1" maxlength="2" placeholder="00">
+                <input type="number" name="firmware_1" maxlength="2" placeholder="00">
                 <span class="dash">-</span>
-                <input type="number" name="fw_2" maxlength="2" placeholder="00">
+                <input type="number" name="firmware_2" maxlength="2" placeholder="00">
                 <span class="dash">-</span>
-                <input type="number" name="fw_3" maxlength="2" placeholder="00">
+                <input type="number" name="firmware_3" maxlength="2" placeholder="00">
                 <span class="dash">-</span>
-                <input type="number" name="fw_4" maxlength="2" placeholder="00">
+                <input type="number" name="firmware_4" maxlength="2" placeholder="00">
             </div>
         </div>
     </div>
         <!-- 面板版本 -->
-        <div class="question-card hidden-field" id="card-panel-version">
-            <div class="question-title">面板版本<span class="required">*</span></div>
-            <div class="fw-container">
-                <div class="fw-inputs">
-                    <input type="text" name="panel_val" maxlength="15" placeholder="填寫面板版本">
-                </div>
+    <div class="question-card hidden-field" id="card-panel-version">
+        <div class="question-title">面板版本<span class="required">*</span></div>
+        <div class="fw-container">
+            <div class="fw-inputs">
+                <input type="text" name="panel_version" maxlength="15" placeholder="填寫面板版本">
             </div>
         </div>
+    </div>
         <div class="question-card hidden-field" id="card-panel-voltage">
         <div class="question-title">面板電壓 (V)<span class="required">*</span></div>
         
