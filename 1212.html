@@ -551,14 +551,15 @@
         <input type="text" name="wp_customer_name" placeholder="請輸入客戶姓名">
     </div>
     <!-- 客戶代號 -->
+
     <div class="question-card hidden-field" id="card-customer-code">
-        <div class="question-title">客戶代號</div>
+        <div class="question-title">客戶代號<span class="required">*</span></div>
         <input type="text" name="customer_code" placeholder="請輸入客戶代號">
     </div>
 
     <!-- 客戶地址 -->
     <div class="question-card hidden-field" id="card-address">
-        <div class="question-title">客戶地址</div>
+        <div class="question-title">客戶地址<span class="required">*</span></div>
         <input type="text" name="customer_address" placeholder="請輸入客戶地址">
     </div>
 
@@ -573,7 +574,7 @@
     <!-- ========== 新增維修相關欄位 ========== -->
     <!-- 服務日期 -->
     <div class="question-card hidden-field" id="card-service-date">
-        <div class="question-title">服務日期</div>
+        <div class="question-title">服務日期<span class="required">*</span></div>
         <input 
             type="text" 
             name="service_date" 
@@ -584,66 +585,66 @@
     </div>
     <!-- 銷貨單號 -->
     <div class="question-card hidden-field" id="card-invoice-number">
-        <div class="question-title">銷貨單號</div>
+        <div class="question-title">銷貨單號<span class="required">*</span></div>
         <input type="number" name="invoice_number" placeholder="請輸入銷貨單號">
     </div>
     <!-- 機器型號 -->
     <div class="question-card hidden-field" id="card-machine-type">
-        <div class="question-title">機器型號</div>
+        <div class="question-title">機器型號<span class="required">*</span></div>
         <input type="text" name="machine_model" placeholder="請輸入機器型號">
     </div>
     <!-- 機器序號 -->
     <div class="question-card hidden-field" id="card-machine-serial">
-        <div class="question-title">機器序號</div>
+        <div class="question-title">機器序號<span class="required">*</span></div>
         <input type="number" name="machine_serial" placeholder="請輸入機器序號">
     </div>
     <!-- 機器版本 -->
     <div class="question-card hidden-field" id="card-machine-model">
-        <div class="question-title">機器版本</div>
+        <div class="question-title">機器版本<span class="required">*</span></div>
         <input type="text" name="machine_serial" placeholder="請輸入機器版本">
     </div>
     
     <!-- 安裝位置 -->
     <div class="question-card hidden-field" id="card-install-location">
-        <div class="question-title">安裝位置</div>
+        <div class="question-title">安裝位置<span class="required">*</span></div>
         <input type="text" name="install_location" placeholder="請輸入安裝位置">
     </div>
 
 
     <!-- 安裝樓層< -->
     <div class="question-card hidden-field" id="card-install-floor">
-        <div class="question-title">樓層資訊</div>
+        <div class="question-title">樓層資訊<span class="required">*</span></div>
         <div class="multi-input-row">
             <input type="text" name="install_floor" placeholder="安裝樓層 (例: 3F)">
             <input type="text" name="total_floors" placeholder="總樓層數 (例: 12F)">
         </div>
     </div>
     <div class="question-card hidden-field" id="card-machine-type-2">
-        <div class="question-title">機器型號(第二台)</div>
+        <div class="question-title">機器型號(第二台)<span class="required">*</span></div>
         <input type="text" name="machine_type_2" placeholder="請輸入第二台機器型號">
     </div>
 
     <div class="question-card hidden-field" id="card-machine-serial-2">
-        <div class="question-title">機器序號(第二台)</div>
+        <div class="question-title">機器序號(第二台)<span class="required">*</span></div>
         <input type="text" name="machine_serial_2" placeholder="請輸入第二台機器序號">
     </div>
 
 
     <div class="question-card hidden-field" id="card-machine-model-2">
-        <div class="question-title">機器版本(第二台)</div>
+        <div class="question-title">機器版本(第二台)<span class="required">*</span></div>
         <input type="text" name="machine_style_2" placeholder="請輸入第二台機器型式">
     </div>
 
     <!-- 系統型號 -->
     <div class="question-card hidden-field" id="card-system">
-        <div class="question-title">系統型號</div>
+        <div class="question-title">系統型號<span class="required">*</span></div>
         <input type="text" name="system_model" placeholder="請輸入系統型號">
     </div>
 
 
     <!-- 保固狀態 -->
     <div class="question-card hidden-field" id="card-warranty">
-        <div class="question-title">保固狀態</div>
+        <div class="question-title">保固狀態<span class="required">*</span></div>
         <select name="warranty_status">
             <option value="">請選擇</option>
             <option value="保固內">保固內</option>
@@ -653,13 +654,13 @@
 
     <!-- 錯誤代碼 -->
     <div class="question-card hidden-field" id="card-error">
-        <div class="question-title">錯誤代碼</div>
+        <div class="question-title">錯誤代碼<span class="required">*</span></div>
         <input type="text" name="error_code" placeholder="請輸入錯誤代碼">
     </div>
 
     <!-- 機器狀態 -->
     <div class="question-card hidden-field" id="card-status">
-        <div class="question-title">機器狀態</div>
+        <div class="question-title">機器狀態<span class="required">*</span></div>
         <select name="machine_status">
             <option value="">請選擇</option>
             <option value="正常">正常</option>
@@ -670,25 +671,25 @@
 
     <!-- 故障描述 -->
     <div class="question-card hidden-field" id="card-description">
-        <div class="question-title">故障描述</div>
+        <div class="question-title">故障描述<span class="required">*</span></div>
         <textarea name="fault_description" rows="3" placeholder="請描述故障情況"></textarea>
     </div>
 
     <!-- 維修說明 -->
     <div class="question-card hidden-field" id="card-repair-note">
-        <div class="question-title">維修說明</div>
+        <div class="question-title">維修說明<span class="required">*</span></div>
         <textarea name="repair_note" rows="3" placeholder="請說明維修過程"></textarea>
     </div>
 
     <!-- 收款金額 -->
     <div class="question-card hidden-field" id="card-payment">
-        <div class="question-title">收款金額</div>
+        <div class="question-title">收款金額<span class="required">*</span></div>
         <input type="number" name="payment_amount" placeholder="請輸入金額">
     </div>
 
     <!-- 付款方式 -->
     <div class="question-card hidden-field" id="card-payment-method">
-        <div class="question-title">付款方式</div>
+        <div class="question-title">付款方式<span class="required">*</span></div>
         <select name="payment_method">
             <option value="">請選擇</option>
             <option value="現金">現金</option>
@@ -699,12 +700,12 @@
     </div>
     <!-- 原水TDS -->
     <div class="question-card hidden-field" id="card-raw-tds">
-        <div class="question-title">原水TDS</div>
+        <div class="question-title">原水TDS<span class="required">*</span></div>
         <input type="number" name="raw_tds" placeholder="請輸入原水TDS">
     </div>
     <!-- 原始水壓 (用於一般裝機，包含減壓閥選項) -->
     <div class="question-card hidden-field" id="card-original-pressure">
-        <div class="question-title">原始水壓</div>
+        <div class="question-title">原始水壓<span class="required">*</span></div>
         <input type="number" name="original_pressure" placeholder="原始水壓值">
         <div class="question-title" style="margin-top: 15px;">減壓閥</div>
             <select name="pressure_valve" id="pressure_valve" onchange="handlePressureValveChange()">
@@ -715,19 +716,19 @@
     </div>
     <!-- 減壓水壓 (當減壓閥選擇"有"時顯示) -->
     <div class="question-card hidden-field" id="card-reduced-pressure">
-        <div class="question-title">減壓水壓</div>
+        <div class="question-title">減壓水壓<span class="required">*</span></div>
         <input type="text" name="reduced_pressure" placeholder="減壓後水壓值">
     </div>
 
     <!-- 場地電壓 -->
     <div class="question-card hidden-field" id="card-site-voltage">
-        <div class="question-title">場地電壓</div>
+        <div class="question-title">場地電壓<span class="required">*</span></div>
         <input type="number" name="water_install_location" placeholder="請輸入場地電壓">
     </div>
 
     <!-- 加壓馬達 -->
     <div class="question-card hidden-field" id="card-pressure-pump">
-        <div class="question-title">加壓馬達</div>
+        <div class="question-title">加壓馬達<span class="required">*</span></div>
         <select name="pressure_pump" id="pressure_pump">
             <option value="" disabled selected>請選擇...</option>
             <option value="有">有</option>
@@ -736,7 +737,7 @@
     </div>
     <!-- 漏水斷路器 -->
     <div class="question-card hidden-field" id="card-leak-circuit">
-        <div class="question-title">漏水斷路器</div>
+        <div class="question-title">漏水斷路器<span class="required">*</span></div>
         <select name="leak_circuit" id="leak_circuit" onchange="handleLeakCircuitChange()">
             <option value="" disabled selected>請選擇...</option>
             <option value="有安裝">有安裝</option>
@@ -744,7 +745,7 @@
         </select>
     </div>
     <div class="question-card hidden-field" id="card-drainage-type">
-        <div class="question-title">排廢水型式</div>
+        <div class="question-title">排廢水型式<span class="required">*</span></div>
         <select name="drainage_type">
             <option value="">請選擇</option>
             <option value="Ｔ字３通">Ｔ字３通</option>
@@ -754,19 +755,19 @@
     </div>
 
     <div class="question-card hidden-field" id="card-drainage-note">
-        <div class="question-title">排廢水型式說明</div>
+        <div class="question-title">排廢水型式說明<span class="required">*</span></div>
         <input type="text" name="drainage_note" placeholder="請輸入排廢水型式說明原因">
     </div>
 
     <div class="question-card hidden-field" id="card-countertop">
-        <div class="question-title">流理台面</div>
+        <div class="question-title">流理台面<span class="required">*</span></div>
         <input type="text" name="countertop" placeholder="請輸入流理台面說明原因">
     </div>
 
 
     <!-- 龍頭型式 -->
     <div class="question-card hidden-field" id="card-faucet-type">
-        <div class="question-title">龍頭型式</div>
+        <div class="question-title">龍頭型式<span class="required">*</span></div>
         <select name="faucet_type">
             <option value="">請選擇</option>
             <option value="經典-基本款">經典-基本款</option>
@@ -780,14 +781,14 @@
     </div>
     <!-- 龍頭標籤 -->
     <div class="question-card hidden-field" id="card-faucet-label">
-        <div class="question-title">龍頭標籤</div>
+        <div class="question-title">龍頭標籤<span class="required">*</span></div>
         <input type="text" name="faucet_label" placeholder="請輸入龍頭標籤">
     </div>
 
 
     <!-- 減壓水壓 (子項目) -->
     <div class="question-card hidden-field" id="card-reduced-pressure">
-        <div class="question-title">減壓水壓</div>
+        <div class="question-title">減壓水壓<span class="required">*</span></div>
         <input type="text" name="reduced_pressure" placeholder="請輸入減壓後的水壓">
     </div>
 
@@ -798,7 +799,7 @@
 
     <!-- 韌體版本 -->
     <div class="question-card hidden-field" id="card-firmware-version">
-        <div class="question-title">韌體版本</div>
+        <div class="question-title">韌體版本<span class="required">*</span></div>
         
         <div class="fw-container">
             <div class="fw-inputs">
@@ -814,7 +815,7 @@
     </div>
         <!-- 面板版本 -->
     <div class="question-card hidden-field" id="card-panel-version">
-        <div class="question-title">面板版本</div>
+        <div class="question-title">面板版本<span class="required">*</span></div>
         <div class="fw-container">
             <div class="fw-inputs">
                 <input type="text" name="fw_1" maxlength="3" placeholder="填寫面板版本">
@@ -822,7 +823,7 @@
         </div>
     </div>
         <div class="question-card hidden-field" id="card-panel-voltage">
-        <div class="question-title">面板電壓 (V)</div>
+        <div class="question-title">面板電壓 (V)<span class="required">*</span></div>
         
         <div class="voltage-grid">
             <div class="grid-item">
@@ -845,7 +846,7 @@
 
     <!-- 環境溫度 -->
     <div class="question-card hidden-field" id="card-env-temp">
-        <div class="question-title">環境溫度</div>
+        <div class="question-title">環境溫度<span class="required">*</span></div>
         <input type="number" name="env_temp" placeholder="請輸入環境溫度">
     </div>
 
@@ -898,7 +899,7 @@
 
     <!-- 調整功率 -->
     <div class="question-card hidden-field" id="card-adjust-power">
-        <div class="question-title">調整功率</div>
+        <div class="question-title">調整功率<span class="required">*</span></div>
         <input type="number" name="adjust_power" placeholder="請輸入調整功率">
     </div>
 
@@ -918,13 +919,13 @@
 
     <!-- 原水水量 -->
     <div class="question-card hidden-field" id="card-raw-flow">
-        <div class="question-title">原水水量</div>
+        <div class="question-title">原水水量<span class="required">*</span></div>
         <input type="number" name="raw_flow" placeholder="請輸入原水水量">
     </div>
 
     <!-- 原水溫度 -->
     <div class="question-card hidden-field" id="card-raw-temp">
-        <div class="question-title">原水溫度</div>
+        <div class="question-title">原水溫度<span class="required">*</span></div>
             <div class="fw-inputs">
                 <input type="number" name="fw_1" maxlength="5" placeholder="0分鐘 ℃">
 
@@ -937,7 +938,7 @@
     </div>
     <!-- 原理說明 -->
     <div class="question-card hidden-field" id="card-principle">
-        <div class="question-title">原理說明</div>
+        <div class="question-title">原理說明<span class="required">*</span></div>
         <select name="principle_explained" id="principle_explained" onchange="handlePrincipleChange()">
             <option value="">請選擇</option>
             <option value="是">是</option>
@@ -946,7 +947,7 @@
     </div>
 
     <div class="question-card hidden-field" id="card-principle-reason">
-        <div class="question-title">未向客戶說明原因</div>
+        <div class="question-title">未向客戶說明原因<span class="required">*</span></div>
         <textarea name="principle_reason" rows="2" placeholder="請描述未向客戶說明原因"></textarea>
     </div>
 
@@ -961,49 +962,49 @@
 
     <!-- 校正方式 -->
     <div class="question-card hidden-field" id="card-calibration">
-        <div class="question-title">校正方式</div>
+        <div class="question-title">校正方式<span class="required">*</span></div>
         <input type="text" name="calibration" placeholder="請輸入校正方式">
     </div>
 
     <!-- 電池款式 -->
     <div class="question-card hidden-field" id="card-battery">
-        <div class="question-title">電池款式</div>
+        <div class="question-title">電池款式<span class="required">*</span></div>
         <input type="text" name="battery" placeholder="請輸入電池款式">
     </div>
 
     <!-- Filter-C -->
     <div class="question-card hidden-field" id="card-filter-c">
-        <div class="question-title">Filter-C</div>
+        <div class="question-title">Filter-C<span class="required">*</span></div>
         <input type="text" name="filter_c" placeholder="請輸入Filter-C">
     </div>
 
     <!-- F11入水水量 (WD1專用) -->
     <div class="question-card hidden-field" id="card-f11-flow">
-        <div class="question-title">F11入水水量</div>
+        <div class="question-title">F11入水水量<span class="required">*</span></div>
         <input type="text" name="f11_flow" placeholder="請輸入F11入水水量">
     </div>
 
     <!-- 熱缸出水 (WD1專用) -->
     <div class="question-card hidden-field" id="card-hot-tank-output">
-        <div class="question-title">熱缸出水</div>
+        <div class="question-title">熱缸出水<span class="required">*</span></div>
         <input type="text" name="hot_tank_output" placeholder="請輸入熱缸出水">
     </div>
 
     <!-- 常溫缸出水 (WD1專用) -->
     <div class="question-card hidden-field" id="card-normal-tank-output">
-        <div class="question-title">常溫缸出水</div>
+        <div class="question-title">常溫缸出水<span class="required">*</span></div>
         <input type="text" name="normal_tank_output" placeholder="請輸入常溫缸出水">
     </div>
 
     <!-- 冰缸出水 (WD1專用) -->
     <div class="question-card hidden-field" id="card-ice-tank-output">
-        <div class="question-title">冰缸出水</div>
+        <div class="question-title">冰缸出水<span class="required">*</span></div>
         <input type="text" name="ice_tank_output" placeholder="請輸入冰缸出水">
     </div>
 
     <!-- 冰缸降溫 (WD1專用) -->
     <div class="question-card hidden-field" id="card-ice-tank-cooling">
-        <div class="question-title">冰缸降溫</div>
+        <div class="question-title">冰缸降溫<span class="required">*</span></div>
         <select name="principle_explained" id="principle_explained" onchange="handlePrincipleChange()">
             <option value="" disabled selected>請選擇狀態</option>
             <option value="yes">是</option>
@@ -1013,37 +1014,37 @@
 
     <!-- 報修原因 (維修專用) -->
     <div class="question-card hidden-field" id="card-repair-reason">
-        <div class="question-title">報修原因</div>
+        <div class="question-title">報修原因<span class="required">*</span></div>
         <textarea name="repair_reason" rows="3" placeholder="請輸入報修原因"></textarea>
     </div>
 
     <!-- 實際原因 (維修專用) -->
     <div class="question-card hidden-field" id="card-actual-reason">
-        <div class="question-title">實際原因</div>
+        <div class="question-title">實際原因<span class="required">*</span></div>
         <textarea name="actual_reason" rows="3" placeholder="請輸入實際原因"></textarea>
     </div>
 
     <!-- 處理方式 (維修專用) -->
     <div class="question-card hidden-field" id="card-handling">
-        <div class="question-title">處理方式</div>
+        <div class="question-title">處理方式<span class="required">*</span></div>
         <textarea name="handling" rows="3" placeholder="請輸入處理方式"></textarea>
     </div>
 
     <!-- 檢修結果 (維修專用) -->
     <div class="question-card hidden-field" id="card-inspection-result">
-        <div class="question-title">檢修結果</div>
+        <div class="question-title">檢修結果<span class="required">*</span></div>
         <textarea name="inspection_result" rows="3" placeholder="請輸入檢修結果"></textarea>
     </div>
 
     <!-- 更換零件 (維修專用) -->
     <div class="question-card hidden-field" id="card-replaced-parts">
-        <div class="question-title">更換零件</div>
+        <div class="question-title">更換零件<span class="required">*</span></div>
         <input type="text" name="wp_replaced_parts" placeholder="請輸入更換的零件">
     </div>
 
     <!-- 料件收款 (維修專用) -->
     <div class="question-card hidden-field" id="card-parts-payment">
-        <div class="question-title">料件收款</div>
+        <div class="question-title">料件收款<span class="required">*</span></div>
         <input type="number" name="parts_payment" placeholder="請輸入料件收款金額">
     </div>
     <div class="question-card hidden-field" id="card-is-payment">
@@ -1057,7 +1058,7 @@
         
     <!-- 收款品項 (維修專用) -->
 <div class="question-card hidden-field" id="card-water-source">
-        <div class="question-title">水源位置照</div>
+        <div class="question-title">水源位置照<span class="required">*</span></div>
         <select name="water_source_photo" id="water_source_photo">
             <option value="" disabled selected>請選擇...</option>
             <option value="有">有</option>
@@ -1066,7 +1067,7 @@
     </div>
 
     <div class="question-card hidden-field" id="card-pipe-spec">
-        <div class="question-title">水管規格照</div>
+        <div class="question-title">水管規格照<span class="required">*</span></div>
         <select name="pipe_spec_photo" id="pipe_spec_photo">
             <option value="" disabled selected>請選擇...</option>
             <option value="有">有</option>
@@ -1075,7 +1076,7 @@
     </div>
 
     <div class="question-card hidden-field" id="card-pump-photo">
-        <div class="question-title">全景照/近照</div>
+        <div class="question-title">全景照/近照<span class="required">*</span></div>
         <select name="pump_photo" id="pump_photo">
             <option value="" disabled selected>請選擇...</option>
             <option value="有">有</option>
@@ -1084,7 +1085,7 @@
     </div>
 
     <div class="question-card hidden-field" id="card-pipe-material">
-        <div class="question-title">管線材質</div>
+        <div class="question-title">管線材質<span class="required">*</span></div>
         <select name="pipe_material" id="pipe_material">
             <option value="" disabled selected>請選擇...</option>
             <option value="有">有</option>
@@ -1093,7 +1094,7 @@
     </div>
 
     <div class="question-card hidden-field" id="card-signal-strength">
-        <div class="question-title">訊號強度</div>
+        <div class="question-title">訊號強度<span class="required">*</span></div>
         <select name="signal_strength" id="signal_strength">
             <option value="" disabled selected>請選擇...</option>
             <option value="有">有</option>
@@ -1105,17 +1106,17 @@
 
     <!-- 收款品項 (維修專用) -->
     <div class="question-card hidden-field" id="card-payment-detail">
-        <div class="question-title">收款品項</div>
+        <div class="question-title">收款品項<span class="required">*</span></div>
         <textarea name="payment_detail" rows="3" placeholder="請輸入收款品項"></textarea>
     </div>
     <!-- App綁定 -->
     <div class="question-card hidden-field" id="card-app">
-        <div class="question-title">App綁定</div>
+        <div class="question-title">App綁定<span class="required">*</span></div>
         <input type="text" name="app_binding" placeholder="請輸入App綁定狀態">
     </div>
     <!-- 其他說明事項 (惟品) -->
     <div class="question-card hidden-field" id="card-wp-note">
-        <div class="question-title">其他說明事項</div>
+        <div class="question-title">其他說明事項 </div>
         <textarea name="wp_other_notes" rows="3" placeholder="請輸入其他需要說明的事項"></textarea>
     </div>
 
@@ -1290,6 +1291,7 @@
                 detailSelect.innerHTML += '<option value="升級裝機">升級裝機</option>';
                 detailSelect.innerHTML += '<option value="拖修">拖修</option>';
                 detailSelect.innerHTML += '<option value="更換面板">更換面板</option>';
+                detailSelect.innerHTML += '<option value="換機">換機</option>';
                 detailSelect.innerHTML += '<option value="取消">取消</option>';
                 detailCard.classList.remove('hidden-field');
                 modelCard.classList.add('hidden-field');
@@ -1392,6 +1394,12 @@
                     modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
                     modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
                     modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '換機') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelCard.classList.remove('hidden-field');
+    
                 } else if (detailValue === '取消') {
                     modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
                     modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
@@ -1803,6 +1811,70 @@
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
                 document.getElementById('temp-10').style.display = 'none';
+
+                } else if (currentServiceDetail === '換機' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-filter-c', 'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '換機' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-filter-c', 'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot',
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '換機' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-filter-c',
+                    'card-wp-customer',
+                    'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power', 'card-power',
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                     'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';         
+                
             } else if (currentServiceDetail === '店修' && currentModel === 'WS2-C') {
                 // 店修-WS2-C
                 currentRequiredIds = [];
@@ -1881,7 +1953,7 @@
                 // 更換面板-WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-type-repair', 'card-filter-c',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -1894,7 +1966,7 @@
                 // 更換面板-WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-machine-type-repair', 'card-filter-c',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2542,10 +2614,7 @@
                 let text = title.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
                 let isRequired = false;
 
-                if (isInstall && currentRequiredIds.includes(card.id)) {
-                    isRequired = true;
-                }
-                else if (!isInstall && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
+                if (title.innerHTML.includes('required') || title.innerText.includes('*')) {
                     isRequired = true;
                 }
                 if (card.id === 'card-service-detail') isRequired = true;
