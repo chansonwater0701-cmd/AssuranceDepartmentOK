@@ -2726,6 +2726,25 @@
     }
     renumberQuestions(); // 重新觸編號
 }
+    function formatCustomerCode(input) {
+    let val = input.value.trim();
+    if (!val) return;
+
+    // 移除所有非數字字元 (避免使用者重複輸入 W)
+    let numericPart = val.replace(/\D/g, '');
+
+    if (currentBrand === '惟品') {
+        // 惟品：補齊為 W + 9位數字 (總共10碼)
+        if (numericPart.length > 0) {
+            input.value = 'W' + numericPart.padStart(9, '0');
+        }
+    } else if (currentBrand === '千山') {
+        // 千山：如果只是純數字，不加 W，或者您可以自訂千山的格式
+        // 這裡範例設為：千山保持原樣或僅純數字
+        input.value = numericPart; 
+    }
+}
+
     // 複製LINE格式
     function copyForLine() {
         if (!validateForm()) return;
