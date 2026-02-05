@@ -392,59 +392,63 @@
 </head>
 <body>
 
-<div class="form-container">
-    <!-- ========== 頁面頂部說明 ========== -->
-        <div class="header-card">
-            <div class="header-main-title">🛠️ 技師維修回報系統</div>
-            
-            <div class="header-section">
-                <div class="header-title-small">📢 公司內部公告</div>
+    <div class="form-container">
+        <!-- ========== 頁面頂部說明 ========== -->
+            <div class="header-card">
+                <div class="header-main-title">🛠️ 技師維修回報系統</div>
                 
-                <div style="color: #e0e0e0; font-size: 0.95em; line-height: 1.8;">
-                    
-                    <p style="margin-bottom: 8px;">
-                        歡迎使用技師維修回報系統。本系統為公司內部專用作業系統，僅限技師本人於執行維修勤務時使用。
-                    </p>
+    <div class="header-section">
+        <div class="header-title-small">📢 公司內部公告</div>
+        
+        <div style="color: #e0e0e0; font-size: 0.95em; line-height: 1.8;">
+            
+            <p style="margin-bottom: 8px;">
+                歡迎使用技師維修回報系統。本系統為公司內部專用作業系統，
+                僅限技師本人於實際執行安裝、維修、保養等勤務時使用。
+            </p>
 
-                    <ul style="margin: 0 0 10px 20px; padding-left: 0;">
-                        <li>
-                            <strong style="color: #fff;">嚴禁外流：</strong>
-                            本系統含客戶及設備相關之機敏資料，
-                            <span style="color: #ffcc00; font-weight: bold;">
-                                禁止公開、轉傳系統連結、截圖或洩露任何客戶資訊
-                            </span>。
-                        </li>
+            <ul style="margin: 0 0 10px 20px; padding-left: 0;">
+                <li>
+                    <strong style="color: #fff;">資料保密：</strong>
+                    本系統包含客戶、設備及作業相關之機敏資訊，
+                    <span style="color: #ffcc00; font-weight: bold;">
+                        嚴禁以任何形式公開、轉傳系統連結、截圖或洩露相關資料
+                    </span>。
+                </li>
 
-                        <li>
-                            <strong style="color: #fff;">填寫責任：</strong>
-                            所有回報內容將作為維修紀錄、保固判定、客訴處理及內部稽核依據，
-                            請於送出前確認資料正確性。
-                        </li>
+                <li>
+                    <strong style="color: #fff;">填寫責任：</strong>
+                    所有回報內容將作為維修紀錄、保固判定、客訴處理及內部稽核之依據，
+                    資料一經送出即視同本人實際作業紀錄，請務必確認內容正確。
+                </li>
 
-                        <li>
-                            <strong style="color: #fff;">填寫時效：</strong>
-                            請於實際維修完成後即時填寫回報，
-                            不得事後補填、代填或使用他人資料。
-                        </li>
+                <li>
+                    <strong style="color: #fff;">填寫時效：</strong>
+                    回報資料請於實際作業完成後即時填寫，
+                    不得事後補填、代填或使用他人帳號填寫。
+                </li>
 
-                        <li>
-                            <strong style="color: #fff;">帳號使用：</strong>
-                            本系統僅限本人帳號使用，禁止借用、共用或代他人填寫。
-                        </li>
+                <li>
+                    <strong style="color: #fff;">帳號使用：</strong>
+                    本系統帳號僅限本人使用，
+                    禁止借用、共用或代他人進行回報作業。
+                </li>
 
-                        <li>
-                            <strong style="color: #fff;">系統支援：</strong>
-                            如遇系統異常、操作問題或錯誤訊息，請聯繫
-                            <span style="text-decoration: underline;">品保部</span>。
-                        </li>
-                    </ul>
+                <li>
+                    <strong style="color: #fff;">系統支援：</strong>
+                    如遇系統異常、操作問題或錯誤訊息，
+                    請即時聯繫 <span style="text-decoration: underline;">品保部</span> 協助處理。
+                </li>
+            </ul>
 
-                    <p style="margin-top: 5px; font-size: 0.9em; color: #aaa;">
-                        ⚠️ 違反上述規範者，將依公司相關管理辦法及資訊安全規範辦理。
-                    </p>
+            <p style="margin-top: 5px; font-size: 0.9em; color: #aaa;">
+                ⚠️ 本系統所有操作與填寫紀錄皆留存備查，
+                違反上述規範者，將依公司相關管理辦法及資訊安全規定辦理。
+            </p>
 
-                </div>
-            </div>
+        </div>
+    </div>
+
 
             <div class="header-section">
                             <div class="header-title-small">★ 最新作業公告 ★</div>
@@ -482,16 +486,21 @@
                 </ul>
             </div>
             <div class="header-section">
-                <div class="header-title-small">ℹ️ 服務項目定義參考</div>
                 <ul class="header-list">
-                    <li><strong>新機安裝</strong>：新設備裝設與測試</li>
-                    <li><strong>故障維修</strong>：設備異常排除或零件更換</li>
-                    <li><strong>定期保養</strong>：例行性檢查與清潔</li>
-                    <li><strong>耗材更換</strong>：僅更換濾芯或消耗性材料</li>
-                    <li><strong>移機作業</strong>：拆卸舊機並於新地點安裝</li>
+                    <li><strong>新機安裝</strong>：設備裝設、測試與 <u>App 綁定</u></li>
+                    <li><strong>故障維修</strong>：異常排除、零件更換與 <u>保固判定</u></li>
+                    <li><strong>定期保養</strong>：例行檢查、<u>內部清潔</u>與水質檢測</li>
+                    <li><strong>耗材更換</strong>：濾芯更換與 <u>TDS 值複測</u></li>
+                    <li><strong>移機 / 撤機</strong>：異地裝卸作業或設備收回</li>
+                    <li><strong>操作教學</strong>：基本操作說明、App 功能講解</li>
+                    <li><strong>現場檢測</strong>：水壓、水質、電壓等數據量測</li>
+                    <li><strong>配件安裝</strong>：支架、龍頭、管線等配件加裝或調整</li>
+                    <li><strong>到場未施工</strong>：已到場但因條件或客戶因素未實際作業</li>
+                    <li><strong>非保固處理</strong>：過保或人為因素之維修與報價</li>
+                    <li><strong>異常回報</strong>：無法施工、客戶取消或其他異常狀況紀錄</li>
+                    <li><strong>後續處理</strong>：需另行派工、回廠或申請零件之案件</li>
                 </ul>
             </div>
-
             <div class="header-footer">※ 除非您自行提供，否則不會自動收集您的詳細數據。</div>
         </div>
     <!-- ========== 表單區域開始 ========== -->
