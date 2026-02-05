@@ -634,6 +634,51 @@
         <input type="text" name="machine_style_2" placeholder="請輸入第二台機器型式">
     </div>
 
+    <!-- 系統型號 -->
+    <div class="question-card hidden-field" id="card-system">
+        <div class="question-title">系統型號<span class="required">*</span></div>
+        <input type="text" name="system_model" placeholder="請輸入系統型號">
+    </div>
+
+
+    <!-- 保固狀態 -->
+    <div class="question-card hidden-field" id="card-warranty">
+        <div class="question-title">保固狀態<span class="required">*</span></div>
+        <select name="warranty_status">
+            <option value="">請選擇</option>
+            <option value="保固內">保固內</option>
+            <option value="保固外">保固外</option>
+        </select>
+    </div>
+
+    <!-- 錯誤代碼 -->
+    <div class="question-card hidden-field" id="card-error">
+        <div class="question-title">錯誤代碼<span class="required">*</span></div>
+        <input type="text" name="error_code" placeholder="請輸入錯誤代碼">
+    </div>
+
+    <!-- 機器狀態 -->
+    <div class="question-card hidden-field" id="card-status">
+        <div class="question-title">機器狀態<span class="required">*</span></div>
+        <select name="machine_status">
+            <option value="">請選擇</option>
+            <option value="正常">正常</option>
+            <option value="異常">異常</option>
+            <option value="已修復">已修復</option>
+        </select>
+    </div>
+
+    <!-- 故障描述 -->
+    <div class="question-card hidden-field" id="card-description">
+        <div class="question-title">故障描述<span class="required">*</span></div>
+        <textarea name="fault_description" rows="3" placeholder="請描述故障情況"></textarea>
+    </div>
+
+    <!-- 維修說明 -->
+    <div class="question-card hidden-field" id="card-repair-note">
+        <div class="question-title">維修說明<span class="required">*</span></div>
+        <textarea name="repair_note" rows="3" placeholder="請說明維修過程"></textarea>
+    </div>
 
     <!-- 收款金額 -->
     <div class="question-card hidden-field" id="card-payment">
@@ -1098,7 +1143,7 @@
     // 千山一般維修必填欄位ID
     const qsRepairRequired = [
         'card-name', 'card-service-date', 'card-customer',
-        'card-replaced-parts'
+        'card-description', 'card-repair-note', 'card-replaced-parts'
     ];
 
 // 品牌選擇處理
@@ -1469,9 +1514,9 @@
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
                     'card-name', 'card-invoice-number','card-machine-model', 'card-service-date', 'card-customer',' card-machine-serial' ,                    
-                     'card-customer-code',  'card-wp-customer','card-original-pressure',
-                    'card-raw-tds','card-site-voltage',
-                    'card-repair-reason','card-actual-reason',
+                    'card-system', 'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-warranty', 'card-error', 'card-status','card-raw-tds','card-site-voltage',
+                    'card-description', 'card-repair-note', 'card-repair-reason','card-actual-reason',
                     'card-leak-circuit','card-leak-reason','card-parts-payment',
                     'card-pressure-pump','card-drainage-type','card-drainage-note','card-taste','card-wp-note','card-handling',
                     'card-inspection-result','card-is-payment','card-machine-type',
@@ -1480,9 +1525,9 @@
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
                     'card-name', 'card-invoice-number','card-machine-model', 'card-service-date', 'card-customer',' card-machine-serial' ,                        
-                     'card-customer-code',  'card-wp-customer','card-app',
-                    
-                    'card-repair-reason','card-actual-reason',
+                    'card-system', 'card-customer-code',  'card-wp-customer','card-app',
+                    'card-warranty', 'card-error', 'card-status',
+                    'card-description', 'card-repair-note', 'card-repair-reason','card-actual-reason',
                     'card-leak-reason','card-parts-payment',
                     'card-pressure-pump','card-wp-note','card-handling',
                     'card-inspection-result','card-is-payment','card-machine-serial','card-machine-type',
@@ -1498,9 +1543,9 @@
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
                     'card-name', 'card-invoice-number','card-machine-model', 'card-service-date', 'card-customer',                     
-                     'card-customer-code',  'card-wp-customer','card-original-pressure',
-                    'card-raw-tds','card-site-voltage',
-                    'card-replaced-parts','card-repair-reason','card-actual-reason',
+                    'card-system', 'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-warranty', 'card-error', 'card-status','card-raw-tds','card-site-voltage',
+                    'card-description', 'card-repair-note', 'card-replaced-parts','card-repair-reason','card-actual-reason',
                     'card-leak-circuit','card-leak-reason',
                     'card-pressure-pump','card-drainage-type','card-drainage-note','card-taste','card-wp-note','card-handling',
                     'card-inspection-result','card-is-payment','card-water-source','card-pump-photo',
@@ -1510,9 +1555,9 @@
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
                     'card-name', 'card-invoice-number','card-machine-model', 'card-service-date', 'card-customer',                     
-                     'card-customer-code',  'card-wp-customer','card-original-pressure',
-                    'card-site-voltage',
-                    'card-replaced-parts','card-repair-reason','card-actual-reason',
+                    'card-system', 'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-warranty', 'card-error', 'card-status','card-site-voltage',
+                    'card-description', 'card-repair-note', 'card-replaced-parts','card-repair-reason','card-actual-reason',
                     'card-leak-circuit','card-leak-reason',
                     'card-pressure-pump','card-drainage-type','card-drainage-note','card-taste','card-wp-note','card-handling',
                     'card-inspection-result','card-is-payment','card-water-source','card-pump-photo',
