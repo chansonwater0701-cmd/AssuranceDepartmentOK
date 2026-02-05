@@ -1118,54 +1118,39 @@
         'card-replaced-parts'
     ];
 
-    // 品牌選擇處理
+// 品牌選擇處理
     function handleBrandChange() {
+        // 1. 取得目前選中的品牌值
         const brandRadio = document.querySelector('input[name="brand"]:checked');
         if (!brandRadio) return;
         const brand = brandRadio.value;
 
-        // 1. 確認是否切換品牌
+        // 2. 如果切換品牌，彈出確認視窗
         if (currentBrand && currentBrand !== brand) {
             if (!confirm("變更品牌將會清除目前所有已填寫的內容，確定要變更嗎？")) {
+                // 使用者按取消：將 Radio Button 選回原本的品牌
                 const radios = document.querySelectorAll('input[name="brand"]');
-                radios.forEach(r => { r.checked = (r.value === currentBrand); });
+                radios.forEach(r => {
+                    r.checked = (r.value === currentBrand);
+                });
                 return;
             }
         }
 
-        // 2. 更新品牌狀態與重置
+        // 3. 更新全域變數與重置表單
         currentBrand = brand;
         resetFormValues(['brand']); // 保留品牌勾選，其餘清除
         
         currentServiceItem = '';
         currentServiceDetail = '';
         currentModel = '';
+        
+        // 4. 隱藏所有後續卡片
         hideAllCards();
-
-        // ★★★ 3. 處理客戶代號欄位 (重點修改區) ★★★
-        const codeInput = document.getElementById('customer_code_input');
-        if (codeInput) {
-            if (currentBrand === '千山') {
-                // 千山設定：
-                // 1. 允許文字輸入 (text) 以便輸入 A
-                // 2. 值是空的，讓技師自己填
-                codeInput.setAttribute('inputmode', 'text');
-                codeInput.value = ""; 
-                codeInput.placeholder = "請輸入完整代號 (例: A123456789)";
-            } else if (currentBrand === '惟品') {
-                // 惟品設定：
-                // 1. 預設填好 "W0000" (寫死開頭)
-                // 2. 用數字鍵盤 (numeric) 方便打後面的數字
-                codeInput.setAttribute('inputmode', 'numeric');
-                codeInput.value = "W0000"; 
-                codeInput.placeholder = "請輸入數字";
-            }
-        }
-        // ★★★ 修改結束 ★★★
-
-        // 4. 重建服務項目選單 (這部分保持原本邏輯)
+        
+        // 5. 動態更新「服務項目」的選項
         const serviceSelect = document.getElementById('service_item');
-        serviceSelect.innerHTML = '<option value="">請選擇</option>';
+        serviceSelect.innerHTML = '<option value="">請選擇</option>'; // 先清空舊選項
 
         if (currentBrand === '千山') {
             serviceSelect.innerHTML += `
@@ -1180,6 +1165,7 @@
                 <option value="售服">售服</option>`;
         }
 
+        // 6. 顯示服務項目卡片並重新編號
         document.getElementById('card-service-item').classList.remove('hidden-field');
         renumberQuestions();
     }
@@ -2745,29 +2731,23 @@
     renumberQuestions(); // 重新觸編號
 }
     function formatCustomerCode(input) {
-        let val = input.value.trim();
-        if (!val) return;
+    let val = input.value.trim();
+    if (!val) return;
 
-        if (currentBrand === '惟品') {
-            // 惟品邏輯：
-            // 1. 先把所有非數字的字元刪掉 (這會把 W 刪掉，沒關係我們後面補)
-            let numericPart = val.replace(/\D/g, ''); 
-            
-            // 2. 如果刪完還有數字，或是原本就是 W0000，就幫它補成標準格式
-            // 這裡維持您原本邏輯：W + 9位數字 (共10碼)
-            if (numericPart.length > 0) {
-                input.value = 'W' + numericPart.padStart(9, '0');
-            } else {
-                // 如果刪光光沒剩半個數字，就回復預設值
-                input.value = "W0000";
-            }
-        } else if (currentBrand === '千山') {
-            // 千山邏輯：
-            // 1. 強制轉大寫 (a -> A)
-            // 2. 不刪除任何字，保留 A 開頭
-            input.value = val.toUpperCase();
+    // 移除所有非數字字元 (避免使用者重複輸入 W)
+    let numericPart = val.replace(/\D/g, '');
+
+    if (currentBrand === '惟品') {
+        // 惟品：補齊為 W + 9位數字 (總共10碼)
+        if (numericPart.length > 0) {
+            input.value = 'W' + numericPart.padStart(9, '0');
         }
+    } else if (currentBrand === '千山') {
+        // 千山：如果只是純數字，不加 W，或者您可以自訂千山的格式
+        // 這裡範例設為：千山保持原樣或僅純數字
+        input.value = numericPart; 
     }
+}
 
     // 複製LINE格式
     function copyForLine() {
