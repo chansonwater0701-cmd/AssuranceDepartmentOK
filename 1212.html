@@ -533,7 +533,7 @@
     <!-- 3. 機器型號 -->
     <div class="question-card hidden-field" id="card-model">
         <div class="question-title">機器型式 <span class="required">*</span></div>
-        <select name="machine_type" id="model" onchange="handleModelChange()">
+        <select name="machine_type" id="model" inputmode="url" onchange="handleModelChange()">
             <option value="">請選擇</option>
         </select>
     </div>
@@ -553,7 +553,7 @@
 
     <div class="question-card hidden-field" id="card-customer-code">
         <div class="question-title">客戶代號<span class="required">*</span></div>
-        <input type="text" name="customer_code" placeholder="請輸入客戶代號">
+        <input type="text" name="customer_code" inputmode="url" placeholder="請輸入客戶代號">
     </div>
 
     <!-- 客戶地址 -->
@@ -599,7 +599,7 @@
     </div>
     <!-- 機器版本 -->
     <div class="question-card hidden-field" id="card-machine-model">
-        <div class="question-title">機器版本<span class="required">*</span></div>
+        <div class="question-title">機器序號<span class="required">*</span></div>
         <input type="text" name="machine_version" placeholder="請輸入機器版本">
     </div>
     
@@ -701,7 +701,6 @@
     <div class="question-card hidden-field" id="card-drainage-type">
         <div class="question-title">排廢水型式<span class="required">*</span></div>
         <select name="drainage_type">
-            <option value="">請選擇</option>
             <option value="Ｔ字３通">Ｔ字３通</option>
             <option value="破管">破管</option>
             <option value="地排">地排</option>
@@ -906,7 +905,7 @@
 
     <!-- 口感組合 (技師與客戶) -->
     <div class="question-card hidden-field" id="card-taste">
-        <div class="question-title">口感評價 <span class="required">*</span></div>
+        <div class="question-title">技師/客戶口感評價 <span class="required">*</span></div>
         <div class="multi-input-row">
             <input type="text" name="engineer_taste" placeholder="技師口感">
             <input type="text" name="customer_taste" placeholder="客戶口感">
@@ -1455,7 +1454,7 @@
                     'card-name', 'card-invoice-number', 'card-machine-model','card-service-date', 'card-customer',  'card-customer-code','card-machine-type',                      
                     'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app',
                     'card-raw-pressure', 'card-leak-reason','card-wp-customer',
-                    'card-pressure-pump','card-repair-reason','card-actual-reason','card-original-pressure',
+                    'card-pressure-pump','card-original-pressure',
                     'card-wp-note','card-principle',
                 ]);
             }else if (detail === '取消') {
