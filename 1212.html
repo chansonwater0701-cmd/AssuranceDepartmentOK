@@ -561,7 +561,7 @@
     <!-- 客戶代號 -->
 
     <div class="question-card hidden-field" id="card-customer-code">
-        <div class="question-title">客戶代號<span class="required">*</span></div>
+        <div class="question-title">客戶代號</div>
         <input 
             type="text" 
             name="customer_code" 
@@ -1056,18 +1056,16 @@
 
     <div class="question-card hidden-field" id="card-pipe-material">
         <div class="question-title">管線材質<span class="required">*</span></div>
-        <select name="pipe_material" id="pipe_material">
-            <option value="" disabled selected>請選擇...</option>
-            <option value="有">有</option>
-            <option value="無">無</option>
-        </select>
+        <input type="text" name="pipe_material" placeholder="請輸入更換管線的材質" required>
     </div>
 
     <div class="question-card hidden-field" id="card-signal-strength">
         <div class="question-title">訊號強度<span class="required">*</span></div>
         <select name="signal_strength" id="signal_strength">
             <option value="" disabled selected>請選擇...</option>
-            <option value="有">有</option>
+            <option value="高">高</option>
+            <option value="中">中</option>
+            <option value="低">低</option>
             <option value="無">無</option>
         </select>
     </div>
