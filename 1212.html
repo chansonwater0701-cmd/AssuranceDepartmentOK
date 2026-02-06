@@ -1257,7 +1257,7 @@
                 detailCard.classList.remove('hidden-field');
                 modelCard.classList.add('hidden-field');
             } else if (item === '合約') {
-                detailSelect.innerHTML += '<option value="換濾芯">換濾芯</option>';
+                detailSelect.innerHTML += '<option value="換濾芯">換濾芯(保後裝機)</option>';
                 detailSelect.innerHTML += '<option value="空值">空值(手動輸入)</option>';
                 detailSelect.innerHTML += '<option value="大保拆機">大保拆機</option>';
                 detailSelect.innerHTML += '<option value="取消">取消</option>';
@@ -1544,25 +1544,25 @@
             if (detail === '一般場勘') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
-                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer',                     
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-model' ,                   
                      'card-customer-code',  'card-wp-customer','card-original-pressure',
                     'card-raw-tds','card-site-voltage',
                     'card-replaced-parts','card-repair-reason','card-actual-reason',
                     'card-leak-circuit','card-leak-reason',
-                    'card-pressure-pump','card-drainage-type','card-taste','card-wp-note','card-handling',
-                    'card-inspection-result','card-is-payment','card-water-source','card-pump-photo',
-                    'card-pipe-material','card-signal-strength','card-install-location','card-install-floor','card-countertop',
+                    'card-pressure-pump','card-drainage-type','card-wp-note','card-handling',
+                    'card-inspection-result','card-water-source','card-pump-photo',
+                    'card-install-location','card-countertop',
                 ]);
             } else if (detail === '全戶場勘') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer',                     
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-model' ,                      
                      'card-customer-code',  'card-wp-customer','card-original-pressure',
                     'card-site-voltage',
                     'card-replaced-parts','card-repair-reason','card-actual-reason',
-                    'card-leak-circuit','card-leak-reason',
+                    'card-leak-reason',
                     'card-pressure-pump','card-drainage-type','card-taste','card-wp-note','card-handling',
-                    'card-inspection-result','card-is-payment','card-water-source','card-pump-photo',
+                    'card-inspection-result','card-water-source','card-pump-photo',
                     'card-pipe-material','card-signal-strength','card-install-location','card-install-floor',
                     'card-pipe-spec','card-pipe-material','card-signal-strength',
                 ]);
@@ -1576,7 +1576,7 @@
             currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
             showCards([
                 'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
-                'card-machine-type','card-machine-serial',
+                'card-machine-type',
                 // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
             ]);
             }
