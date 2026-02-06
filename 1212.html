@@ -785,7 +785,7 @@
         <div class="question-title">面板版本<span class="required">*</span></div>
         <div class="fw-container">
             <div class="fw-inputs">
-                <input type="number" name="panel_version" maxlength="15" placeholder="填寫面板版本">
+                <input type="text" name="panel_version" maxlength="15" placeholder="填寫面板版本">
             </div>
         </div>
     </div>
@@ -1082,7 +1082,11 @@
     <!-- 是否已綁定App -->
     <div class="question-card hidden-field" id="card-app">
         <div class="question-title">是否已綁定App<span class="required">*</span></div>
-        <input type="text" name="app_binding" placeholder="請輸入是否已綁定App狀態">
+        <select name="app_binding" id="app_binding" required>
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
     </div>
     <!-- 其他說明事項 (惟品) -->
     <div class="question-card hidden-field" id="card-wp-note">
@@ -2091,7 +2095,7 @@
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date', 'card-invoice-number', 'card-wp-customer',
+                    'card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
                     'card-panel-version', 'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2099,7 +2103,7 @@
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date', 'card-invoice-number', 'card-wp-customer',
+                    'card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
                     'card-panel-version', 'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2107,7 +2111,7 @@
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date', 'card-invoice-number', 'card-wp-customer',
+                    'card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
                     'card-panel-version', 'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2115,7 +2119,7 @@
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date', 'card-invoice-number', 'card-wp-customer',
+                    'card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
                     'card-panel-version', 'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2123,7 +2127,7 @@
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date', 'card-invoice-number', 'card-wp-customer',
+                    'card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
                     'card-panel-version', 'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2225,7 +2229,7 @@
             if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-machine-type',  
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2242,7 +2246,7 @@
             } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-machine-type',  
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2259,7 +2263,7 @@
             } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-machine-type',  
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version', 'card-temp-group',
