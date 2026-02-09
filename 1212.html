@@ -24,6 +24,12 @@
             max-width: 640px; 
             margin: 0 12px; 
         }
+        .instruction-note {
+            font-size: 0.85em;   /* 字體稍微縮小 */
+            color: #6c757d;      /* 使用深灰色，讓視覺比較柔和 */
+            margin-left: 8px;    /* 與前面的星號保持一點距離 */
+            font-weight: normal; /* 如果標題是粗體，這裡設為一般粗細以做區隔 */
+        }
         /* 讓輸入框看起來扁扁的，像底線或小方格 */
         /* 容器設定為換行排列 */
             .fw-container {
@@ -90,7 +96,7 @@
             padding: 12px; 
             background: rgba(0, 0, 0, 0.15); 
             border-radius: 6px; 
-            font-size: 14px; 
+            font-size: 15px; 
             line-height: 1.6; 
         }
 
@@ -611,6 +617,10 @@
     <div class="question-card hidden-field" id="card-machine-type">
         <div class="question-title">機器型號<span class="required">*</span></div>
         <input type="text" name="machine_model" placeholder="請輸入機器型號">
+        
+        <div class="small-note" style="margin-top: 8px; color: #666; font-size: 0.9rem;">
+            💡 提醒：請輸入完整機型
+        </div>
     </div>
     <!-- 機器序號 -->
     <div class="question-card hidden-field" id="card-machine-serial">
@@ -639,19 +649,19 @@
         </div>
     </div>
     <div class="question-card hidden-field" id="card-machine-type-2">
-        <div class="question-title">機器型號(第二台)<span class="required">*</span></div>
-        <input type="text" name="machine_type_2" placeholder="請輸入第二台機器型號">
+        <div class="question-title">機器型號(更換後機台)<span class="required">*</span></div>
+        <input type="text" name="machine_type_2" placeholder="請輸入更換後機台機器型號">
     </div>
 
     <div class="question-card hidden-field" id="card-machine-serial-2">
-        <div class="question-title">機器序號(第二台)<span class="required">*</span></div>
-        <input type="text" name="machine_serial_2" placeholder="請輸入第二台機器序號">
+        <div class="question-title">機器序號(更換後機台)<span class="required">*</span></div>
+        <input type="text" name="machine_serial_2" placeholder="請輸入更換後機台機器序號">
     </div>
 
 
     <div class="question-card hidden-field" id="card-machine-model-2">
-        <div class="question-title">機器版本(第二台)<span class="required">*</span></div>
-        <input type="text" name="machine_style_2" placeholder="請輸入第二台機器型式">
+        <div class="question-title">機器版本(更換後機台)<span class="required">*</span></div>
+        <input type="text" name="machine_style_2" placeholder="請輸入更換後機台機器型式">
     </div>
 
 
@@ -1906,7 +1916,7 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial',
                     'card-site-voltage', 'card-power', 'card-f11-flow','card-是否加裝Filter-C' ,'card-customer',
                     'card-hot-tank-output', 'card-normal-tank-output','card-firmware-version',
-                    'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste',
+                    'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste','card-wp-customer',
                      'card-repair-reason', 'card-actual-reason','card-machine-type-repair',
                     'card-handling', 'card-inspection-result', 'card-replaced-parts','card-temp-group-100',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note','card-machine-type'
@@ -1918,7 +1928,7 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial',
                     'card-site-voltage', 'card-power', 'card-f11-flow','card-是否加裝Filter-C' ,'card-customer',
                     'card-hot-tank-output', 'card-normal-tank-output','card-firmware-version', 'card-taste',
-                    'card-repair-reason', 'card-actual-reason',
+                    'card-repair-reason', 'card-actual-reason','card-wp-customer',
                     'card-handling', 'card-inspection-result', 'card-replaced-parts','card-temp-group-100',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note','card-machine-type',
                 ]);
