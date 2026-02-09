@@ -546,7 +546,7 @@
         <input type="text" name="manual_service_detail" placeholder="請輸入詳細服務內容">
     </div>
 
-    <!-- 3. 機器型號 -->
+    <!-- 3. 機器型式 -->
     <div class="question-card hidden-field" id="card-model">
         <div class="question-title">機器型式 <span class="required">*</span></div>
         <select name="machine_type" id="model" inputmode="url" onchange="handleModelChange()">
@@ -1067,7 +1067,7 @@
 
     <div class="question-card hidden-field" id="card-pipe-material">
         <div class="question-title">管線材質<span class="required">*</span></div>
-        <input type="text" name="pipe_material" placeholder="請輸入更換管線的材質" required>
+        <input type="text" name="pipe_material" placeholder="請輸入現有管線的材質" required>
     </div>
 
     <div class="question-card hidden-field" id="card-signal-strength">
@@ -1553,25 +1553,23 @@
             if (detail === '一般場勘') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
-                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-model' ,                   
-                     'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',                  
+                     'card-customer-code',  'card-wp-customer','card-original-pressure','card-machine-type',
                     'card-raw-tds','card-site-voltage',
-                    'card-replaced-parts','card-repair-reason','card-actual-reason',
-                    'card-leak-circuit','card-leak-reason',
-                    'card-pressure-pump','card-drainage-type','card-wp-note','card-handling',
-                    'card-inspection-result','card-water-source','card-pump-photo',
+                    'card-leak-reason',
+                    'card-wp-note',
+                    'card-water-source','card-pump-photo',
                     'card-install-location','card-countertop',
                 ]);
             } else if (detail === '全戶場勘') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-model' ,                      
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',                    
                      'card-customer-code',  'card-wp-customer','card-original-pressure',
-                    'card-site-voltage',
-                    'card-replaced-parts','card-repair-reason','card-actual-reason',
+                    'card-site-voltage','card-machine-type',
                     'card-leak-reason',
-                    'card-pressure-pump','card-drainage-type','card-taste','card-wp-note','card-handling',
-                    'card-inspection-result','card-water-source','card-pump-photo',
+                    'card-pressure-pump','card-wp-note',
+                    'card-water-source','card-pump-photo',
                     'card-pipe-material','card-signal-strength','card-install-location','card-install-floor',
                     'card-pipe-spec','card-pipe-material','card-signal-strength',
                 ]);
