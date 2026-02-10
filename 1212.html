@@ -2874,6 +2874,56 @@
             btn.innerHTML = originalText;
         }
     }
+    // ========== 韌體版本自動跳格功能 (包含跳轉到面板版本) ==========
+function initFirmwareAutoInput() {
+    // 1. 選取韌體版本的 4 個輸入框
+    const inputs = document.querySelectorAll('#card-firmware-version .fw-inputs input');
+
+    inputs.forEach((input, index) => {
+        // --- 監聽輸入事件 ---
+        input.addEventListener('input', function() {
+            // A. 強制限制只能輸入 2 碼
+            if (this.value.length > 2) {
+                this.value = this.value.slice(0, 2);
+            }
+
+            // B. 判斷是否跳格
+            if (this.value.length === 2) {
+                if (index < inputs.length - 1) {
+                    // 如果不是最後一格，跳到下一格韌體框
+                    inputs[index + 1].focus();
+                } else {
+                    // ★★★ 這裡是修改重點 ★★★
+                    // 如果是最後一格 (第四格)，跳到「面板版本」
+                    const nextField = document.querySelector('input[name="panel_version"]');
+                    // 確保面板版本欄位存在且沒有被隱藏才跳過去
+                    if (nextField && nextField.offsetParent !== null) {
+                        nextField.focus();
+                    }
+                }
+            }
+        });
+
+        // --- 監聽刪除鍵 (Backspace) ---
+        input.addEventListener('keydown', function(e) {
+            // 如果按了刪除鍵且格子是空的，跳回上一格
+            if (e.key === "Backspace" && this.value.length === 0) {
+                if (index > 0) {
+                    inputs[index - 1].focus();
+                }
+            }
+        });
+        
+        // --- 點擊時全選 ---
+        input.addEventListener('focus', function() {
+            this.select();
+        });
+    });
+}
+// ★★★ 這裡是補上的啟動指令 ★★★
+document.addEventListener('DOMContentLoaded', function() {
+    initFirmwareAutoInput();
+});
 </script>
 
 </body>
