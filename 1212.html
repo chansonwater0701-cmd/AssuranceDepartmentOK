@@ -1203,12 +1203,13 @@
     function resetFormValues(excludeNames = []) {
         const allInputs = document.querySelectorAll('input, select, textarea');
         allInputs.forEach(input => {
-            // 如果這個欄位在排除清單內，就不動它
+            // ★★★ 補回這行：如果這個欄位在排除清單內，就不動它 ★★★
             if (excludeNames.includes(input.name)) return;
 
             if (input.type === 'radio' || input.type === 'checkbox') {
                 input.checked = false;
             } else {
+                // 全部清空成空白
                 input.value = '';
             }
         });
@@ -2787,6 +2788,7 @@
     }
 
     // 表單驗證
+// 表單驗證
     function validateForm() {
         let isValid = true;
         let errors = [];
@@ -2815,12 +2817,19 @@
                     hasValue = allFilled;
                 } else {
                     if (inputs.length > 0) {
-                        inputs.forEach(input => { if(input.value.trim()) hasValue = true; });
+                        inputs.forEach(input => { 
+                            // ★ 修改處：如果欄位有值，或者它是韌體欄位(允許空白)，就算通過
+                            if(input.value.trim() || input.name.startsWith('firmware_')) {
+                                hasValue = true;
+                            }
+                        }); // <---原本這裡少這行，導致語法錯誤
                     }
+                    
+                    // 如果有 radio button，也要檢查是否有被選中
                     if (radios.length > 0) {
                         let radioChecked = false;
                         radios.forEach(r => { if(r.checked) radioChecked = true; });
-                        if(radioChecked) hasValue = true; 
+                        if(radioChecked) hasValue = true;
                     }
                 }
 
@@ -2851,19 +2860,27 @@
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         
         visibleCards.forEach(card => {
-            const inputs = card.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                if (!input.name) return;
-                if (input.type === 'radio' && !input.checked) return;
-                
-                // 如果多個 input 共用同一個 name，則串接它們 (例如 fw_1)
-                if (data[input.name]) {
-                    data[input.name] += " - " + input.value;
-                } else {
-                    data[input.name] = input.value;
-                }
-            });
-        });
+                    const inputs = card.querySelectorAll('input, select, textarea');
+                    inputs.forEach(input => {
+                        if (!input.name) return;
+                        if (input.type === 'radio' && !input.checked) return;
+                        
+                        // ★ 新增：取得欄位的值
+                        let finalValue = input.value;
+
+                        // ★ 新增：如果是韌體欄位且是空白，自動視為 "00"
+                        if (input.name.startsWith('firmware_') && finalValue.trim() === '') {
+                            finalValue = '00';
+                        }
+
+                        // 如果多個 input 共用同一個 name，則串接它們
+                        if (data[input.name]) {
+                            data[input.name] += " - " + finalValue;
+                        } else {
+                            data[input.name] = finalValue;
+                        }
+                    });
+                });
         
         // 加入基本資訊
         data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
@@ -2912,11 +2929,11 @@
     }
 
     // 複製LINE格式
+    // 複製LINE格式
     function copyForLine() {
         if (!validateForm()) return;
         
         let header = '';
-        // ... (保持原有的品牌抬頭邏輯) ...
         if (currentBrand === '千山') {
             const item = document.getElementById('service_item').value;
             const detailSelect = document.getElementById('service_detail');
@@ -2953,7 +2970,7 @@
                 });
                 value = groupText;
             } 
-            // 通用處理：處理所有包含多個 input/select 的卡片 (如韌體版本、電壓、最大功率)
+            // 通用處理：處理所有包含多個 input/select 的卡片
             else {
                 const allInputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
                 const checkedRadio = card.querySelector('input[type="radio"]:checked');
@@ -2961,10 +2978,22 @@
                 if (checkedRadio) {
                     value = checkedRadio.parentElement.innerText.trim();
                 } else if (allInputs.length > 0) {
-                    // 將同一個卡片內所有有填值的框框用 " - " 連接
+                    // ★ 修改重點：加入 map 處理，讓韌體版本自動補 00
                     const values = Array.from(allInputs)
-                        .map(i => i.value.trim())
-                        .filter(v => v !== ""); 
+                        .map(i => {
+                            let val = i.value.trim();
+                            
+                            // 針對「韌體版本」做特殊處理
+                            if (i.name.startsWith('firmware_')) {
+                                // 1. 如果是空的，視為 "00"
+                                if (val === '') return "00";
+                                // 2. 如果只打 1 碼 (例如 "0")，自動補成 "00"
+                                if (val.length === 1) return "0" + val;
+                            }
+                            return val;
+                        })
+                        .filter(v => v !== ""); // 過濾掉真的沒填的其他欄位
+
                     value = values.join(' - ');
                 }
             }
@@ -2981,7 +3010,6 @@
         document.body.removeChild(textarea);
         alert('✅ 已複製 LINE 格式內容！');
     }
-
     // 上傳到雲端
     async function uploadToCloud() {
         if (!validateForm()) return; 
