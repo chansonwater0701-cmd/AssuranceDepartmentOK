@@ -1284,8 +1284,8 @@
                 modelCard.classList.add('hidden-field');
             } else if (item === '維修') {
                 // 惟品維修:先選服務細項
-                detailSelect.innerHTML += '<option value="維修">維修</option>';
-                detailSelect.innerHTML += '<option value="店修">店修</option>';                
+                detailSelect.innerHTML += '<option value="維修">客戶處維修</option>';
+                detailSelect.innerHTML += '<option value="店修">門市店內維修</option>';                
                 detailSelect.innerHTML += '<option value="拖修">拖修</option>';
                 detailSelect.innerHTML += '<option value="更換面板">更換面板</option>';
                 detailSelect.innerHTML += '<option value="換機">換機</option>';
@@ -1410,6 +1410,8 @@
                     modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
                     modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
                     modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
                     modelCard.classList.remove('hidden-field');
                 } else if (detailValue === '拆機') {
                     modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
@@ -2283,6 +2285,35 @@
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
                 document.getElementById('temp-10').style.display = 'flex';
+
+                        } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                     'card-temp-group', 'card-f11-flow',
+                    'card-hot-tank-output', 'card-normal-tank-output',
+                    'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste',
+                    'card-calibration', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                     'card-temp-group', 'card-f11-flow',
+                    'card-hot-tank-output', 'card-normal-tank-output',
+                    'card-taste','card-calibration', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-wp-note'
+                ]);
             // ========== 售服 → 拆機 ==========
             } else if (currentServiceDetail === '拆機' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
