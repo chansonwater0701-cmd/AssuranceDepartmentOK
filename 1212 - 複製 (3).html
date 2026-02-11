@@ -376,20 +376,7 @@
         .btn-secondary:hover { 
             background: linear-gradient(135deg, #45a049, #3d8b40); 
         }
-        /* ... 前面的按鈕樣式 ... */
-        .btn-secondary:hover { 
-            background: linear-gradient(135deg, #45a049, #3d8b40); 
-        }
 
-        /* ▼▼▼ 新增這段重置按鈕的樣式 ▼▼▼ */
-        .btn-danger { 
-            background: linear-gradient(135deg, #dc3545, #c82333); 
-            color: white; 
-        }
-
-        .btn-danger:hover { 
-            background: linear-gradient(135deg, #c82333, #bd2130); 
-        }
         /* =========================================
            7. RWD 手機直向優化
            ========================================= */
@@ -1115,13 +1102,13 @@
         <div class="question-title">其他說明事項 </div>
         <textarea name="wp_other_notes" rows="3" placeholder="請輸入其他需要說明的事項"></textarea>
     </div>
+
     <!-- ========== 底部操作按鈕 ========== -->
     <div class="button-bar">
-        <button class="btn-danger" id="btn-reset" onclick="resetToInitial()" style="display: none;">🔄 重新填寫</button>
-        
         <button class="btn-primary" onclick="copyForLine()">📋 複製LINE格式</button>
         <button class="btn-secondary" id="btn-upload" onclick="uploadToCloud()">☁️ 上傳資料</button>
     </div>
+</div>
 
 <script>
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbz2F7RDc9ktIf5TjqAqJ-CT7Ue_tG3uHSUuCJrLRbDT0GIuEj77gcingkqkaJUyTqiBUQ/exec";
@@ -3023,42 +3010,7 @@
         document.body.removeChild(textarea);
         alert('✅ 已複製 LINE 格式內容！');
     }
-
-    // ========== 韌體版本自動跳格功能 (包含跳轉到面板版本) ==========
-// ========== 重置表單到初始狀態 ==========
-    function resetToInitial() {
-        if (!confirm("確定要清除所有資料並準備填寫下一筆嗎？")) return;
-
-        // 1. 清空所有輸入欄位 (不保留任何欄位)
-        resetFormValues([]);
-
-        // 2. 清除可能殘留的錯誤紅框標記
-        clearErrors();
-
-        // 3. 重置全域變數
-        currentBrand = '';
-        currentServiceItem = '';
-        currentServiceDetail = '';
-        currentModel = '';
-        currentRequiredIds = [];
-
-        // 4. 初始化所有連動的下拉選單
-        document.getElementById('service_item').innerHTML = '<option value="">請選擇</option>';
-        document.getElementById('service_detail').innerHTML = '<option value="">請選擇</option>';
-        document.getElementById('model').innerHTML = '<option value="">請選擇</option>';
-
-        // 5. 隱藏所有題目卡片，然後單獨顯示「1. 請選擇品牌」
-        hideAllCards(false); 
-        document.getElementById('card-brand').classList.remove('hidden-field');
-
-        // 6. 重新把這顆重置按鈕隱藏起來
-        document.getElementById('btn-reset').style.display = 'none';
-
-        // 7. 將畫面平滑滾動到最上方
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-// 上傳到雲端
+    // 上傳到雲端
     async function uploadToCloud() {
         if (!validateForm()) return; 
         const data = getFormData();
@@ -3066,28 +3018,22 @@
         const originalText = btn.innerHTML;
         btn.disabled = true; 
         btn.innerHTML = "⏳ 上傳中...";
-        
         try {
             await fetch(CLOUD_URL, {
                 method: 'POST',
-                mode: 'no-cors', // 🌟 終極殺手鐧：加入這行，強制瀏覽器不阻擋跨網域請求
                 headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(data)
             });
-            
-            // 加入 no-cors 後，我們無法讀取 Google 的回傳值，但只要沒跳到 catch 就是成功送出了
-            alert("✅ 資料已成功送出！請確認雲端試算表。");
-            document.getElementById('btn-reset').style.display = 'block';
-            
+            alert("✅ 上傳成功！");
         } catch (e) {
-            alert("❌ 上傳失敗，請檢查網路連線或稍後再試。");
-            console.error("上傳錯誤詳細資訊：", e);
-            document.getElementById('btn-reset').style.display = 'block';
+            alert("✅ 上傳指令已發送 (若無報錯即成功)");
+            console.error(e);
         } finally {
             btn.disabled = false; 
             btn.innerHTML = originalText;
         }
     }
+    // ========== 韌體版本自動跳格功能 (包含跳轉到面板版本) ==========
 function initFirmwareAutoInput() {
     // 1. 選取韌體版本的 4 個輸入框
     const inputs = document.querySelectorAll('#card-firmware-version .fw-inputs input');
