@@ -18,7 +18,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -27,23 +27,26 @@
         }
         
         .header {
-            background-color: #4472C4;
+            background: linear-gradient(135deg, #4472C4 0%, #5b86d4 100%);
             color: white;
-            padding: 20px;
+            padding: 25px;
             margin: -30px -30px 30px -30px;
             border-radius: 8px 8px 0 0;
         }
         
         .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 26px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .header-info {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 14px;
-            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .section {
@@ -52,10 +55,11 @@
         
         .section-title {
             background-color: #E7E6E6;
-            padding: 10px 15px;
+            padding: 12px 15px;
             font-weight: bold;
-            border-left: 4px solid #4472C4;
-            margin-bottom: 15px;
+            border-left: 5px solid #4472C4;
+            margin-bottom: 20px;
+            font-size: 16px;
         }
         
         .form-group {
@@ -71,8 +75,7 @@
         
         .form-group input[type="text"],
         .form-group input[type="date"],
-        .form-group textarea,
-        .form-group select {
+        .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -84,6 +87,7 @@
         .form-group textarea {
             min-height: 100px;
             resize: vertical;
+            line-height: 1.6;
         }
         
         .form-row {
@@ -92,473 +96,413 @@
             gap: 20px;
         }
         
-        /* 步驟表格 */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
         .steps-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .steps-table th {
             background-color: #4472C4;
             color: white;
-            padding: 12px 8px;
+            padding: 14px 12px;
             text-align: left;
             font-size: 13px;
-            border: 1px solid #ddd;
+            border: 1px solid #3a5ba0;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         
         .steps-table td {
-            padding: 10px 8px;
-            border: 1px solid #ddd;
+            padding: 12px 10px;
+            border: 1px solid #e0e0e0;
             vertical-align: top;
+            background-color: white;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .screenshot-cell {
+            min-width: 250px;
         }
         
         .steps-table input[type="text"],
-        .steps-table textarea,
-        .steps-table select {
+        .steps-table textarea {
             width: 100%;
-            padding: 6px;
+            padding: 8px;
             border: 1px solid #ddd;
-            border-radius: 3px;
+            border-radius: 4px;
             font-size: 13px;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .steps-table input[type="text"]:focus,
+        .steps-table textarea:focus {
+            outline: none;
+            border-color: #4472C4;
+            box-shadow: 0 0 0 3px rgba(68, 114, 196, 0.1);
         }
         
         .steps-table textarea {
-            min-height: 60px;
+            min-height: 80px;
             resize: vertical;
+            line-height: 1.5;
         }
         
         .steps-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
+        }
+        
+        .steps-table tr:hover {
+            background-color: #f0f4ff;
+        }
+        
+        .screenshot-input {
+            font-size: 12px;
+            padding: 6px;
+            margin-top: 8px;
+            width: 100%;
+            border: 2px dashed #70AD47;
+            border-radius: 4px;
+            background-color: #f8fff8;
+        }
+        
+        .image-preview {
+            margin-top: 10px;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 250px;
+            border: 2px solid #70AD47;
+            border-radius: 6px;
+            display: block;
+            margin: 10px auto;
+            box-shadow: 0 3px 10px rgba(112, 173, 71, 0.3);
         }
         
         .add-step-btn {
-            background-color: #70AD47;
+            background: linear-gradient(135deg, #70AD47 0%, #5a9038 100%);
             color: white;
-            padding: 10px 20px;
+            padding: 14px 30px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
-            font-size: 14px;
+            margin-top: 15px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(112, 173, 71, 0.3);
         }
         
         .add-step-btn:hover {
-            background-color: #5a9038;
+            background: linear-gradient(135deg, #5a9038 0%, #4a7a2e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(112, 173, 71, 0.4);
         }
         
         .remove-step-btn {
-            background-color: #ff4444;
+            background-color: #ff6b6b;
             color: white;
-            padding: 5px 10px;
+            padding: 7px 14px;
             border: none;
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
         }
         
         .remove-step-btn:hover {
-            background-color: #cc0000;
+            background-color: #ff5252;
+            transform: scale(1.05);
+            box-shadow: 0 3px 8px rgba(255, 82, 82, 0.3);
         }
         
         .submit-section {
             margin-top: 40px;
             text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
         }
         
         .submit-btn {
-            background-color: #4472C4;
+            background: linear-gradient(135deg, #4472C4 0%, #365a9c 100%);
             color: white;
-            padding: 15px 40px;
+            padding: 16px 45px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
             margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(68, 114, 196, 0.3);
         }
         
         .submit-btn:hover {
-            background-color: #365a9c;
+            background: linear-gradient(135deg, #365a9c 0%, #2a4a7c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(68, 114, 196, 0.4);
         }
         
         .export-btn {
-            background-color: #70AD47;
+            background: linear-gradient(135deg, #70AD47 0%, #5a9038 100%);
             color: white;
-            padding: 15px 40px;
+            padding: 16px 45px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
             margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(112, 173, 71, 0.3);
         }
         
         .export-btn:hover {
-            background-color: #5a9038;
+            background: linear-gradient(135deg, #5a9038 0%, #4a7a2e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(112, 173, 71, 0.4);
         }
         
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            font-weight: normal;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 5px;
-        }
-        
-        .signature-box {
-            border: 1px solid #ddd;
-            padding: 40px 20px;
-            text-align: center;
-            background-color: #fafafa;
-            border-radius: 4px;
-        }
-        
-        /* 截圖上傳樣式 */
-        .screenshot-input {
-            width: 100%;
-            font-size: 12px;
-            padding: 5px;
-            margin-bottom: 5px;
-        }
-        
-        .image-preview {
-            margin-top: 8px;
-            text-align: center;
-            min-height: 50px;
-        }
-        
-        .image-preview img {
-            max-width: 100%;
-            max-height: 200px;
-            border: 2px solid #4472C4;
-            border-radius: 4px;
-            margin-top: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .image-preview .image-info {
-            font-size: 11px;
-            color: #666;
-            margin-top: 5px;
-            padding: 3px;
-            background-color: #f0f0f0;
-            border-radius: 3px;
-        }
-        
-        .remove-image-btn {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 3px;
-            font-size: 11px;
-            cursor: pointer;
-            margin-top: 8px;
+        .info-badge {
             display: inline-block;
-        }
-        
-        .remove-image-btn:hover {
-            background-color: #ee5555;
+            background: linear-gradient(135deg, #FFC000 0%, #FFD54F 100%);
+            color: #333;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(255, 192, 0, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>專案流程確認書</h1>
+            <h1>🗂️ 專案流程確認書</h1>
             <div class="header-info">
-                <div>
-                    <label>建立日期：</label>
-                    <input type="date" id="createDate" style="padding: 5px; border-radius: 3px; border: 1px solid #fff;">
-                </div>
-                <div>
-                    <label>文件版本：</label>
-                    <input type="text" id="version" value="VER1.0" style="padding: 5px; border-radius: 3px; border: 1px solid #fff; width: 100px;">
-                </div>
+                <span>📅 建立日期：<span id="displayDate">2026-02-12</span></span>
+                <span>📋 版本：<input type="text" id="versionDisplay" value="VER1.0" style="border: none; background: transparent; color: white; width: 80px; font-weight: bold;"></span>
             </div>
         </div>
 
-        <!-- 基本資訊 -->
-        <div class="section">
-            <div class="section-title">基本資訊</div>
-            
-            <div class="form-group">
-                <label>專案名稱 *</label>
-                <input type="text" id="projectName" placeholder="請輸入專案名稱" required>
-            </div>
-            
-            <div class="form-group">
-                <label>專案目的 *</label>
-                <textarea id="projectPurpose" placeholder="請描述專案目的、預期效益及解決的問題" required></textarea>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>登入系統</label>
-                    <input type="text" id="loginSystems" placeholder="例：CRM、Smart ERP、Google Chrome">
-                </div>
+        <form id="projectForm">
+            <!-- 基本資訊 -->
+            <div class="section">
+                <div class="section-title">📝 基本資訊</div>
                 
-                <div class="form-group">
-                    <label>系統權限需求</label>
-                    <textarea id="systemPermissions" placeholder="請列出所需的系統權限"></textarea>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>建立日期 *</label>
+                        <input type="date" id="createDate" value="2026-02-12" required>
+                    </div>
+                    <div class="form-group">
+                        <label>文件版本 *</label>
+                        <input type="text" id="version" value="VER1.0" required>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="form-row">
+
+                <div class="form-group">
+                    <label>專案名稱 *</label>
+                    <input type="text" id="projectName" placeholder="請輸入專案名稱" required>
+                </div>
+
+                <div class="form-group">
+                    <label>專案目的 *</label>
+                    <textarea id="projectPurpose" placeholder="請描述專案目的與預期效益" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>登入系統 *</label>
+                    <input type="text" id="loginSystems" placeholder="例如：CRM、ERP、Smart 系統等" required>
+                </div>
+
+                <div class="form-group">
+                    <label>系統權限需求 *</label>
+                    <textarea id="systemPermissions" placeholder="請說明所需的系統權限" required></textarea>
+                </div>
+
                 <div class="form-group">
                     <label>檔案命名規則</label>
-                    <input type="text" id="fileNaming" placeholder="例：{SO_ID}_{日期}_{文件類型}.pdf">
+                    <input type="text" id="fileNaming" placeholder="例如：{SO_ID}_{日期}_{文件類型}.pdf">
                 </div>
-                
+
                 <div class="form-group">
                     <label>作業排程</label>
-                    <input type="text" id="schedule" placeholder="例：每日 09:00 執行">
+                    <input type="text" id="schedule" placeholder="例如：每日 8:00 AM 執行">
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label>輸出格式</label>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="outputFormat" value="PDF"> PDF</label>
-                    <label><input type="checkbox" name="outputFormat" value="Excel"> Excel</label>
-                    <label><input type="checkbox" name="outputFormat" value="CSV"> CSV</label>
-                    <label><input type="checkbox" name="outputFormat" value="其他"> 其他</label>
-                </div>
-            </div>
-        </div>
 
-        <!-- 流程步驟 -->
-        <div class="section">
-            <div class="section-title">流程步驟明細</div>
-            
-            <table class="steps-table" id="stepsTable">
-                <thead>
-                    <tr>
-                        <th style="width: 40px;">No.</th>
-                        <th style="width: 100px;">系統名稱</th>
-                        <th style="width: 120px;">手順名稱</th>
-                        <th style="width: 250px;">手順詳細</th>
-                        <th style="width: 120px;">截圖</th>
-                        <th style="width: 150px;">輸入(URL)</th>
-                        <th style="width: 180px;">例外處理</th>
-                        <th style="width: 150px;">備註</th>
-                        <th style="width: 60px;">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="stepsBody">
-                    <tr>
-                        <td>1</td>
-                        <td><input type="text" placeholder="系統名稱"></td>
-                        <td><input type="text" placeholder="手順名稱"></td>
-                        <td><textarea placeholder="詳細說明步驟內容"></textarea></td>
-                        <td>
-                            <input type="file" accept="image/*" class="screenshot-input" onchange="previewImage(this)">
-                            <div class="image-preview"></div>
-                        </td>
-                        <td><input type="text" placeholder="URL或路徑"></td>
-                        <td><textarea placeholder="異常時處理方式"></textarea></td>
-                        <td><input type="text" placeholder="備註"></td>
-                        <td><button type="button" class="remove-step-btn" onclick="removeStep(this)">刪除</button></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <button type="button" class="add-step-btn" onclick="addStep()">+ 新增步驟</button>
-        </div>
-
-        <!-- 簽核欄位 -->
-        <div class="section">
-            <div class="section-title">簽核</div>
-            
-            <div class="form-row">
                 <div class="form-group">
-                    <label>申請人</label>
-                    <input type="text" id="applicant" placeholder="姓名">
-                </div>
-                <div class="form-group">
-                    <label>部門</label>
-                    <input type="text" id="department" placeholder="部門">
+                    <label>輸出格式</label>
+                    <input type="text" id="outputFormat" placeholder="例如：PDF、Excel、CSV">
                 </div>
             </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>主管簽核</label>
-                    <div class="signature-box">
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: inline-block; width: 60px; text-align: left;">簽名：</label>
-                            <input type="text" id="managerSignature" placeholder="請輸入姓名" style="width: 200px; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
-                        <div>
-                            <label style="display: inline-block; width: 60px; text-align: left;">日期：</label>
-                            <input type="date" id="managerDate" style="width: 200px; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
+
+            <!-- 流程步驟 -->
+            <div class="section">
+                <div class="section-title">🔄 流程步驟詳細說明</div>
+                
+                <div class="table-container">
+                    <table class="steps-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 3%;">No.</th>
+                                <th style="width: 8%;">系統名稱</th>
+                                <th style="width: 10%;">手順名稱</th>
+                                <th style="width: 18%;">手順詳細</th>
+                                <th style="width: 22%;">截圖</th>
+                                <th style="width: 12%;">輸入(URL)</th>
+                                <th style="width: 15%;">例外處理</th>
+                                <th style="width: 7%;">備註</th>
+                                <th style="width: 5%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stepsBody">
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" placeholder="系統名稱"></td>
+                                <td><input type="text" placeholder="手順名稱"></td>
+                                <td><textarea placeholder="詳細說明步驟內容"></textarea></td>
+                                <td class="screenshot-cell">
+                                    <input type="file" accept="image/*" class="screenshot-input" onchange="previewImage(this)">
+                                    <div class="image-preview"></div>
+                                </td>
+                                <td><input type="text" placeholder="URL或路徑"></td>
+                                <td><textarea placeholder="異常時處理方式"></textarea></td>
+                                <td><input type="text" placeholder="備註"></td>
+                                <td><button type="button" class="remove-step-btn" onclick="removeStep(this)">刪除</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button type="button" class="add-step-btn" onclick="addStep()">➕ 新增步驟</button>
+            </div>
+
+            <!-- 簽核區 -->
+            <div class="section">
+                <div class="section-title">✍️ 簽核資訊</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>申請人 *</label>
+                        <input type="text" id="applicant" placeholder="請輸入申請人姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label>部門 *</label>
+                        <input type="text" id="department" placeholder="請輸入部門名稱" required>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>IT 確認</label>
-                    <div class="signature-box">
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: inline-block; width: 60px; text-align: left;">簽名：</label>
-                            <input type="text" id="itSignature" placeholder="請輸入姓名" style="width: 200px; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
-                        <div>
-                            <label style="display: inline-block; width: 60px; text-align: left;">日期：</label>
-                            <input type="date" id="itDate" style="width: 200px; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
-                        </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>申請日期</label>
+                        <input type="date" id="applicationDate" value="2026-02-12">
+                    </div>
+                    <div class="form-group">
+                        <label>聯絡方式</label>
+                        <input type="text" id="contact" placeholder="分機或 Email">
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- 提交按鈕 -->
-        <div class="submit-section">
-            <button type="button" class="export-btn" onclick="loadSampleData()" style="background-color: #FFC000;">📋 載入範例資料</button>
-            <button type="button" class="submit-btn" onclick="previewForm()">預覽表單</button>
-            <button type="button" class="export-btn" onclick="exportToExcel()">匯出為 Excel</button>
-        </div>
+                <div style="border-top: 2px solid #e0e0e0; margin: 25px 0; padding-top: 25px;">
+                    <h3 style="color: #4472C4; margin-bottom: 15px;">📋 審核流程</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>直屬主管簽名</label>
+                        <input type="text" id="managerSignature" placeholder="主管簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>簽核日期</label>
+                        <input type="date" id="managerDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>部門主管簽名</label>
+                        <input type="text" id="deptManagerSignature" placeholder="部門主管簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>簽核日期</label>
+                        <input type="date" id="deptManagerDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>IT 部門確認簽名</label>
+                        <input type="text" id="itSignature" placeholder="IT 確認簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>確認日期</label>
+                        <input type="date" id="itDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>IT 主管核准</label>
+                        <input type="text" id="itManagerSignature" placeholder="IT 主管簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>核准日期</label>
+                        <input type="date" id="itManagerDate">
+                    </div>
+                </div>
+
+                <div style="border-top: 2px dashed #FFC000; margin: 25px 0; padding-top: 25px;">
+                    <h3 style="color: #FFC000; margin-bottom: 15px;">👔 最高決策層核准</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label style="color: #D35400; font-size: 15px;">💼 老闆 / CEO 最終核准</label>
+                        <input type="text" id="ceoSignature" placeholder="老闆簽名" style="border: 2px solid #FFC000; background-color: #FFFEF5;">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #D35400;">最終核准日期</label>
+                        <input type="date" id="ceoDate" style="border: 2px solid #FFC000; background-color: #FFFEF5;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="color: #D35400;">老闆指示 / 特別交辦事項</label>
+                    <textarea id="ceoNotes" rows="2" placeholder="請填寫老闆的特別指示" style="border: 2px solid #FFC000; background-color: #FFFEF5;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>審核意見 / 備註</label>
+                    <textarea id="approvalNotes" rows="3" placeholder="請填寫審核意見或特別注意事項"></textarea>
+                </div>
+            </div>
+
+            <!-- 提交按鈕 -->
+            <div class="submit-section">
+                <button type="button" class="submit-btn" onclick="previewForm()">👁️ 預覽表單</button>
+                <button type="button" class="export-btn" onclick="exportToExcel()">📊 匯出資料</button>
+                <button type="submit" class="submit-btn">📤 提交表單</button>
+            </div>
+        </form>
     </div>
 
     <script>
-        // 設置今天的日期
-        document.getElementById('createDate').valueAsDate = new Date();
-        
         let stepCounter = 1;
-        
-        // 載入範例資料
-        function loadSampleData() {
-            if (!confirm('確定要載入範例資料嗎？這將會覆蓋目前已填寫的內容。')) {
-                return;
-            }
-            
-            // 填入基本資訊
-            document.getElementById('projectName').value = 'CRM 附件文件自動下載與整理專案';
-            document.getElementById('projectPurpose').value = '本專案旨在透過 RPA（UiPath）流程自動化方式，完成 CRM 附件文件的自動展開、下載與整理，降低人工處理時間並減少錯誤率。\n系統將自動讀取 CRM 中之附件資訊、執行 Download SO 文件操作，並依規則分類、命名與存放相關檔案，以建立標準化的作業流程，提高作業效率與資料一致性。';
-            document.getElementById('loginSystems').value = 'CRM、Smart ERP 系統、Google Chrome';
-            document.getElementById('systemPermissions').value = 'CRM 附件讀取權限、固定帳號或「機器人帳號」、Smart ERP 系統（若需要查詢比對）、Windows 執行權限（UI 自動化權限）、Google Chrome 插件 / 設定（如下載自動化）';
-            document.getElementById('fileNaming').value = '{SO_ID}_{日期}_{文件類型}.pdf';
-            document.getElementById('schedule').value = '每工作天 09:00 執行';
-            
-            // 勾選輸出格式
-            document.querySelectorAll('input[name="outputFormat"]').forEach(cb => {
-                if (cb.value === 'PDF' || cb.value === 'Excel') {
-                    cb.checked = true;
-                }
-            });
-            
-            // 填入申請人資訊
-            document.getElementById('applicant').value = '王小明';
-            document.getElementById('department').value = 'IT 部門';
-            
-            // 清空現有步驟
-            document.getElementById('stepsBody').innerHTML = '';
-            stepCounter = 0;
-            
-            // 範例步驟資料
-            const sampleSteps = [
-                {
-                    system: 'CRM',
-                    name: '登入系統',
-                    detail: '每工作天09:00 RPA發Outlook 通知到群組，訊息內容+<確認放行>按鈕\n\nCRM觸發RPA防呆：\n①當天只能觸發當天的按鈕(無法觸發前日期按鈕)\n②當天已觸發按鈕，按鈕反深灰(不能重複按)',
-                    url: '',
-                    exception: 'CRM_RPA失敗，QCT會人工介入作業',
-                    remark: ''
-                },
-                {
-                    system: 'CRM',
-                    name: '登入CRM',
-                    detail: 'CRM附文件RPA從流程6開始\n\n開啟CRM系統→登入帳密\n帳號：000044\n密碼：000044',
-                    url: '',
-                    exception: 'CRM_RPA失敗，QCT會人工介入作業',
-                    remark: '利用現有RPA: CRM F2的資料'
-                },
-                {
-                    system: 'CRM',
-                    name: 'CRM資料下載',
-                    detail: '選單 "Shipment Type" 選取QCT→ 點選F12 Search',
-                    url: 'http://192.168.0.17/WebCRM/src/_Common/AppUtil/FrameSet/TreeMainFrame.aspx',
-                    exception: '網頁未正常反應重整頁面2次未成功→報錯IT',
-                    remark: ''
-                },
-                {
-                    system: '本機',
-                    name: '開啟CRM資料',
-                    detail: '開啟「修改日期/時間最新」的一筆，檔名：TIW Shipping data(系統時間序號)\n\nRPA用Excel打開原始TIW Shipping data.csv',
-                    url: '',
-                    exception: 'Excel Error：記憶體不夠、檔案內容空白→報錯IT、報錯CS',
-                    remark: '如果CRM RPA未執行，修復前會由QCT手動下載匯入'
-                },
-                {
-                    system: '本機',
-                    name: '篩選對象',
-                    detail: '「TIW Shipping data」Excel檔案中，E欄Global Customer CD\n→RPA利用「CS附文件客戶清單表」I欄Tcode，篩選出附文件對象',
-                    url: '',
-                    exception: 'Excel Error：記憶體不夠、檔案內容空白→報錯IT、報錯CS',
-                    remark: ''
-                }
-            ];
-            
-            // 新增範例步驟
-            sampleSteps.forEach(step => {
-                addStep();
-                const lastRow = document.querySelector('#stepsBody tr:last-child');
-                const cells = lastRow.cells;
-                
-                cells[1].querySelector('input').value = step.system;
-                cells[2].querySelector('input').value = step.name;
-                cells[3].querySelector('textarea').value = step.detail;
-                cells[5].querySelector('input').value = step.url;
-                cells[6].querySelector('textarea').value = step.exception;
-                cells[7].querySelector('input').value = step.remark;
-            });
-            
-            alert('✅ 範例資料已載入！\n您可以修改內容或上傳截圖。');
-        }
-        
-        // 圖片預覽功能
-        function previewImage(input) {
-            const preview = input.parentElement.querySelector('.image-preview');
-            
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                const reader = new FileReader();
-                
-                // 檢查檔案大小 (轉換為 MB)
-                const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                
-                reader.onload = function(e) {
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" alt="截圖預覽">
-                        <div class="image-info">
-                            📎 ${file.name}<br>
-                            📏 大小: ${fileSizeMB} MB
-                        </div>
-                        <button type="button" class="remove-image-btn" onclick="removeImage(this)">✕ 移除圖片</button>
-                    `;
-                }
-                
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        // 移除圖片
-        function removeImage(btn) {
-            const td = btn.closest('td');
-            const input = td.querySelector('.screenshot-input');
-            const preview = td.querySelector('.image-preview');
-            
-            input.value = '';
-            preview.innerHTML = '';
-        }
-        
+
         // 新增步驟
         function addStep() {
             stepCounter++;
@@ -570,7 +514,7 @@
                 <td><input type="text" placeholder="系統名稱"></td>
                 <td><input type="text" placeholder="手順名稱"></td>
                 <td><textarea placeholder="詳細說明步驟內容"></textarea></td>
-                <td>
+                <td class="screenshot-cell">
                     <input type="file" accept="image/*" class="screenshot-input" onchange="previewImage(this)">
                     <div class="image-preview"></div>
                 </td>
@@ -582,14 +526,16 @@
             
             updateStepNumbers();
         }
-        
+
         // 刪除步驟
         function removeStep(btn) {
-            const row = btn.closest('tr');
-            row.remove();
-            updateStepNumbers();
+            if (confirm('確定要刪除此步驟嗎？')) {
+                const row = btn.closest('tr');
+                row.remove();
+                updateStepNumbers();
+            }
         }
-        
+
         // 更新步驟編號
         function updateStepNumbers() {
             const rows = document.querySelectorAll('#stepsBody tr');
@@ -598,121 +544,106 @@
             });
             stepCounter = rows.length;
         }
-        
+
+        // 圖片預覽
+        function previewImage(input) {
+            const preview = input.parentElement.querySelector('.image-preview');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="新增截圖" onclick="this.parentElement.innerHTML=''">
+                        <div style="text-align: center; margin-top: 8px; font-size: 11px; color: #70AD47; font-weight: bold;">
+                            ✓ ${file.name}
+                        </div>
+                    `;
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
         // 預覽表單
         function previewForm() {
             const formData = collectFormData();
-            
-            let preview = `
-專案流程確認書
-=====================================
-
-【基本資訊】
-建立日期：${formData.createDate}
-文件版本：${formData.version}
-專案名稱：${formData.projectName}
-專案目的：${formData.projectPurpose}
-登入系統：${formData.loginSystems}
-系統權限需求：${formData.systemPermissions}
-檔案命名規則：${formData.fileNaming}
-作業排程：${formData.schedule}
-輸出格式：${formData.outputFormat}
-
-【流程步驟】
-${formData.steps.map(step => `
-步驟 ${step.no}
-系統名稱：${step.system}
-手順名稱：${step.name}
-手順詳細：${step.detail}
-截圖：${step.screenshot}
-輸入(URL)：${step.url}
-例外處理：${step.exception}
-備註：${step.remark}
-`).join('\n---\n')}
-
-【簽核資訊】
-申請人：${formData.applicant}
-部門：${formData.department}
-
-主管簽核：
-  簽名：${formData.managerSignature}
-  日期：${formData.managerDate}
-
-IT 確認：
-  簽名：${formData.itSignature}
-  日期：${formData.itDate}
-`;
+            let preview = `📋 專案流程確認書\n$============================================================\n\n`;
+            preview += `專案名稱：${formData.projectName || '(未填寫)'}\n`;
+            preview += `建立日期：${formData.createDate}\n`;
+            preview += `文件版本：${formData.version}\n\n`;
+            preview += `申請人：${formData.applicant || '(未填寫)'}\n`;
+            preview += `部門：${formData.department || '(未填寫)'}\n\n`;
+            preview += `流程步驟：${formData.steps.length} 個\n`;
             
             alert(preview);
         }
-        
+
         // 收集表單資料
         function collectFormData() {
-            const data = {
+            return {
                 createDate: document.getElementById('createDate').value,
                 version: document.getElementById('version').value,
                 projectName: document.getElementById('projectName').value,
                 projectPurpose: document.getElementById('projectPurpose').value,
-                loginSystems: document.getElementById('loginSystems').value,
-                systemPermissions: document.getElementById('systemPermissions').value,
-                fileNaming: document.getElementById('fileNaming').value,
-                schedule: document.getElementById('schedule').value,
-                outputFormat: Array.from(document.querySelectorAll('input[name="outputFormat"]:checked')).map(cb => cb.value).join(', '),
                 applicant: document.getElementById('applicant').value,
                 department: document.getElementById('department').value,
-                managerSignature: document.getElementById('managerSignature').value,
-                managerDate: document.getElementById('managerDate').value,
-                itSignature: document.getElementById('itSignature').value,
-                itDate: document.getElementById('itDate').value,
-                steps: []
-            };
-            
-            const rows = document.querySelectorAll('#stepsBody tr');
-            rows.forEach((row, index) => {
-                const cells = row.cells;
-                const screenshotInput = cells[4].querySelector('.screenshot-input');
-                const hasScreenshot = screenshotInput && screenshotInput.files.length > 0;
-                
-                data.steps.push({
+                steps: Array.from(document.querySelectorAll('#stepsBody tr')).map((row, index) => ({
                     no: index + 1,
-                    system: cells[1].querySelector('input').value,
-                    name: cells[2].querySelector('input').value,
-                    detail: cells[3].querySelector('textarea').value,
-                    screenshot: hasScreenshot ? screenshotInput.files[0].name : '無',
-                    url: cells[5].querySelector('input').value,
-                    exception: cells[6].querySelector('textarea').value,
-                    remark: cells[7].querySelector('input').value
-                });
-            });
-            
-            return data;
+                    system: row.cells[1].querySelector('input').value,
+                    name: row.cells[2].querySelector('input').value,
+                    detail: row.cells[3].querySelector('textarea').value
+                }))
+            };
         }
-        
-        // 匯出為 Excel
+
+        // 匯出資料
         function exportToExcel() {
-            alert('匯出功能需要後端支援或使用 SheetJS 等函式庫\n\n您可以：\n1. 複製表單內容到 Excel\n2. 使用「預覽表單」查看資料\n3. 整合 SheetJS 實現匯出功能');
-            
-            // 如果要實現真正的 Excel 匯出，可以使用 SheetJS (xlsx)
-            // 這裡提供基本的 CSV 匯出作為替代方案
             const formData = collectFormData();
-            let csv = '專案流程確認書\n\n';
+            
+            if (!formData.projectName) {
+                alert('請先填寫專案名稱！');
+                return;
+            }
+            
+            let csv = '\ufeff專案流程確認書\n\n';
             csv += `建立日期,${formData.createDate}\n`;
-            csv += `文件版本,${formData.version}\n`;
             csv += `專案名稱,${formData.projectName}\n`;
-            csv += `專案目的,${formData.projectPurpose}\n\n`;
-            csv += 'No.,系統名稱,手順名稱,手順詳細,截圖,輸入(URL),例外處理,備註\n';
+            csv += `文件版本,${formData.version}\n`;
+            csv += `申請人,${formData.applicant}\n`;
+            csv += `部門,${formData.department}\n\n`;
+            csv += 'No.,系統名稱,手順名稱,手順詳細\n';
             
             formData.steps.forEach(step => {
-                csv += `${step.no},"${step.system}","${step.name}","${step.detail}","${step.screenshot}","${step.url}","${step.exception}","${step.remark}"\n`;
+                const detail = (step.detail || '').replace(/"/g, '""');
+                csv += `${step.no},"${step.system}","${step.name}","${detail}"\n`;
             });
             
-            // 下載 CSV
-            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `專案流程確認書_${formData.projectName}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `專案流程確認書_${formData.projectName || '未命名'}_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
+
+        // 表單提交
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = collectFormData();
+            
+            if (!formData.projectName || !formData.applicant || !formData.department) {
+                alert('⚠️ 請填寫必填欄位！\n\n必填項目：\n- 專案名稱\n- 申請人\n- 部門');
+                return;
+            }
+            
+            alert(`✅ 表單已提交！\n\n專案：${formData.projectName}\n申請人：${formData.applicant}\n步驟數：${formData.steps.length}`);
+        });
+
+        // 同步更新版本號
+        document.getElementById('version').addEventListener('input', function() {
+            document.getElementById('versionDisplay').value = this.value;
+        });
     </script>
 </body>
 </html>
