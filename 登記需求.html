@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA 需求規格書 (使用者填寫版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; }
+            textarea, input { border: 1px solid #ddd !important; resize: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 py-8 text-gray-800 font-sans">
+
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        
+        <div class="flex justify-between items-start mb-8 border-b pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">RPA 自動化流程需求規格書</h1>
+                <p class="text-gray-600 text-sm mt-1">使用者填寫版 v1.2 | 已加大填寫空間</p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition shadow">
+                <i class="fa-solid fa-print mr-2"></i> 列印 / 另存 PDF
+            </button>
+        </div>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-blue-600 pl-3 mb-4">1. 專案基本資料 (Project Profile)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">作業名稱</label>
+                    <input type="text" class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="例如：每日下載 MISUMI 訂單附文件">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">填寫部門 / 填寫人</label>
+                    <input type="text" class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="例如：CS 客服部 / 王小明">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">作業頻率與時間</label>
+                    <input type="text" class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="例如：每個工作日 09:00 AM">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">觸發條件</label>
+                    <input type="text" class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="例如：時間到自動執行，或是收到某封 Email 後執行">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">作業目的 (為什麼要做這件事？)</label>
+                    <textarea class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" rows="6" placeholder="例如：為了整理出貨明細給倉庫，目前人工處理耗時且容易看錯..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-blue-600 pl-3 mb-4">2. 系統與權限 (Systems & Access)</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 border" id="systemTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">系統名稱</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">網址 / 程式路徑</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">登入帳號</th>
+                            <th class="px-4 py-2 w-10 no-print"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-2 py-2"><input type="text" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500" placeholder="MISUMI Download Site"></td>
+                            <td class="px-2 py-2"><input type="text" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500" placeholder="https://msmdl.misumi.jp/..."></td>
+                            <td class="px-2 py-2"><input type="text" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500" placeholder="TI2079"></td>
+                            <td class="px-2 py-2 no-print text-center"><button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button onclick="addSystemRow()" class="no-print mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition">
+                    <i class="fa-solid fa-plus mr-1"></i> 新增系統
+                </button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-blue-600 pl-3 mb-4">3. 詳細作業步驟 (Step-by-Step Flow)</h2>
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 text-sm text-yellow-700">
+                <strong>填寫撇步：</strong>想像您正在教新人。若有判斷邏輯（如：如果是A則做B），請寫在「規則/例外」欄。
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 border" id="stepTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-12">序號</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-32">操作畫面</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-1/3">動作描述</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-1/3">規則 / 例外狀況</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-24">截圖編號</th>
+                            <th class="px-4 py-2 w-10 no-print"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-2 py-2 text-center text-gray-500 font-bold align-top pt-3">1</td>
+                            <td class="px-2 py-2 align-top"><textarea rows="4" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500 resize-y" placeholder="Chrome"></textarea></td>
+                            <td class="px-2 py-2 align-top"><textarea rows="4" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500 resize-y" placeholder="開啟 MISUMI 下載網站..."></textarea></td>
+                            <td class="px-2 py-2 align-top"><textarea rows="4" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500 resize-y" placeholder="若失敗..."></textarea></td>
+                            <td class="px-2 py-2 align-top"><input type="text" class="w-full border-gray-200 rounded p-1 focus:ring-blue-500 focus:border-blue-500" placeholder="圖 1"></td>
+                            <td class="px-2 py-2 no-print text-center align-top pt-3"><button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button onclick="addStepRow()" class="no-print mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition">
+                    <i class="fa-solid fa-plus mr-1"></i> 新增步驟
+                </button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-blue-600 pl-3 mb-4">4. 資料處理與邏輯 (Data Logic)</h2>
+            <div class="space-y-6">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="block text-base font-bold text-gray-800 mb-2">A. 檔案命名與存檔規則</label>
+                    <p class="text-sm text-gray-500 mb-2">產出的檔案要叫什麼名字？存在哪裡？</p>
+                    <textarea class="w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" rows="6" placeholder="例如：
+1. 檔名：附文件明細_{年月日}.xlsx
+2. 存檔路徑：SharePoint > TIW_RPA_Docs > 每日報表"></textarea>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="block text-base font-bold text-gray-800 mb-2">B. 篩選與過濾條件 (保留與刪除)</label>
+                    <p class="text-sm text-gray-500 mb-2">在 Excel 中要刪除哪些資料？保留哪些資料？</p>
+                    <textarea class="w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" rows="10" placeholder="例如：
+1. 篩選 K 欄 (VSD)：只保留「今天」和「明天」的日期。
+2. 刪除 Stop Shipment 訂單：
+   若 AN 欄 = TRUE 且 D 欄 = TP，則整列刪除。"></textarea>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <label class="block text-base font-bold text-gray-800 mb-2">C. Email 發信內容 (若需要)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <input type="text" class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="收件人: tiw-cs@...">
+                        <input type="text" class="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="主旨: 附文件明細_{年月日}">
+                    </div>
+                    <textarea class="w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" rows="12" placeholder="親愛的 CS 團隊：
+
+今日附文件明細已整理完畢，請查收附件。
+
+謝謝。"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-lg font-bold text-gray-800 border-l-4 border-blue-600 pl-3 mb-4">5. 異常處理 (Exception Handling)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">當機器人出錯時，您希望如何收到通知？</label>
+                    <div class="space-y-2 bg-gray-50 p-4 rounded border">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="text-gray-700">截圖並 Email 給負責人</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="text-gray-700">發送 Teams 訊息到群組</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">若機器人無法修復，人工接手的標準動作是？</label>
+                    <textarea class="w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" rows="6" placeholder="例如：
+1. CS 人員手動登入網站下載 CSV。
+2. 更新 SharePoint 上的雲端帳密表。
+3. 通知 IT 部門重啟機器人。"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <div class="border-t pt-4 text-center text-sm text-gray-500 no-print">
+            <p>填寫完畢後，請點擊右上角「列印 / 另存 PDF」按鈕儲存檔案。</p>
+        </div>
+
+    </div>
+
+    <script>
+        function deleteRow(btn) {
+            var row = btn.parentNode.parentNode;
+            if(row.parentNode.rows.length > 1) {
+                row.parentNode.removeChild(row);
+                updateStepNumbers();
+            } else {
+                alert("至少需要保留一列，無法刪除。");
+            }
+        }
+
+        function addSystemRow() {
+            var table = document.getElementById("systemTable").getElementsByTagName('tbody')[0];
+            var newRow = table.rows[0].cloneNode(true);
+            var inputs = newRow.getElementsByTagName('input');
+            for(var i=0; i<inputs.length; i++) { inputs[i].value = ''; }
+            table.appendChild(newRow);
+        }
+
+        function addStepRow() {
+            var table = document.getElementById("stepTable").getElementsByTagName('tbody')[0];
+            var newRow = table.rows[0].cloneNode(true);
+            var inputs = newRow.getElementsByTagName('input');
+            for(var i=0; i<inputs.length; i++) { inputs[i].value = ''; }
+            var textareas = newRow.getElementsByTagName('textarea');
+            for(var i=0; i<textareas.length; i++) { textareas[i].value = ''; }
+            table.appendChild(newRow);
+            updateStepNumbers();
+        }
+
+        function updateStepNumbers() {
+            var table = document.getElementById("stepTable").getElementsByTagName('tbody')[0];
+            for (var i = 0, row; row = table.rows[i]; i++) {
+                row.cells[0].innerText = i + 1;
+            }
+        }
+    </script>
+</body>
+</html>

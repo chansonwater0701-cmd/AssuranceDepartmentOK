@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA 需求規格書 - 前10步驟範例</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; -webkit-print-color-adjust: exact; }
+            textarea { border: none !important; resize: none; overflow: hidden; }
+            .step-card { break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        }
+        .image-drop-zone {
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background-color: #f3f4f6; /* Gray-100 */
+            border: 2px dashed #9ca3af; /* Gray-400 */
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-drop-zone:hover {
+            border-color: #2563eb; /* Blue-600 */
+            background-color: #eff6ff; /* Blue-50 */
+        }
+        .image-drop-zone img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+        .image-drop-zone.has-image {
+            border-style: solid;
+            background-color: white;
+        }
+        .placeholder-text {
+            pointer-events: none;
+            text-align: center;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 py-8 text-gray-800 font-sans">
+
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        
+        <div class="flex justify-between items-start mb-8 border-b pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">RPA 自動化流程需求規格書</h1>
+                <p class="text-blue-600 font-bold mt-1">【前 10 步驟範例】MISUMI Download Site 資料處理</p>
+                <p class="text-xs text-gray-500 mt-1">文字已自動填入，請點擊灰色框框貼上 (Ctrl+V) 照片。</p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition">
+                <i class="fa-solid fa-file-pdf mr-2"></i> 轉存 PDF
+            </button>
+        </div>
+
+        <div class="space-y-8">
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 1</span>
+                        <span class="font-bold text-blue-800">登入 MISUMI Download Site</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="4">每個工作日，下午15:00 執行。
+登入 MISUMI Download Site
+帳號：TI2079
+密碼：P@ssw0rd</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="3">網頁未正常反應重整頁面2次未成功、系統欄位變更位置 →【報錯IT】【報錯CS】
+帳密錯誤重試2次失敗 →【報錯CS】</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (登入畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 2</span>
+                        <span class="font-bold text-blue-800">切換至 Download 頁面</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="2">點上方選單 > Download</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="2">網頁未正常反應重整頁面2次未成功 →【報錯IT】【報錯CS】</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (選單畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 3</span>
+                        <span class="font-bold text-blue-800">下載 RPA 附文件資料</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="3">列表中找到 Download title【RPA】附文件資料。
+按 Download 按鈕。</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="4">如果 Download 按鈕反灰，代表資料處理中 → 等待 RPA 判別按鈕變藍色。
+等待 10 分鐘仍反灰 → 按右上 Update 兩次重整 → 失敗則【報錯IT】</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (下載按鈕畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 4</span>
+                        <span class="font-bold text-green-700">打開 CSV 檔案</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="3">打開下載好的壓縮檔案夾。
+點兩下打開裡面的 CSV 檔。</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="3">RPA 先檢查下載檔案內容如為空 →【報錯IT】【報錯CS】
+如無法立即排除，CS 暫時人工用 NEWTON 作業。</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (打開檔案畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 5</span>
+                        <span class="font-bold text-green-700">Excel 篩選資料 (VSD)</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="4">篩選 K 欄 VSD，只保留「工作日當天」+「1工作日」的日期資料。
+其餘資料整列選取刪除 (保留表頭)。
+Sheet 命名：出貨明細。</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="2">檔案記憶體不夠、跳出意想外視窗 →【報錯IT】</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (篩選 VSD 畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 6</span>
+                        <span class="font-bold text-green-700">Excel 排序資料</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="3">1. 先點 F 欄篩選，排序資料 (A到Z)。
+2. 再點 D 欄篩選，排序資料 (A到Z)。</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="2">Excel 檔案無法運作 →【報錯IT】</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (排序畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 7</span>
+                        <span class="font-bold text-green-700">插入樞紐分析表</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="2">點選上方 > 插入 > 樞紐分析表 (從表格/範圍)。</textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-red-500 uppercase">例外處理</label>
+                        <textarea class="w-full bg-red-50 border border-red-100 text-red-700 rounded p-2 text-sm" rows="2">跳出意想外視窗 →【報錯IT】</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (插入樞紐畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 8</span>
+                        <span class="font-bold text-green-700">建立樞紐工作表</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="2">出現選擇視窗 > 新增工作表 > 確定。</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (選擇視窗畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 9</span>
+                        <span class="font-bold text-green-700">選擇樞紐欄位</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="5">「列」的值，依序拖入：
+1. CUSTOMER_NAME_NATIVE1
+2. SO_SLIP_NUMBER
+3. CUSTOMER_PO_REFERENCE</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (欄位選擇畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+            <div class="step-card grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded mr-2">No. 10</span>
+                        <span class="font-bold text-green-700">設定版面配置</span>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-500 uppercase">動作詳細</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-200 rounded p-2 text-sm" rows="3">點選上方 > 樞紐分析表 > 選項 > 顯示。
+勾選「古典樞紐分析表版面配置」> 確定。</textarea>
+                    </div>
+                </div>
+                <div class="image-drop-zone rounded" tabindex="0">
+                    <div class="placeholder-text">
+                        <i class="fa-solid fa-image text-3xl mb-2"></i><br>
+                        點擊此處 -> 按 Ctrl+V 貼上<br>
+                        (選項設定畫面)
+                    </div>
+                    <img src="" class="hidden">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="border-t pt-4 text-center text-sm text-gray-500 no-print mt-8">
+            <p>填寫完畢後，請按上方按鈕列印或轉存 PDF。</p>
+        </div>
+
+    </div>
+
+    <script>
+        // 自動調整 textarea 高度
+        document.querySelectorAll('textarea').forEach(el => {
+            el.style.height = el.scrollHeight + 'px';
+        });
+
+        // 圖片貼上功能
+        document.querySelectorAll('.image-drop-zone').forEach(zone => {
+            zone.addEventListener('click', () => {
+                zone.focus();
+                // 視覺回饋：讓使用者知道這裡 focus 了
+                zone.style.borderColor = '#2563eb';
+            });
+
+            zone.addEventListener('blur', () => {
+                zone.style.borderColor = zone.classList.contains('has-image') ? 'white' : '#9ca3af';
+            });
+
+            zone.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                
+                let hasImage = false;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf("image") === 0) {
+                        const blob = items[i].getAsFile();
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(event) {
+                            const img = zone.querySelector('img');
+                            const placeholder = zone.querySelector('.placeholder-text');
+                            
+                            img.src = event.target.result;
+                            img.classList.remove('hidden');
+                            placeholder.classList.add('hidden');
+                            
+                            zone.classList.add('has-image');
+                            zone.style.borderColor = 'white'; // Remove border for clean look
+                            zone.style.backgroundColor = 'white';
+                        };
+                        
+                        reader.readAsDataURL(blob);
+                        hasImage = true;
+                        break;
+                    }
+                }
+                
+                if (!hasImage) {
+                    alert("剪貼簿裡沒有圖片喔！請先去 Excel 複製圖片 (Ctrl+C)。");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
