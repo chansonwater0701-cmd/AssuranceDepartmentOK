@@ -1544,7 +1544,7 @@
             }else if (detail === '取消') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name','card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
                 ]);
             }
         } else if (item === '維修') {
@@ -1876,13 +1876,13 @@
                 document.getElementById('temp-10').style.display = 'none';    
             } else if (currentServiceDetail === '取消' && currentModel ==='WS2-C') {
                 currentRequiredIds = [];
-                showCards(['card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
+                showCards(['card-name','card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
             } else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
-                showCards(['card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
+                showCards(['card-name','card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
             } else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
-                showCards(['card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
+                showCards(['card-name','card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
             }
         } else if (currentServiceItem === '維修') {
             if (currentServiceDetail === '維修' && currentModel === 'WS2-C') {
