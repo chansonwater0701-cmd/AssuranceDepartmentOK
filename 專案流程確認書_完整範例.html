@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案流程確認書 - 範例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .header {
+            background-color: #4472C4;
+            color: white;
+            padding: 20px;
+            margin: -30px -30px 30px -30px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            background-color: #E7E6E6;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-left: 4px solid #4472C4;
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #4472C4;
+            margin-bottom: 5px;
+        }
+        
+        .info-content {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        /* 步驟表格 */
+        .steps-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .steps-table th {
+            background-color: #4472C4;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-size: 13px;
+            border: 1px solid #ddd;
+        }
+        
+        .steps-table td {
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+            font-size: 13px;
+        }
+        
+        .steps-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .step-no {
+            background-color: #4472C4;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .screenshot-placeholder {
+            background-color: #e8f4f8;
+            border: 2px dashed #4472C4;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .signature-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 4px;
+        }
+        
+        .signature-row {
+            margin-bottom: 10px;
+        }
+        
+        .signature-label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
+        }
+        
+        .signature-value {
+            display: inline-block;
+            color: #333;
+        }
+        
+        .checkbox-list {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-item {
+            background-color: #4472C4;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+        
+        .example-badge {
+            background-color: #FFC000;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="example-badge">📋 這是填寫完成的範例</div>
+        
+        <div class="header">
+            <h1>專案流程確認書</h1>
+            <div class="header-info">
+                <div>建立日期：2025-02-12</div>
+                <div>文件版本：VER1.0</div>
+            </div>
+        </div>
+
+        <!-- 基本資訊 -->
+        <div class="section">
+            <div class="section-title">基本資訊</div>
+            
+            <div class="info-row">
+                <div class="info-label">專案名稱</div>
+                <div class="info-content">CRM 附件文件自動下載與整理專案</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">專案目的</div>
+                <div class="info-content">
+                    本專案旨在透過 RPA（UiPath）流程自動化方式，完成 CRM 附件文件的自動展開、下載與整理，降低人工處理時間並減少錯誤率。<br><br>
+                    系統將自動讀取 CRM 中之附件資訊、執行 Download SO 文件操作，並依規則分類、命名與存放相關檔案，以建立標準化的作業流程，提高作業效率與資料一致性。
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="info-row">
+                    <div class="info-label">登入系統</div>
+                    <div class="info-content">CRM、Smart ERP 系統、Google Chrome</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">系統權限需求</div>
+                    <div class="info-content">
+                        • CRM 附件讀取權限<br>
+                        • 固定帳號或「機器人帳號」<br>
+                        • Smart ERP 系統（若需要查詢比對）<br>
+                        • Windows 執行權限（UI 自動化權限）<br>
+                        • Google Chrome 插件 / 設定（如下載自動化）
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="info-row">
+                    <div class="info-label">檔案命名規則</div>
+                    <div class="info-content">{SO_ID}_{日期}_{文件類型}.pdf</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">作業排程</div>
+                    <div class="info-content">每工作天 09:00 執行</div>
+                </div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">輸出格式</div>
+                <div class="checkbox-list">
+                    <span class="checkbox-item">✓ PDF</span>
+                    <span class="checkbox-item">✓ Excel</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 流程步驟 -->
+        <div class="section">
+            <div class="section-title">流程步驟明細</div>
+            
+            <table class="steps-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">No.</th>
+                        <th style="width: 100px;">系統名稱</th>
+                        <th style="width: 120px;">手順名稱</th>
+                        <th style="width: 250px;">手順詳細</th>
+                        <th style="width: 120px;">截圖</th>
+                        <th style="width: 150px;">輸入(URL)</th>
+                        <th style="width: 180px;">例外處理</th>
+                        <th style="width: 150px;">備註</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="step-no">1</span></td>
+                        <td>CRM</td>
+                        <td>登入系統</td>
+                        <td>
+                            每工作天09:00 RPA發Outlook 通知到群組，訊息內容+&lt;確認放行&gt;按鈕<br><br>
+                            <strong>CRM觸發RPA防呆：</strong><br>
+                            ①當天只能觸發當天的按鈕(無法觸發前日期按鈕)<br>
+                            ②當天已觸發按鈕，按鈕反深灰(不能重複按)
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（CRM登入畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>CRM_RPA失敗，QCT會人工介入作業</td>
+                        <td>每日自動觸發</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">2</span></td>
+                        <td>CRM</td>
+                        <td>登入CRM</td>
+                        <td>
+                            CRM附文件RPA從流程6開始<br><br>
+                            開啟CRM系統→登入帳密<br>
+                            帳號：000044<br>
+                            密碼：000044
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（CRM登入介面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>CRM_RPA失敗，QCT會人工介入作業</td>
+                        <td>利用現有RPA: CRM F2的資料</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">3</span></td>
+                        <td>CRM</td>
+                        <td>CRM資料下載</td>
+                        <td>
+                            選單 "Shipment Type" 選取QCT→ 點選F12 Search
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（資料查詢畫面）</small>
+                            </div>
+                        </td>
+                        <td>http://192.168.0.17/WebCRM/src/_Common/AppUtil/FrameSet/TreeMainFrame.aspx</td>
+                        <td>網頁未正常反應重整頁面2次未成功→報錯IT</td>
+                        <td>CS附文件RPA不用重覆執行</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">4</span></td>
+                        <td>CRM</td>
+                        <td>CRM資料下載</td>
+                        <td>
+                            CRM畫面點選後按Ctrl+S另存檔案<br><br>
+                            <strong>RPA存取數據位置：</strong><br>
+                            \\192.168.2.123\nps_data\f2import
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（另存檔案畫面）</small>
+                            </div>
+                        </td>
+                        <td>http://192.168.0.17/WebCRM/src/_Common/AppUtil/FrameSet/TreeMainFrame.aspx</td>
+                        <td>檔案儲存失敗→檢查網路連線→報錯IT</td>
+                        <td>檔案自動歸檔</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">5</span></td>
+                        <td>本機</td>
+                        <td>開啟CRM資料</td>
+                        <td>
+                            上一步「VSD當天日期」檔案夾中：<br>
+                            開啟「修改日期/時間最新」的一筆<br>
+                            檔名：TIW Shipping data(系統時間序號)<br><br>
+                            RPA用Excel打開原始TIW Shipping data.csv
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（檔案開啟畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>Excel Error：記憶體不夠、檔案內容空白→報錯IT、報錯CS</td>
+                        <td>如果CRM RPA未執行，修復前會由QCT手動下載匯入</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">6</span></td>
+                        <td>本機</td>
+                        <td>篩選對象</td>
+                        <td>
+                            「TIW Shipping data」Excel檔案中，E欄Global Customer CD<br><br>
+                            →RPA利用「CS附文件客戶清單表」I欄Tcode，在「TIW Shipping data Excel」篩選出附文件對象<br><br>
+                            其餘非附文件對象資料整列(A-BE列)刪除
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（Excel篩選畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>Excel Error：記憶體不夠、檔案內容空白→報錯IT、報錯CS</td>
+                        <td>保留篩選結果</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">7</span></td>
+                        <td>本機</td>
+                        <td>整理資料</td>
+                        <td>
+                            「TIW Shipping data」Excel檔案中，再篩選Stop Shipment對象<br><br>
+                            <strong>條件如下：</strong><br>
+                            AN欄=#TRUE#<br>
+                            D欄=TP<br>
+                            G欄移除重複項 (留一筆排除重複_因母子件)<br><br>
+                            檔案命名：附文件StopShipment年月日<br>
+                            (範例：附文件StopShipment20251107)
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（資料整理畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>Excel Error：記憶體不夠、檔案內容空白→報錯IT、報錯CS</td>
+                        <td>存到指定位置</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">8</span></td>
+                        <td>Download Site</td>
+                        <td>登入Download Site</td>
+                        <td>
+                            登入Download Site<br>
+                            帳號：RPA_NT02_TIW@company-tw.com.tw<br>
+                            密碼：B#701713500127uy<br><br>
+                            DownloadSite已設好Bookmark與Schedule，定時在9:00AM開始
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（登入畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>
+                            網頁Error：網頁未正常反應重整頁面2次未成功→報錯IT<br><br>
+                            帳密錯誤：重試2次失敗→報錯CS→CS更新雲端帳密表後，通知IT重啟RPA
+                        </td>
+                        <td>若IT無法當下解決，則CS人工作業</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">9</span></td>
+                        <td>Download Site</td>
+                        <td>Newton資料下載</td>
+                        <td>
+                            點上方選單 &gt; Download<br>
+                            下載所需的Newton資料檔案
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（下載操作畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>網頁未正常反應重整頁面2次未成功→報錯IT、報錯CS</td>
+                        <td>若IT無法當下解決，則CS人工作業</td>
+                    </tr>
+                    
+                    <tr>
+                        <td><span class="step-no">10</span></td>
+                        <td>本機</td>
+                        <td>檔案歸檔</td>
+                        <td>
+                            將下載完成的檔案依照命名規則整理歸檔<br>
+                            並發送完成通知給相關人員
+                        </td>
+                        <td>
+                            <div class="screenshot-placeholder">
+                                📸<br>截圖位置<br>
+                                <small>（歸檔完成畫面）</small>
+                            </div>
+                        </td>
+                        <td>-</td>
+                        <td>檔案歸檔失敗→檢查權限→報錯IT</td>
+                        <td>發送Outlook通知</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 簽核欄位 -->
+        <div class="section">
+            <div class="section-title">簽核</div>
+            
+            <div class="form-row">
+                <div class="info-row">
+                    <div class="info-label">申請人</div>
+                    <div class="info-content">王小明</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">部門</div>
+                    <div class="info-content">IT 部門</div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div>
+                    <div class="info-label" style="margin-bottom: 10px;">主管簽核</div>
+                    <div class="signature-box">
+                        <div class="signature-row">
+                            <span class="signature-label">簽名：</span>
+                            <span class="signature-value">李主管</span>
+                        </div>
+                        <div class="signature-row">
+                            <span class="signature-label">日期：</span>
+                            <span class="signature-value">2025-02-12</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="info-label" style="margin-bottom: 10px;">IT 確認</div>
+                    <div class="signature-box">
+                        <div class="signature-row">
+                            <span class="signature-label">簽名：</span>
+                            <span class="signature-value">張工程師</span>
+                        </div>
+                        <div class="signature-row">
+                            <span class="signature-label">日期：</span>
+                            <span class="signature-value">2025-02-12</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background-color: #e8f4f8; border-radius: 8px;">
+            <p style="color: #4472C4; font-weight: bold; font-size: 16px;">✅ 這是一個完整的範例</p>
+            <p style="color: #666; margin-top: 10px;">您可以參考這個格式來填寫您的專案流程確認書</p>
+        </div>
+    </div>
+</body>
+</html>
