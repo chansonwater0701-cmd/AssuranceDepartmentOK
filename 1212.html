@@ -770,11 +770,6 @@
             <option value="Ｔ字３通">Ｔ字３通</option>
             <option value="破管">破管</option>
             <option value="地排">地排</option>
-<<<<<<< HEAD
-
-=======
-            <option value="無">無</option>
->>>>>>> 04880a9 (Auto upload: 週五 2026/02/13  9:56:12.64)
         </select>
     </div>
 
@@ -2906,7 +2901,7 @@
     }
 
     // 獲取表單資料 (修正版)
-// 獲取表單資料 (最終完整修正版：支援序號自動帶入型號)
+// 獲取表單資料 (修正版：移除序號後的型號串接)
     function getFormData() {
         let data = {};
         
@@ -2914,7 +2909,7 @@
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         
         visibleCards.forEach(card => {
-            // ▼ 跳過特殊處理的卡片：機器型號 & 機器序號 (稍後手動處理)
+            // ▼ 跳過特殊處理的卡片：機器型號 & 機器序號
             if (card.id === 'card-machine-type' || card.id === 'card-machine-serial') return;
 
             const inputs = card.querySelectorAll('input, select, textarea');
@@ -2941,13 +2936,10 @@
 
         // ▼▼▼ 特殊處理 2：機器型號 (串接) ▼▼▼
         const typeCard = document.getElementById('card-machine-type');
-        let modelInputs = []; // 先宣告變數，因為下面序號處理時會用到
-        let modelValues = [];
-
         // 只有當機器型號卡片是「顯示狀態」才抓取
         if (typeCard && !typeCard.classList.contains('hidden-field')) {
-            // 抓取所有動態產生的型號輸入框
-            modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
+            const modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
+            let modelValues = [];
             
             modelInputs.forEach(input => {
                 if (input.value.trim()) {
@@ -2955,13 +2947,13 @@
                 }
             });
 
-            // 用 " \ " 符號連接，例如：C1-XXX \ C1-XXX
+            // 用 " \ " 符號連接，例如：PF-203 \ RFX600S
             if (modelValues.length > 0) {
                 data['machine_model'] = modelValues.join(' \\ ');
             }
         }
 
-        // ▼▼▼ 特殊處理 3：機器序號 (核心邏輯：自動變成 序號-型號) ▼▼▼
+        // ▼▼▼ 特殊處理 3：機器序號 (單純串接，不帶型號) ▼▼▼
         const serialCard = document.getElementById('card-machine-serial');
         
         // 只有當機器序號卡片是「顯示狀態」才抓取
@@ -2969,37 +2961,28 @@
             const serialInputs = serialCard.querySelectorAll('.dynamic-serial-input');
             let finalSerialValues = [];
 
-            serialInputs.forEach((sInput, index) => {
+            serialInputs.forEach((sInput) => {
                 let sVal = sInput.value.trim();
                 
-                // 嘗試找到對應位置的型號值 (透過 index 對應)
-                // 注意：modelInputs 是上面抓到的型號輸入框列表
-                let mVal = (modelInputs[index]) ? modelInputs[index].value.trim() : '';
-
+                // ★ 修改處：這裡不再去抓型號來串接，直接用原本輸入的序號
                 if (sVal) {
-                    // ★ 這裡執行合併： 序號 + "-" + 型號 ★
-                    // 例如：輸入序號 111，型號 WS2-C，結果變成 111-WS2-C
-                    if (mVal) {
-                        sVal = `${sVal}-${mVal}`;
-                    }
                     finalSerialValues.push(sVal);
                 }
             });
 
-            // 用 " \ " 符號連接，例如：111-WS2-C \ 222-WS2-C
+            // 用 " \ " 符號連接，例如：PF203L... \ RFX600L...
             if (finalSerialValues.length > 0) {
                 data['machine_serial'] = finalSerialValues.join(' \\ ');
             }
         }
 
-        // 4. 加入基本全域變數 (確保這些核心欄位一定有值)
+        // 4. 加入基本全域變數
         data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
         data['service_item'] = document.getElementById('service_item').value || "";
         data['service_detail'] = document.getElementById('service_detail').value || "";
         
         return data;
     }
-    
     function handlePrincipleChange() {
     const explained = document.getElementById('principle_explained').value;
     const reasonCard = document.getElementById('card-principle-reason');
