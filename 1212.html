@@ -657,7 +657,10 @@
     <!-- 機器序號 -->
     <div class="question-card hidden-field" id="card-machine-serial">
         <div class="question-title">機器序號<span class="required">*</span></div>
-        <input type="text" name="machine_serial" inputmode="decimal" placeholder="請輸入機器序號">
+        
+        <div id="machine_serial_container">
+            <input type="text" name="machine_serial_1" class="dynamic-serial-input" placeholder="請輸入機器序號">
+        </div>
     </div>
     <!-- 機器版本 -->
     <div class="question-card hidden-field" id="card-machine-model">
@@ -767,7 +770,11 @@
             <option value="Ｔ字３通">Ｔ字３通</option>
             <option value="破管">破管</option>
             <option value="地排">地排</option>
+<<<<<<< HEAD
 
+=======
+            <option value="無">無</option>
+>>>>>>> 04880a9 (Auto upload: 週五 2026/02/13  9:56:12.64)
         </select>
     </div>
 
@@ -2899,15 +2906,16 @@
     }
 
     // 獲取表單資料 (修正版)
+// 獲取表單資料 (最終完整修正版：支援序號自動帶入型號)
     function getFormData() {
         let data = {};
         
-        // 1. 獲取所有「可見卡片」中的輸入項
+        // 1. 獲取所有「可見卡片」中的一般欄位
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         
         visibleCards.forEach(card => {
-            // ▼▼▼ 修改重點 1：如果是機器型號卡片，先跳過，稍後手動處理 ▼▼▼
-            if (card.id === 'card-machine-type') return;
+            // ▼ 跳過特殊處理的卡片：機器型號 & 機器序號 (稍後手動處理)
+            if (card.id === 'card-machine-type' || card.id === 'card-machine-serial') return;
 
             const inputs = card.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
@@ -2916,15 +2924,13 @@
                 // 如果是 radio button 但沒被選中，就跳過
                 if (input.type === 'radio' && !input.checked) return;
                 
-                // 取得欄位的值
                 let finalValue = input.value;
-
                 // 特殊處理：如果是韌體欄位且是空白，自動視為 "00"
                 if (input.name.startsWith('firmware_') && finalValue.trim() === '') {
                     finalValue = '00';
                 }
 
-                // 處理多選或同名欄位：如果多個 input 共用同一個 name，則用 " - " 串接它們
+                // 處理多選或同名欄位
                 if (data[input.name]) {
                     data[input.name] += " - " + finalValue;
                 } else {
@@ -2933,14 +2939,15 @@
             });
         });
 
-        // ▼▼▼ 修改重點 2：手動處理機器型號卡片，串接成您要的格式 ▼▼▼
+        // ▼▼▼ 特殊處理 2：機器型號 (串接) ▼▼▼
         const typeCard = document.getElementById('card-machine-type');
-        
-        // 只有當機器型號卡片是「顯示狀態」才抓取資料
+        let modelInputs = []; // 先宣告變數，因為下面序號處理時會用到
+        let modelValues = [];
+
+        // 只有當機器型號卡片是「顯示狀態」才抓取
         if (typeCard && !typeCard.classList.contains('hidden-field')) {
-            // 抓取所有動態產生的輸入框 (class="dynamic-model-input")
-            const modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
-            let modelValues = [];
+            // 抓取所有動態產生的型號輸入框
+            modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
             
             modelInputs.forEach(input => {
                 if (input.value.trim()) {
@@ -2948,25 +2955,51 @@
                 }
             });
 
-            // 用 " \ " 符號連接，例如：C1-XXX-1 \ C1-XXX-2
-            // 並存入 'machine_model' 這個欄位名稱 (這是 Google Sheet 會讀取的欄位名)
+            // 用 " \ " 符號連接，例如：C1-XXX \ C1-XXX
             if (modelValues.length > 0) {
                 data['machine_model'] = modelValues.join(' \\ ');
             }
         }
-        // ▲▲▲ 修改結束 ▲▲▲
 
-        // 2. 加入基本全域變數 (確保這些核心欄位一定有值)
+        // ▼▼▼ 特殊處理 3：機器序號 (核心邏輯：自動變成 序號-型號) ▼▼▼
+        const serialCard = document.getElementById('card-machine-serial');
+        
+        // 只有當機器序號卡片是「顯示狀態」才抓取
+        if (serialCard && !serialCard.classList.contains('hidden-field')) {
+            const serialInputs = serialCard.querySelectorAll('.dynamic-serial-input');
+            let finalSerialValues = [];
+
+            serialInputs.forEach((sInput, index) => {
+                let sVal = sInput.value.trim();
+                
+                // 嘗試找到對應位置的型號值 (透過 index 對應)
+                // 注意：modelInputs 是上面抓到的型號輸入框列表
+                let mVal = (modelInputs[index]) ? modelInputs[index].value.trim() : '';
+
+                if (sVal) {
+                    // ★ 這裡執行合併： 序號 + "-" + 型號 ★
+                    // 例如：輸入序號 111，型號 WS2-C，結果變成 111-WS2-C
+                    if (mVal) {
+                        sVal = `${sVal}-${mVal}`;
+                    }
+                    finalSerialValues.push(sVal);
+                }
+            });
+
+            // 用 " \ " 符號連接，例如：111-WS2-C \ 222-WS2-C
+            if (finalSerialValues.length > 0) {
+                data['machine_serial'] = finalSerialValues.join(' \\ ');
+            }
+        }
+
+        // 4. 加入基本全域變數 (確保這些核心欄位一定有值)
         data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
         data['service_item'] = document.getElementById('service_item').value || "";
         data['service_detail'] = document.getElementById('service_detail').value || "";
         
-        // 注意：currentModel 是全域變數，但因為我們已經手動處理了 machine_model，
-        // 這裡可以選擇性加入，或者如果 Google Sheet 不需要 'model' 這個欄位名可忽略。
-        // data['model'] = currentModel; 
-        
         return data;
     }
+    
     function handlePrincipleChange() {
     const explained = document.getElementById('principle_explained').value;
     const reasonCard = document.getElementById('card-principle-reason');
@@ -3124,71 +3157,74 @@
 // ========== 千山多機台處理邏輯 ==========
 
     // 1. 產生輸入框
+// ========== 千山多機台處理邏輯 (修改版) ==========
+// 1. 產生輸入框 (修改版：預設帶入第一台型號，但允許手動修改)
     function generateMachineInputs() {
         const qty = parseInt(document.getElementById('machine_qty').value);
-        const container = document.getElementById('machine_inputs_container');
         
-        // 暫存第一格的值 (避免切換數量時，原本打的字不見)
-        const firstInput = container.querySelector('input');
-        const currentVal = firstInput ? firstInput.value : '';
+        // --- 處理機器型號 ---
+        const modelContainer = document.getElementById('machine_inputs_container');
+        // 先抓第一台目前的值，當作預設值
+        const firstModelInput = modelContainer.querySelector('input');
+        const currentModelVal = firstModelInput ? firstModelInput.value : '';
+        
+        modelContainer.innerHTML = ''; // 清空
 
-        container.innerHTML = ''; // 清空容器
+        // --- 處理機器序號 ---
+        const serialContainer = document.getElementById('machine_serial_container');
+        const firstSerialInput = serialContainer ? serialContainer.querySelector('input') : null;
+        const currentSerialVal = firstSerialInput ? firstSerialInput.value : '';
+
+        if(serialContainer) serialContainer.innerHTML = ''; // 清空
 
         for (let i = 1; i <= qty; i++) {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'dynamic-model-input'; // 重要：識別用 class
-            input.style.marginBottom = '8px';        // 讓格子之間有點距離
+            // --- 建立型號輸入框 ---
+            const mInput = document.createElement('input');
+            mInput.type = 'text';
+            mInput.className = 'dynamic-model-input'; 
+            mInput.style.marginBottom = '8px';
             
-            if (i === 1) {
-                // 第一台：保留原本輸入的值，並綁定連動事件
-                input.name = "machine_model"; // 第一格保留原本 name，確保相容性
-                input.value = currentVal;
-                input.placeholder = "請輸入機器型號 (例: C1-XXX-1)";
-                input.oninput = syncMachineInputs; // 打字時觸發連動
-            } else {
-                // 第二台以後
-                input.name = `machine_model_${i}`;
-                input.placeholder = `第 ${i} 台 (自動帶入)`;
+            // --- 建立序號輸入框 ---
+            let sInput = null;
+            if (serialContainer) {
+                sInput = document.createElement('input');
+                sInput.type = 'text';
+                sInput.className = 'dynamic-serial-input';
+                sInput.style.marginBottom = '8px';
             }
-            container.appendChild(input);
-        }
-        // 重新執行連動 (確保新增的格子有值)
-        syncMachineInputs();
-    }
 
-    // 2. 自動連動內容 (-1, -2...)
-    function syncMachineInputs() {
-        // 如果現在是「惟品」，不執行自動連動 (避免惟品誤用)
-        if (currentBrand === '惟品') return;
+            if (i === 1) {
+                // 第一台：填入原本的值
+                mInput.value = currentModelVal;
+                mInput.placeholder = "請輸入機器型號 (例: 222)";
+                // ★ 重點：這裡拿掉 oninput = syncMachineInputs，不再強制連動
 
-        const inputs = document.querySelectorAll('.dynamic-model-input');
-        if (inputs.length <= 1) return; // 只有一台不用連動
-
-        const firstVal = inputs[0].value.trim();
-        if (!firstVal) return;
-
-        // 邏輯：檢查是否以 "-數字" 結尾
-        const regex = /^(.*)-(\d+)$/; 
-        const match = firstVal.match(regex);
-        
-        let baseName = firstVal;
-        
-        // 如果第一格是 XXX-1，我們抓出 XXX
-        if (match) {
-            baseName = match[1]; 
-        }
-
-        // 幫第 2 格以後自動填值
-        for (let i = 1; i < inputs.length; i++) {
-            // 第 i+1 格，就要接 -(i+1)
-            // 例：第二格 (i=1) 接 -2
-            const suffix = i + 1;
+                if (sInput) {
+                    sInput.value = currentSerialVal;
+                    sInput.placeholder = "請輸入機器序號 (例: 1111)";
+                }
+            } else {
+                // 第二台以後：
+                // ★ 預設幫您填入第一台的型號 (方便)，但您可以隨便改
+                mInput.value = currentModelVal; 
+                mInput.placeholder = `第 ${i} 台型號`;
+                
+                if (sInput) {
+                    sInput.placeholder = `請輸入第 ${i} 台機器序號`;
+                }
+            }
             
-            // 組合： 名稱 + "-" + 序號
-            inputs[i].value = `${baseName}-${suffix}`;
+            modelContainer.appendChild(mInput);
+            if (serialContainer && sInput) serialContainer.appendChild(sInput);
         }
     }
+
+    // 2. 自動連動型號 (移除 -1, -2 邏輯，改為單純複製)
+    function syncMachineInputs() {
+            // 留空即可
+            // 這樣當您修改第一台型號時，就不會雞婆地去覆蓋第二台
+            // 您可以自由地在第二台填寫 333
+        }
 // 上傳到雲端
     async function uploadToCloud() {
         if (!validateForm()) return; 
