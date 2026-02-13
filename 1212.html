@@ -628,9 +628,27 @@
         <input type="number" name="invoice_number" placeholder="請輸入銷貨單號">
     </div>
     <!-- 機器型號 -->
-    <div class="question-card hidden-field" id="card-machine-type">
+<div class="question-card hidden-field" id="card-machine-type">
         <div class="question-title">機器型號<span class="required">*</span></div>
-        <input type="text" name="machine_model" placeholder="請輸入機器型號">
+        
+        <div id="machine_qty_row" style="display: none; margin-bottom: 10px; padding: 8px; background-color: #e3f2fd; border-radius: 4px;">
+            <label style="font-weight: bold; color: #007377;">機台數量：</label>
+            <select id="machine_qty" onchange="generateMachineInputs()" style="width: auto; padding: 4px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+            <span style="font-size: 0.85em; color: #666; margin-left: 5px;">(選擇後下方會自動增加欄位)</span>
+        </div>
+        <div id="machine_inputs_container">
+            <input type="text" name="machine_model_1" class="dynamic-model-input" placeholder="請輸入機器型號" oninput="syncMachineInputs()">
+        </div>
         
         <div class="small-note" style="margin-top: 8px; color: #666; font-size: 0.9rem;">
             💡 提醒：請輸入完整機型
@@ -745,9 +763,11 @@
     <div class="question-card hidden-field" id="card-drainage-type">
         <div class="question-title">排廢水型式<span class="required">*</span></div>
         <select name="drainage_type">
+            <option value="無">無</option>
             <option value="Ｔ字３通">Ｔ字３通</option>
             <option value="破管">破管</option>
             <option value="地排">地排</option>
+
         </select>
     </div>
 
@@ -1162,6 +1182,20 @@
 
         // 2. 更新品牌狀態與重置
         currentBrand = brand;
+
+        // ▼▼▼ 新增這段：控制數量選單的顯示與隱藏 ▼▼▼
+        const qtyRow = document.getElementById('machine_qty_row');
+        const qtySelect = document.getElementById('machine_qty');
+
+        if (currentBrand === '千山') {
+            // 千山：顯示數量選單
+            qtyRow.style.display = 'block';
+        } else {
+            // 惟品：隱藏選單，並強制重置回 1 台
+            qtyRow.style.display = 'none';
+            qtySelect.value = "1"; 
+            generateMachineInputs(); // 呼叫這個函式，讓畫面變回只有一個輸入框
+        }
         resetFormValues(['brand']); // 保留品牌勾選，其餘清除
         
         currentServiceItem = '';
@@ -1494,22 +1528,19 @@
         currentModel = model;
         
         // ==========================================
-        // ★ 新增這段程式碼：自動帶入機器型號開頭
+        // ★ 修改：確保惟品選擇型號時，填入第一個格子
         // ==========================================
-        const machineModelInput = document.querySelector('input[name="machine_model"]');
-        if (machineModelInput) {
-            // 將選擇的 value (如 WS2-C) 直接填入機器型號欄位
-            machineModelInput.value = model; 
-            
-            // 如果您希望帶入後自動加一個空格，可以改成下面這行：
-            // machineModelInput.value = model + " "; 
+        // 原本：const machineModelInput = document.querySelector('input[name="machine_model"]');
+        // 改為：
+        const machineModelInputs = document.querySelectorAll('.dynamic-model-input');
+        if (machineModelInputs.length > 0) {
+            machineModelInputs[0].value = model; 
         }
         // ==========================================
 
         if (currentBrand === '惟品') {
             showWeipinFields();
         }
-        
         renumberQuestions();
     }
 
@@ -2867,40 +2898,72 @@
         document.querySelectorAll('.error-input').forEach(el => el.classList.remove('error-input'));
     }
 
-    // 獲取表單資料
+    // 獲取表單資料 (修正版)
     function getFormData() {
         let data = {};
-        // 獲取所有「可見卡片」中的輸入項
+        
+        // 1. 獲取所有「可見卡片」中的輸入項
         const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
         
         visibleCards.forEach(card => {
-                    const inputs = card.querySelectorAll('input, select, textarea');
-                    inputs.forEach(input => {
-                        if (!input.name) return;
-                        if (input.type === 'radio' && !input.checked) return;
-                        
-                        // ★ 新增：取得欄位的值
-                        let finalValue = input.value;
+            // ▼▼▼ 修改重點 1：如果是機器型號卡片，先跳過，稍後手動處理 ▼▼▼
+            if (card.id === 'card-machine-type') return;
 
-                        // ★ 新增：如果是韌體欄位且是空白，自動視為 "00"
-                        if (input.name.startsWith('firmware_') && finalValue.trim() === '') {
-                            finalValue = '00';
-                        }
+            const inputs = card.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (!input.name) return;
+                
+                // 如果是 radio button 但沒被選中，就跳過
+                if (input.type === 'radio' && !input.checked) return;
+                
+                // 取得欄位的值
+                let finalValue = input.value;
 
-                        // 如果多個 input 共用同一個 name，則串接它們
-                        if (data[input.name]) {
-                            data[input.name] += " - " + finalValue;
-                        } else {
-                            data[input.name] = finalValue;
-                        }
-                    });
-                });
+                // 特殊處理：如果是韌體欄位且是空白，自動視為 "00"
+                if (input.name.startsWith('firmware_') && finalValue.trim() === '') {
+                    finalValue = '00';
+                }
+
+                // 處理多選或同名欄位：如果多個 input 共用同一個 name，則用 " - " 串接它們
+                if (data[input.name]) {
+                    data[input.name] += " - " + finalValue;
+                } else {
+                    data[input.name] = finalValue;
+                }
+            });
+        });
+
+        // ▼▼▼ 修改重點 2：手動處理機器型號卡片，串接成您要的格式 ▼▼▼
+        const typeCard = document.getElementById('card-machine-type');
         
-        // 加入基本資訊
+        // 只有當機器型號卡片是「顯示狀態」才抓取資料
+        if (typeCard && !typeCard.classList.contains('hidden-field')) {
+            // 抓取所有動態產生的輸入框 (class="dynamic-model-input")
+            const modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
+            let modelValues = [];
+            
+            modelInputs.forEach(input => {
+                if (input.value.trim()) {
+                    modelValues.push(input.value.trim());
+                }
+            });
+
+            // 用 " \ " 符號連接，例如：C1-XXX-1 \ C1-XXX-2
+            // 並存入 'machine_model' 這個欄位名稱 (這是 Google Sheet 會讀取的欄位名)
+            if (modelValues.length > 0) {
+                data['machine_model'] = modelValues.join(' \\ ');
+            }
+        }
+        // ▲▲▲ 修改結束 ▲▲▲
+
+        // 2. 加入基本全域變數 (確保這些核心欄位一定有值)
         data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
-        data['service_item'] = document.getElementById('service_item').value;
-        data['service_detail'] = document.getElementById('service_detail').value;
-        //data['model'] = document.getElementById('model').value;
+        data['service_item'] = document.getElementById('service_item').value || "";
+        data['service_detail'] = document.getElementById('service_detail').value || "";
+        
+        // 注意：currentModel 是全域變數，但因為我們已經手動處理了 machine_model，
+        // 這裡可以選擇性加入，或者如果 Google Sheet 不需要 'model' 這個欄位名可忽略。
+        // data['model'] = currentModel; 
         
         return data;
     }
@@ -3058,7 +3121,74 @@
         // 7. 將畫面平滑滾動到最上方
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+// ========== 千山多機台處理邏輯 ==========
 
+    // 1. 產生輸入框
+    function generateMachineInputs() {
+        const qty = parseInt(document.getElementById('machine_qty').value);
+        const container = document.getElementById('machine_inputs_container');
+        
+        // 暫存第一格的值 (避免切換數量時，原本打的字不見)
+        const firstInput = container.querySelector('input');
+        const currentVal = firstInput ? firstInput.value : '';
+
+        container.innerHTML = ''; // 清空容器
+
+        for (let i = 1; i <= qty; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'dynamic-model-input'; // 重要：識別用 class
+            input.style.marginBottom = '8px';        // 讓格子之間有點距離
+            
+            if (i === 1) {
+                // 第一台：保留原本輸入的值，並綁定連動事件
+                input.name = "machine_model"; // 第一格保留原本 name，確保相容性
+                input.value = currentVal;
+                input.placeholder = "請輸入機器型號 (例: C1-XXX-1)";
+                input.oninput = syncMachineInputs; // 打字時觸發連動
+            } else {
+                // 第二台以後
+                input.name = `machine_model_${i}`;
+                input.placeholder = `第 ${i} 台 (自動帶入)`;
+            }
+            container.appendChild(input);
+        }
+        // 重新執行連動 (確保新增的格子有值)
+        syncMachineInputs();
+    }
+
+    // 2. 自動連動內容 (-1, -2...)
+    function syncMachineInputs() {
+        // 如果現在是「惟品」，不執行自動連動 (避免惟品誤用)
+        if (currentBrand === '惟品') return;
+
+        const inputs = document.querySelectorAll('.dynamic-model-input');
+        if (inputs.length <= 1) return; // 只有一台不用連動
+
+        const firstVal = inputs[0].value.trim();
+        if (!firstVal) return;
+
+        // 邏輯：檢查是否以 "-數字" 結尾
+        const regex = /^(.*)-(\d+)$/; 
+        const match = firstVal.match(regex);
+        
+        let baseName = firstVal;
+        
+        // 如果第一格是 XXX-1，我們抓出 XXX
+        if (match) {
+            baseName = match[1]; 
+        }
+
+        // 幫第 2 格以後自動填值
+        for (let i = 1; i < inputs.length; i++) {
+            // 第 i+1 格，就要接 -(i+1)
+            // 例：第二格 (i=1) 接 -2
+            const suffix = i + 1;
+            
+            // 組合： 名稱 + "-" + 序號
+            inputs[i].value = `${baseName}-${suffix}`;
+        }
+    }
 // 上傳到雲端
     async function uploadToCloud() {
         if (!validateForm()) return; 
