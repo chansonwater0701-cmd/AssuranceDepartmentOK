@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>賣場專案特惠申請系統</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3514/3514491.png" type="image/png">
+    <style>
+        /* 基礎設定 */
+        body { background-color: #f4f7f6; font-family: -apple-system, "Microsoft JhengHei", sans-serif; margin: 0; padding: 20px 0 100px 0; display: flex; justify-content: center; color: #333; }
+        .form-container { width: 100%; max-width: 640px; margin: 0 12px; }
+        .header-card { background: linear-gradient(135deg, #1a5f7a 0%, #083d56 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; }
+        .header-main-title { font-size: 26px; font-weight: bold; color: #fff; margin-bottom: 10px; }
+        .header-subtitle { font-size: 14px; opacity: 0.9; line-height: 1.6; }
+        
+        /* 卡片與欄位 */
+        .question-card { background-color: #fff; padding: 18px 20px; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #1a5f7a; }
+        .question-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #1a5f7a; }
+        .required { color: #d93025; margin-left: 4px; }
+        input[type="text"], input[type="number"], input[type="date"], input[type="tel"], select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        .flex-row-inputs select, .flex-row-inputs input { padding: 10px 8px; }
+        textarea { resize: vertical; }
+        .price-group { background: #fdf2f2; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px dashed #d93025; }
+        .small-hint { font-size: 12px; color: #666; margin-top: 5px; display: block; }
+        
+        /* 底部按鈕 */
+        .button-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.9); padding: 10px 15px; display: flex; gap: 8px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .btn { flex: 1; padding: 14px 10px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-copy { background: #1a5f7a; color: white; }
+        .btn-reset { background: #6c757d; color: white; flex: 0.5; }
+        .btn-upload { background: #28a745; color: white; }
+        .btn:active { transform: scale(0.98); }
+        
+        /* 藍色邊框的精緻下拉選單樣式 */
+        .select-add { 
+            border: 2px solid #1a5f7a !important; 
+            color: #1a5f7a !important; 
+            font-weight: bold; 
+            background-color: #fff !important; 
+        }
+
+        /* 向下堆疊表格樣式 */
+        .cart-table-wrapper {
+            border: 1px solid #1a5f7a;
+            border-radius: 8px; 
+            overflow: hidden;
+            margin-top: 12px;
+            display: none; 
+            background-color: #fff;
+        }
+        .cart-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            text-align: center; 
+            font-size: 14px; 
+            table-layout: fixed; 
+        }
+        .cart-table thead { background-color: #1a5f7a; color: white; }
+        .cart-table th { 
+            padding: 10px 4px; 
+            font-weight: normal; 
+            font-size: 13px; 
+            vertical-align: middle; 
+        }
+        .cart-table td { 
+            padding: 10px 4px; 
+            border-bottom: 1px solid #eee; 
+            vertical-align: middle; 
+        }
+        .cart-table td.item-name { 
+            text-align: left; 
+            padding-left: 10px; 
+            color: #1a5f7a; 
+            font-weight: 500;
+            word-wrap: break-word;
+        }
+        .cart-table input[type="number"] { 
+            width: 36px; 
+            padding: 6px 2px; 
+            text-align: center; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 14px; 
+            background: #fff; 
+        }
+        
+        /* 刪除按鈕 */
+        .cart-table .del-btn { 
+            background: #ffebee; 
+            color: #d93025; 
+            border: 1px solid #ffcdd2; 
+            padding: 6px 10px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 13px; 
+            white-space: nowrap; 
+            display: inline-block;
+        }
+        .cart-table .del-btn:active { background: #ffcdd2; }
+        
+        /* 勾選框 */
+        .cart-checkbox { width: 18px; height: 18px; cursor: pointer; vertical-align: middle; margin: 0; accent-color: #1a5f7a; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <div class="header-card">
+        <div class="header-main-title">🏪 賣場專案特惠申請</div>
+        <div class="header-subtitle">供賣場同仁針對特殊競爭案例申請折讓或搭贈使用<br>核准後方可出單</div>
+    </div>
+
+    <div class="question-card">
+        <div class="question-title">1. 申請單位資訊 <span class="required">*</span></div>
+        <div class="flex-row-inputs" style="display: flex; gap: 6px; margin-bottom: 10px;">
+            <select name="store_chain" id="store_chain" style="flex: 1;">
+                <option value="">銷售通路...</option>
+                <option value="家樂福">家樂福</option>
+                <option value="大潤發">大潤發</option>
+                <option value="全聯">全聯</option>
+                <option value="好市多">好市多</option>
+                <option value="愛買">愛買</option>
+                <option value="特力屋">特力屋</option>
+                <option value="全國電子">全國電子</option>
+                <option value="燦坤">燦坤</option>
+                <option value="其他">其他</option>
+            </select>
+            <select name="store_city" id="store_city" style="flex: 1;">
+                <option value="">銷售縣市...</option>
+                <option value="基隆市">基隆市</option>
+                <option value="台北市">台北市</option>
+                <option value="新北市">新北市</option>
+                <option value="桃園市">桃園市</option>
+                <option value="新竹市">新竹市</option>
+                <option value="新竹縣">新竹縣</option>
+                <option value="苗栗縣">苗栗縣</option>
+                <option value="台中市">台中市</option>
+                <option value="彰化縣">彰化縣</option>
+                <option value="南投縣">南投縣</option>
+                <option value="雲林縣">雲林縣</option>
+                <option value="嘉義市">嘉義市</option>
+                <option value="嘉義縣">嘉義縣</option>
+                <option value="台南市">台南市</option>
+                <option value="高雄市">高雄市</option>
+                <option value="屏東縣">屏東縣</option>
+                <option value="宜蘭縣">宜蘭縣</option>
+                <option value="花蓮縣">花蓮縣</option>
+                <option value="台東縣">台東縣</option>
+            </select>
+            
+            <select id="store_branch_select" class="select-add" style="flex: 1.5; padding: 10px 4px !important;" onchange="handleBranchSelect()">
+                <option value="">請選擇分店門市...</option>
+                <optgroup label="📍 北區">
+                    <option value="家樂福蘆洲">家樂福蘆洲</option>
+                    <option value="家樂福重慶">家樂福重慶</option>
+                    <option value="家樂福天母">家樂福天母</option>
+                    <option value="家樂福重新">家樂福重新</option>
+                    <option value="家樂福淡新">家樂福淡新</option>
+                    <option value="家樂福汐科">家樂福汐科</option>
+                    <option value="家樂福板橋">家樂福板橋</option>
+                    <option value="家樂福中和">家樂福中和</option>
+                    <option value="家樂福新店">家樂福新店</option>
+                    <option value="家樂福土城">家樂福土城</option>
+                    <option value="家樂福樹林">家樂福樹林</option>
+                    <option value="家樂福林口">家樂福林口</option>
+                    <option value="大全聯中和">大全聯中和</option>
+                    <option value="大全聯南湖">大全聯南湖</option>
+                    <option value="大全聯中崙">大全聯中崙</option>
+                    <option value="大全聯土城">大全聯土城</option>
+                    <option value="大全聯景平">大全聯景平</option>
+                    <option value="大全聯碧潭">大全聯碧潭</option>
+                </optgroup>
+                <optgroup label="📍 桃竹區">
+                    <option value="家樂福中壢">家樂福中壢</option>
+                    <option value="家樂福內壢">家樂福內壢</option>
+                    <option value="家樂福中原">家樂福中原</option>
+                    <option value="家樂福經國">家樂福經國</option>
+                    <option value="家樂福平鎮">家樂福平鎮</option>
+                    <option value="家樂福八德">家樂福八德</option>
+                    <option value="大全聯八德">大全聯八德</option>
+                    <option value="大全聯平鎮">大全聯平鎮</option>
+                    <option value="大全聯中壢">大全聯中壢</option>
+                    <option value="大全聯忠孝">大全聯忠孝</option>
+                    <option value="大全聯頭份">大全聯頭份</option>
+                    <option value="大全聯青埔">大全聯青埔</option>
+                    <option value="新竹大遠百">新竹大遠百</option>
+                </optgroup>
+                <optgroup label="📍 中區">
+                    <option value="家樂福中清">家樂福中清</option>
+                    <option value="家樂福彰化">家樂福彰化</option>
+                    <option value="家樂福南投">家樂福南投</option>
+                    <option value="家樂福豐原">家樂福豐原</option>
+                    <option value="家樂福德安">家樂福德安</option>
+                    <option value="家樂福青海">家樂福青海</option>
+                    <option value="家樂福文心">家樂福文心</option>
+                    <option value="家樂福太平">家樂福太平</option>
+                    <option value="家樂福沙鹿">家樂福沙鹿</option>
+                    <option value="家樂福嘉義">家樂福嘉義</option>
+                    <option value="家樂福斗六">家樂福斗六</option>
+                    <option value="家樂福大墩">家樂福大墩</option>
+                    <option value="家樂福西屯">家樂福西屯</option>
+                    <option value="家樂福北港">家樂福北港</option>
+                    <option value="大全聯忠明">大全聯忠明</option>
+                    <option value="大全聯嘉義">大全聯嘉義</option>
+                    <option value="大全聯斗南">大全聯斗南</option>
+                    <option value="大全聯員林">大全聯員林</option>
+                    <option value="台中大遠百">台中大遠百</option>
+                </optgroup>
+                <optgroup label="📍 南區">
+                    <option value="家樂福屏東">家樂福屏東</option>
+                    <option value="家樂福愛河">家樂福愛河</option>
+                    <option value="家樂福鳳山">家樂福鳳山</option>
+                    <option value="家樂福成功">家樂福成功</option>
+                    <option value="家樂福楠梓">家樂福楠梓</option>
+                    <option value="家樂福中華">家樂福中華</option>
+                    <option value="家樂福中正">家樂福中正</option>
+                    <option value="家樂福新營">家樂福新營</option>
+                    <option value="家樂福仁德">家樂福仁德</option>
+                    <option value="家樂福安平">家樂福安平</option>
+                    <option value="家樂福台東">家樂福台東</option>
+                    <option value="家福新屏店">家福新屏店</option>
+                    <option value="家樂福新楠">家樂福新楠</option>
+                    <option value="家樂福新仁">家樂福新仁</option>
+                    <option value="大全聯台南">大全聯台南</option>
+                    <option value="大全聯佳里">大全聯佳里</option>
+                    <option value="大全聯鳳山">大全聯鳳山</option>
+                    <option value="大全聯台東">大全聯台東</option>
+                </optgroup>
+                <option value="自己填寫">✏️ 自己填寫...</option>
+            </select>
+            
+        </div>
+        <input type="text" id="store_branch_custom" placeholder="請手 manual 填寫分店名稱..." style="display:none; margin-top:5px; border-color: #1a5f7a; background: #f0f8ff;">
+        <label style="font-size: 14px; font-weight: bold; color: #555;">🧑‍💼 業務人員 <span class="required">*</span></label>
+        <div style="display: flex; gap: 6px; margin-top: 5px;">
+            <input type="text" id="salesperson_id" placeholder="輸入編號 (例: A001)" style="flex: 1; border-color: #1a5f7a;">
+            <button type="button" onclick="checkEmployee()" class="btn-copy" style="padding: 0 15px; flex-shrink: 0; border:none; border-radius:6px;">🔍 確認</button>
+            <input type="text" id="salesperson_name" placeholder="顯示姓名" readonly style="flex: 1; background-color: #e9ecef; color: #666; border-color: #ddd; cursor: not-allowed;">
+        </div>
+    </div>
+
+<div class="question-card" id="card-service-date">
+        <div class="question-title">服務日期 <span class="required">*</span></div>
+        <input 
+            type="text" 
+            id="order_date" 
+            name="service_date" 
+            placeholder="請點擊選擇日期"
+            onfocus="(this.type='date')" 
+            onblur="if(!this.value) this.type='text'"
+            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; background: #fafafa; cursor: pointer;"
+        >
+    </div>
+
+    <div class="question-card">
+        <div class="question-title">客戶與訂單資訊 <span class="required">*</span></div>
+        <div class="flex-row-inputs" style="display: flex; gap: 6px; margin-bottom: 10px;">
+            <input type="text" id="order_id" placeholder="單號 *" style="flex: 1; border-color: #1a5f7a;">
+            <input type="text" id="order_no" placeholder="銷貨單號 *" style="flex: 1; border-color: #1a5f7a;">
+        </div>
+        <div class="flex-row-inputs" style="display: flex; gap: 6px; margin-bottom: 10px;">
+            <input type="text" id="customer_name" placeholder="顧客姓名 *" style="flex: 1;">
+            <input type="tel" id="mobile_phone" placeholder="行動電話 *" style="flex: 1;">
+        </div>
+        
+        <label style="font-size: 14px; font-weight: bold; color: #555;">📍 送貨地點 *： <span id="store_hint" style="color: #d93025; margin-left: 10px; font-weight: 800;"></span></label>
+        <div class="flex-row-inputs" style="display: flex; gap: 6px; margin-top: 5px; margin-bottom: 5px;">
+            <select id="addr_city" onchange="updateDistricts()" style="flex: 1;">
+                <option value="">選擇縣市</option>
+            </select>
+            <select id="addr_dist" style="flex: 1;">
+                <option value="">選擇鄉鎮市區</option>
+            </select>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <input type="text" id="addr_detail" placeholder="街道巷弄號樓 (例: 信義路六段381號)">
+        </div>
+        
+        <input type="text" id="invoice_no" placeholder="發票編碼 *" style="border-color: #1a5f7a;">
+    </div>
+
+
+
+    <div class="question-card">
+        <div class="question-title">機型選擇 <span class="required">*</span></div>
+        <select id="machine_dropdown" class="select-add" style="margin-bottom: 8px; padding: 14px 12px !important;" onchange="handleAddSelect('machine')">
+            <option value="">➕ 點選此處將機型加入清單...</option>
+            <optgroup label="IONPURE 濾菌生飲">
+                <option value="IonPure Pro 電淨盾">IonPure Pro 電淨盾</option>
+                <option value="PF-207 全效能淨水器">PF-207 全效能淨水器</option>
+                <option value="PF-203 硬水軟化淨水器">PF-203 硬水軟化淨水器</option>
+                <option value="UVC-207/203/202 醫護級">UVC-207/203/202 醫護級</option>
+            </optgroup>
+            <optgroup label="廚下型飲水機">
+                <option value="TK-6000 冰溫熱觸控">TK-6000 冰溫熱觸控</option>
+                <option value="TK-5000 雙溫觸控">TK-5000 雙溫觸控</option>
+                <option value="TK-4000 加熱雙溫">TK-4000 加熱雙溫</option>
+            </optgroup>
+            <optgroup label="電解水機">
+                <option value="VS-705 廚下型電解水機">VS-705 廚下型電解水機</option>
+                <option value="PL-705 桌上型電解水機">PL-705 桌上型電解水機</option>
+                <option value="PL-505T 桌上型電解水機">PL-505T 桌上型電解水機</option>
+                <option value="PL-B502 桌上型電解水機">PL-B502 桌上型電解水機</option>
+            </optgroup>
+            <optgroup label="RO純水機">
+                <option value="RFX-1000 大水量直出RO">RFX-1000 大水量直出RO</option>
+                <option value="RF-800 直出RO淨水器">RF-800 直出RO淨水器</option>
+                <option value="RF-550 高效磁化淨水器">RF-550 高效磁化淨水器</option>
+                <option value="RF-350 高效純水淨水器">RF-350 高效純水淨水器</option>
+            </optgroup>
+            <optgroup label="全戶式/軟水">
+                <option value="WH-300 全戶淨水系統">WH-300 全戶淨水系統</option>
+                <option value="WST-1400 Pro 智慧軟水">WST-1400 Pro 智慧軟水</option>
+                <option value="WST-2000 Pro 智慧軟水">WST-2000 Pro 智慧軟水</option>
+            </optgroup>
+            <optgroup label="飲水機 (桌上/落地)">
+                <option value="桌上型飲水機">桌上型飲水機</option>
+                <option value="落地型飲水機">落地型飲水機</option>
+            </optgroup>
+            <option value="其他">📌 其他型號 (請手動輸入)</option>
+        </select>
+        
+        <div id="machine_other_wrap" style="display: none; gap: 8px; margin-bottom: 10px;">
+            <input type="text" id="machine_other_input" placeholder="請手動輸入型號名稱..." style="flex: 1; border-color: #1a5f7a; background: #f0f8ff;">
+            <button type="button" onclick="handleAddOther('machine')" class="btn-copy" style="padding: 0 15px; flex-shrink: 0; border:none; border-radius:6px;">確認加入</button>
+        </div>
+
+        <div id="machine_table_wrap" class="cart-table-wrapper">
+            <table class="cart-table" id="machine_table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding-left: 10px; width: auto;">已選機型清單</th>
+                        <th style="width: 45px;">數量</th>
+                        <th style="width: 70px; line-height: 1.2;">說明確認<br><span style="font-size: 11px;">(請打勾)</span></th>
+                        <th style="width: 55px;">刪除</th>
+                    </tr>
+                </thead>
+                <tbody id="machine_tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="question-card">
+        <div class="question-title">濾心抵用金選擇 <span class="required">*</span></div>
+        <select id="filter_dropdown" class="select-add" style="margin-bottom: 8px; padding: 14px 12px !important;" onchange="handleAddSelect('filter')">
+            <option value="">➕ 點選此處將濾芯加入清單...</option>
+            <optgroup label="P系列濾芯">
+                <option value="P1000">P1000</option>
+                <option value="P2000">P2000</option>
+                <option value="P3000">P3000</option>
+                <option value="P4000">P4000</option>
+                <option value="P7000">P7000</option>
+            </optgroup>
+            <optgroup label="其他專用濾芯">
+            <option value="PJ-8000">PJ-8000</option>
+            <option value="Q4000">Q4000</option>
+            <option value="Q2000">Q2000</option>
+            <option value="R500">R500</option>
+            </optgroup>
+        </select>
+        
+        <div id="filter_other_wrap" style="display: none; gap: 8px; margin-bottom: 10px;">
+            <input type="text" id="filter_other_input" placeholder="請手動輸入濾芯名稱..." style="flex: 1; border-color: #1a5f7a; background: #f0f8ff;">
+            <button type="button" onclick="handleAddOther('filter')" class="btn-copy" style="padding: 0 15px; flex-shrink: 0; border:none; border-radius:6px;">確認加入</button>
+        </div>
+
+<div id="filter_table_wrap" class="cart-table-wrapper">
+            <table class="cart-table" id="filter_table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding-left: 10px; width: auto;">您為客戶選擇的濾芯清單</th>
+                        <th style="width: 45px;">數量</th>
+                        <th style="width: 60px;">價格</th> <th style="width: 70px; line-height: 1.2;">說明確認<br><span style="font-size: 11px;">(請打勾)</span></th>
+                        <th style="width: 55px;">刪除</th>
+                    </tr>
+                </thead>
+                <tbody id="filter_tbody"></tbody>
+                <tfoot id="filter_tfoot" style="background-color: #fdf2f2; font-weight: bold; color: #d93025; display: none;">
+                    <tr>
+                        <td colspan="2" style="text-align: right; padding-right: 10px;">總計金額：</td>
+                        <td id="filter_total_price" style="text-align: center;">$0</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="button-bar">
+    <button class="btn btn-copy" onclick="copyForLine()">📋 複製 LINE 申請單</button>
+    <button class="btn btn-upload" id="btn-upload" onclick="uploadToCloud()">☁️ 存入雲端</button>
+    <button class="btn btn-reset" onclick="resetForm()">🔄 清除</button>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjqQd0zTwacRnsJme3556imKPnPCqBeD_y9XPkjnVbeysqrnYC_mkO5OjCz3F-1P9i/exec";
+
+    // --- 台灣縣市與鄉鎮市區資料庫 ---
+    const twZipCode = {
+        "台北市": ["中正區", "大同區", "中山區", "松山區", "大安區", "萬華區", "信義區", "士林區", "北投區", "內湖區", "南港區", "文山區"],
+        "新北市": ["板橋區", "三重區", "中和區", "永和區", "新莊區", "新店區", "樹林區", "鶯歌區", "三峽區", "淡水區", "汐止區", "瑞芳區", "土城區", "蘆洲區", "五股區", "泰山區", "林口區", "深坑區", "石碇區", "坪林區", "三芝區", "石門區", "八里區", "平溪區", "雙溪區", "貢寮區", "金山區", "萬里區", "烏來區"],
+        "桃園市": ["桃園區", "中壢區", "大溪區", "楊梅區", "蘆竹區", "大園區", "龜山區", "八德區", "龍潭區", "平鎮區", "新屋區", "觀音區", "復興區"],
+        "台中市": ["中區", "東區", "南區", "西區", "北區", "北屯區", "西屯區", "南屯區", "太平區", "大里區", "霧峰區", "烏日區", "豐原區", "后里區", "石岡區", "東勢區", "和平區", "新社區", "潭子區", "大雅區", "神岡區", "大肚區", "沙鹿區", "龍井區", "梧棲區", "清水區", "大甲區", "外埔區", "大安區"],
+        "台南市": ["中西區", "東區", "南區", "北區", "安平區", "安南區", "永康區", "歸仁區", "新化區", "左鎮區", "玉井區", "楠西區", "南化區", "仁德區", "關廟區", "龍崎區", "官田區", "麻豆區", "佳里區", "西港區", "七股區", "將軍區", "學甲區", "北門區", "新營區", "後壁區", "白河區", "東山區", "六甲區", "下營區", "柳營區", "鹽水區", "善化區", "大內區", "山上區", "新市區", "安定區"],
+        "高雄市": ["新興區", "前金區", "苓雅區", "鹽埕區", "鼓山區", "旗津區", "前鎮區", "三民區", "楠梓區", "小港區", "左營區", "仁武區", "大社區", "岡山區", "路竹區", "阿蓮區", "田寮區", "燕巢區", "橋頭區", "梓官區", "彌陀區", "永安區", "湖內區", "鳳山區", "大寮區", "林園區", "鳥松區", "大樹區", "旗山區", "美濃區", "六龜區", "內門區", "杉林區", "甲仙區", "桃源區", "那瑪夏區", "茂林區"],
+        "基隆市": ["仁愛區", "信義區", "中正區", "中山區", "安樂區", "暖暖區", "七堵區"],
+        "新竹市": ["東區", "北區", "香山區"],
+        "嘉義市": ["東區", "西區"],
+        "新竹縣": ["竹北市", "竹東鎮", "新埔鎮", "關西鎮", "湖口鄉", "新豐鄉", "芎林鄉", "橫山鄉", "北埔鄉", "寶山鄉", "峨眉鄉", "尖石鄉", "五峰鄉"],
+        "苗栗縣": ["苗栗市", "苑裡鎮", "通霄鎮", "竹南鎮", "頭份市", "後龍鎮", "卓蘭鎮", "大湖鄉", "公館鄉", "銅鑼鄉", "南庄鄉", "頭屋鄉", "三義鄉", "西湖鄉", "造橋鄉", "三灣鄉", "獅潭鄉", "泰安鄉"],
+        "彰化縣": ["彰化市", "鹿港鎮", "和美鎮", "線西鄉", "伸港鄉", "福興鄉", "秀水鄉", "花壇鄉", "芬園鄉", "員林市", "溪湖鎮", "田中鎮", "大村鄉", "埔鹽鄉", "埔心鄉", "永靖鄉", "社頭鄉", "二水鄉", "北斗鎮", "二林鎮", "田尾鄉", "埤頭鄉", "芳苑鄉", "大城鄉", "竹塘鄉", "溪州鄉"],
+        "南投縣": ["南投市", "埔里鎮", "草屯鎮", "竹山鎮", "集集鎮", "名間鄉", "鹿谷鄉", "中寮鄉", "魚池鄉", "國姓鄉", "水里鄉", "信義鄉", "仁愛鄉"],
+        "雲林縣": ["斗六市", "斗南鎮", "虎尾鎮", "西螺鎮", "土庫鎮", "北港鎮", "古坑鄉", "大埤鄉", "莿桐鄉", "林內鄉", "二崙鄉", "崙背鄉", "麥寮鄉", "東勢鄉", "褒忠鄉", "臺西鄉", "元長鄉", "四湖鄉", "口湖鄉", "水林鄉"],
+        "嘉義縣": ["太保市", "朴子市", "布袋鎮", "大林鎮", "民雄鄉", "溪口鄉", "新港鄉", "六腳鄉", "東石鄉", "義竹鄉", "鹿草鄉", "水上鄉", "中埔鄉", "竹崎鄉", "梅山鄉", "番路鄉", "大埔鄉", "阿里山鄉"],
+        "屏東縣": ["屏東市", "潮州鎮", "東港鎮", "恆春鎮", "萬丹鄉", "長治鄉", "麟洛鄉", "九如鄉", "里港鄉", "鹽埔鄉", "高樹鄉", "萬巒鄉", "內埔鄉", "竹田鄉", "新埤鄉", "枋寮鄉", "新園鄉", "崁頂鄉", "林邊鄉", "南州鄉", "佳冬鄉", "琉球鄉", "車城鄉", "滿州鄉", "枋山鄉", "三地門鄉", "霧臺鄉", "瑪家鄉", "泰武鄉", "來義鄉", "春日鄉", "獅子鄉", "牡丹鄉"],
+        "宜蘭縣": ["宜蘭市", "羅東鎮", "蘇澳鎮", "頭城鎮", "礁溪鄉", "壯圍鄉", "員山鄉", "冬山鄉", "五結鄉", "三星鄉", "大同鄉", "南澳鄉"],
+        "花蓮縣": ["花蓮市", "鳳林鎮", "玉里鎮", "新城鄉", "吉安鄉", "壽豐鄉", "光復鄉", "豐濱鄉", "瑞穗鄉", "富里鄉", "秀林鄉", "萬榮鄉", "卓溪鄉"],
+        "台東縣": ["臺東市", "成功鎮", "關山鎮", "卑南鄉", "大武鄉", "太麻里鄉", "東河鄉", "長濱鄉", "鹿野鄉", "池上鄉", "綠島鄉", "延平鄉", "海端鄉", "達仁鄉", "金峰鄉", "蘭嶼鄉"],
+        "澎湖縣": ["馬公市", "湖西鄉", "白沙鄉", "西嶼鄉", "望安鄉", "七美鄉"],
+        "金門縣": ["金城鎮", "金湖鎮", "金沙鎮", "金寧鄉", "烈嶼鄉", "烏坵鄉"],
+        "連江縣": ["南竿鄉", "北竿鄉", "莒光鄉", "東引鄉"]
+    };
+// --- 門市服務區域歸屬設定 --- 
+const serviceResponsibility = {
+    "大安": ["大安區", "中山區", "中正區", "萬華區", "信義區", "文山區", "大同區", "松山區", "內湖區", "南港區", "汐止區", "萬里區", "深坑區", "石碇區", "瑞芳區", "平溪區", "雙溪區", "貢寮區", "坪林區", "石門區", "金山區", "基隆市", "宜蘭縣", "宜蘭市"],
+    "三重": ["三重區", "蘆洲區", "五股區", "泰山區", "八里區", "新莊區", "士林區", "北投區", "淡水區", "三芝區"],
+    "板橋": ["板橋區", "中和區", "永和區", "新店區", "烏來區", "土城區", "樹林區", "三峽區", "鶯歌區"],
+    "桃園": ["桃園區", "龜山區", "大園區", "蘆竹區", "林口區", "八德區"],
+    "中壢": ["中壢區", "平鎮區", "龍潭區", "楊梅區", "新屋區", "觀音區", "大溪區", "復興區"],
+    "新竹": ["新竹市", "新竹縣", "苗栗縣", "苗栗市"],
+    "台中": ["西區", "南區", "南屯區", "大里區", "霧峰區", "梧棲區", "沙鹿區", "大肚區", "龍井區", "烏日區", "清水區", "西屯區", "彰化縣", "彰化市"],
+    "中清": ["東區", "北區", "中區", "北屯區", "豐原區", "神岡區", "石岡區", "大雅區", "新社區", "大甲區", "外埔區", "后里區", "東勢區", "潭子區", "太平區", "和平區", "南投市", "南投縣"],
+    "嘉義": ["嘉義市", "雲林縣", "台南市後壁區", "台南市白河區", "台南市東山區", "台南市新營區", "那瑪夏區"],
+    "台南": ["台南市", "湖內區", "茄萣區", "茄定區"],
+    "高雄": ["高雄市", "高雄縣", "屏東縣", "屏東市"]
+};
+
+// 獨立出來的計算函數 (UI 跟 表單送出都會用到)
+function getResponsibleStore(city, dist) {
+    const fullArea = city + dist;
+    let storeName = "";
+    for (let store in serviceResponsibility) {
+        const areas = serviceResponsibility[store];
+        if (areas.includes(dist) || areas.includes(fullArea) || areas.includes(city)) {
+            storeName = store;
+            break;
+        }
+    }
+    const codes = {
+        "大安": "18", "三重": "02", "板橋": "16", "桃園": "14", 
+        "中壢": "07", "新竹": "03", "台中": "04", "中清": "19", 
+        "嘉義": "12", "台南": "08", "高雄": "06"
+    };
+    return storeName ? `A${codes[storeName]} ${storeName}` : "";
+}
+
+// 監聽縣市與區域變動，將結果安靜地顯示在文字旁邊
+document.addEventListener('change', function(e) {
+    if (e.target && (e.target.id === 'addr_dist' || e.target.id === 'addr_city')) {
+        const city = document.getElementById('addr_city').value;
+        const dist = document.getElementById('addr_dist').value;
+        const hintSpan = document.getElementById('store_hint');
+        
+        if (!hintSpan) return;
+        if (!dist || !city) {
+            hintSpan.innerHTML = "";
+            return;
+        }
+
+        const responsible = getResponsibleStore(city, dist);
+        if (responsible) {
+            hintSpan.innerHTML = `👉 由【${responsible}】負責`;
+        } else {
+            hintSpan.innerHTML = `👉 查無負責門市`;
+        }
+    }
+});
+
+
+    function initAddressSelectors() {
+        const citySelect = document.getElementById('addr_city');
+        for (let city in twZipCode) {
+            let option = document.createElement("option");
+            option.value = city; option.text = city; citySelect.add(option);
+        }
+    }
+
+    function updateDistricts() {
+        const city = document.getElementById('addr_city').value;
+        const distSelect = document.getElementById('addr_dist');
+        distSelect.innerHTML = '<option value="">選擇鄉鎮市區</option>';
+        if (city && twZipCode[city]) {
+            twZipCode[city].forEach(dist => {
+                let option = document.createElement("option");
+                option.value = dist; option.text = dist; distSelect.add(option);
+            });
+        }
+    }
+
+    // --- 控制「分店」下拉選單 ---
+    function handleBranchSelect() {
+        const sel = document.getElementById('store_branch_select').value;
+        const customInput = document.getElementById('store_branch_custom');
+        if (sel === '自己填寫') {
+            customInput.style.display = 'block';
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+            customInput.value = '';
+        }
+    }
+
+    // --- ★★★ 購物車堆疊表格邏輯 ★★★ ---
+    let selections = {
+        machine: [],
+        filter: [],
+        life: []
+    };
+
+    function handleAddSelect(category) {
+        const select = document.getElementById(category + '_dropdown');
+        const val = select.value;
+
+        if (val === "") return;
+
+        if (val === "其他") {
+            document.getElementById(category + '_other_wrap').style.display = 'flex';
+            document.getElementById(category + '_other_input').focus();
+            select.value = "";
+            return;
+        }
+
+        if (val === "無") {
+            selections[category] = [{ name: "無", qty: 1, isNone: true }];
+            renderCartTable(category);
+            select.value = "";
+            document.getElementById(category + '_other_wrap').style.display = 'none';
+            return;
+        }
+
+        selections[category] = selections[category].filter(item => !item.isNone);
+
+        let existing = selections[category].find(item => item.name === val);
+        if (existing) {
+            existing.qty++; 
+        } else {
+            selections[category].push({ name: val, qty: 1, checked: false });
+        }
+
+        select.value = ""; 
+        document.getElementById(category + '_other_wrap').style.display = 'none';
+        renderCartTable(category);
+    }
+
+    function handleAddOther(category) {
+        const input = document.getElementById(category + '_other_input');
+        const val = input.value.trim();
+        
+        if (val) {
+            selections[category] = selections[category].filter(item => !item.isNone);
+            let existing = selections[category].find(item => item.name === val);
+            if (existing) {
+                existing.qty++;
+            } else {
+                selections[category].push({ name: val, qty: 1, checked: false });
+            }
+            input.value = "";
+            document.getElementById(category + '_other_wrap').style.display = 'none';
+            renderCartTable(category);
+        }
+    }
+
+    function updateCartQty(category, index, newQty) {
+        if(newQty < 1) newQty = 1;
+        selections[category][index].qty = newQty;
+    }
+
+    function removeCartItem(category, index) {
+        selections[category].splice(index, 1);
+        renderCartTable(category);
+    }
+
+    function toggleCartCheck(category, index) {
+        selections[category][index].checked = !selections[category][index].checked;
+    }
+
+function renderCartTable(category) {
+        const tbody = document.getElementById(category + '_tbody');
+        const wrapper = document.getElementById(category + '_table_wrap'); 
+        const data = selections[category];
+
+        if(data.length === 0) {
+            wrapper.style.display = 'none';
+            return;
+        }
+        
+        wrapper.style.display = 'block';
+        tbody.innerHTML = '';
+
+        let totalSum = 0; // 🌟 用來累加濾芯總金額
+
+        data.forEach((item, index) => {
+            let tr = document.createElement('tr');
+            
+            // 1. 名稱
+            let nameTd = document.createElement('td');
+            nameTd.className = 'item-name';
+            nameTd.innerText = item.name;
+            tr.appendChild(nameTd);
+
+            // 2. 數量
+            let qtyTd = document.createElement('td');
+            if (item.isNone) {
+                qtyTd.innerText = "-";
+            } else {
+                qtyTd.innerHTML = `<input type="number" value="${item.qty}" min="1" onchange="updateCartQty('${category}', ${index}, this.value)">`;
+            }
+            tr.appendChild(qtyTd);
+
+            // 3. 🌟 價格 (只有濾芯分類才會顯示價格)
+            if (category === 'filter') {
+                let priceTd = document.createElement('td');
+                if (item.isNone) {
+                    priceTd.innerText = "-";
+                } else {
+                    let unitPrice = filterPrices[item.name] || 0; // 查表找價格，若手動輸入找不到則預設 0
+                    let rowPrice = unitPrice * item.qty; // 單價 x 數量
+                    totalSum += rowPrice;
+                    priceTd.innerText = `$${rowPrice}`;
+                }
+                tr.appendChild(priceTd);
+            }
+
+            // 4. 說明確認 (全部都有)
+            let chkTd = document.createElement('td');
+            if (item.isNone) {
+                chkTd.innerText = "-";
+            } else {
+                chkTd.innerHTML = `<input type="checkbox" class="cart-checkbox" ${item.checked ? 'checked' : ''} onchange="toggleCartCheck('${category}', ${index})">`;
+            }
+            tr.appendChild(chkTd);
+
+            // 5. 刪除按鈕
+            let actionTd = document.createElement('td');
+            actionTd.innerHTML = `<button type="button" class="del-btn" onclick="removeCartItem('${category}', ${index})">刪除</button>`;
+            tr.appendChild(actionTd);
+
+            tbody.appendChild(tr);
+        });
+
+        // 🌟 處理底部的總計顯示 (只有濾芯需要)
+        if (category === 'filter') {
+            const tfoot = document.getElementById('filter_tfoot');
+            const totalDisplay = document.getElementById('filter_total_price');
+            if (tfoot && totalDisplay) {
+                if (data.length > 0 && !data[0].isNone && totalSum > 0) {
+                    tfoot.style.display = 'table-row-group';
+                    totalDisplay.innerText = `$${totalSum}`;
+                } else {
+                    tfoot.style.display = 'none'; // 若總額為 0 或選了"無"，則隱藏總計
+                }
+            }
+        }
+    }
+    function getCartString(category) {
+        if (selections[category].length === 0) return "";
+        if (selections[category][0].isNone) return "無";
+        
+        return selections[category].map(item => {
+            return item.qty > 1 ? `${item.name} *${item.qty}` : item.name;
+        }).join(' + ');
+    }
+
+    // --- 表單送出與驗證邏輯 ---
+function getFormData() {
+        const chain = document.getElementById('store_chain').value;
+        const city = document.getElementById('store_city').value;
+        
+        // 處理分店邏輯
+        let branchSel = document.getElementById('store_branch_select').value;
+        let branchFinal = branchSel;
+        if (branchSel === '自己填寫') {
+            branchFinal = document.getElementById('store_branch_custom').value.trim();
+            if (branchFinal && !branchFinal.endsWith('店')) branchFinal += '店';
+        }
+
+        const addrCity = document.getElementById('addr_city').value;
+        const addrDist = document.getElementById('addr_dist').value;
+        const addrDetail = document.getElementById('addr_detail').value.trim();
+        let fullDeliveryAddress = "";
+        if (addrCity || addrDist || addrDetail) {
+            fullDeliveryAddress = addrCity + addrDist + addrDetail;
+        }
+
+        // 👇 這裡呼叫剛剛寫好的函數，抓取負責門市
+        const responsibleStoreStr = getResponsibleStore(addrCity, addrDist);
+
+        return {
+            store_chain: chain,
+            store_city: city,
+            store_branch: branchFinal,
+            order_date: document.getElementById('order_date').value,
+            order_id: document.getElementById('order_id').value.trim(),
+            order_no: document.getElementById('order_no').value.trim(),
+            invoice_no: document.getElementById('invoice_no').value.trim(),
+            customer_name: document.getElementById('customer_name').value.trim(),
+            mobile_phone: document.getElementById('mobile_phone').value.trim(),
+            delivery_address: fullDeliveryAddress,
+            
+            machine_model: getCartString('machine'),
+            filter_model: getCartString('filter'),
+            
+            // 👇 這裡把資料加進去打包清單中 (Google Sheet 才能接收)
+            responsible_store: responsibleStoreStr 
+        };
+    }
+
+    function validateForm(data) {
+        // 檢查分店選單
+        const branchSel = document.getElementById('store_branch_select').value;
+        if (!data.store_chain || !data.store_city || !branchSel) {
+            alert("⚠️ 請完整選擇【申請單位資訊】的通路、縣市與分店門市！");
+            return false;
+        }
+        if (branchSel === '自己填寫' && !data.store_branch) {
+            alert("⚠️ 請手動輸入【分店名稱】！");
+            return false;
+        }
+
+        if(!data.order_date || !data.order_id || !data.order_no || !data.invoice_no || !data.customer_name || !data.mobile_phone) {
+            alert("⚠️ 標記星號的必填欄位尚未填寫完成！\n(請確認服務日期、單號、銷貨單號、發票編碼、客戶資訊等皆已填寫)");
+            return false;
+        }
+        
+        const addrCity = document.getElementById('addr_city').value;
+        const addrDist = document.getElementById('addr_dist').value;
+        const addrDetail = document.getElementById('addr_detail').value.trim();
+        if(!addrCity || !addrDist || !addrDetail) {
+            alert("⚠️ 請完整填寫【送貨地點】的縣市、區域與詳細地址！");
+            return false;
+        }
+
+        if (selections.machine.length === 0) {
+            alert("⚠️ 請從下拉選單選擇或輸入加入【機型】！(可多次點選加入多台)");
+            return false;
+        }
+        
+        if (selections.filter.length === 0) {
+            alert("⚠️ 請選擇或輸入【濾芯】！(若無更換濾芯請選擇「🚫 無濾芯」)");
+            return false;
+        }
+        
+        // 統一檢查表格是否有未勾選「說明確認」的項目
+        const checkCategoryConfirmation = (categoryData, categoryName) => {
+            let unconfirmed = categoryData.filter(item => !item.isNone && !item.checked);
+            if (unconfirmed.length > 0) {
+                let names = unconfirmed.map(i => i.name).join('、');
+                alert(`⚠️ 請確認並勾選下列${categoryName}的「說明確認」方塊：\n\n${names}`);
+                return false;
+            }
+            return true;
+        };
+
+        if (!checkCategoryConfirmation(selections.machine, '機型')) return false;
+        if (!checkCategoryConfirmation(selections.filter, '濾芯')) return false;
+
+        return true;
+    }
+    // --- 🌟 濾芯專用價格表 ---
+    const filterPrices = {
+        "PJ-8000": 1980,
+        "Q4000": 2300,
+        "Q2000": 1160,
+        "R500": 420,
+        "P1000": 590,
+        "P2000": 1180,
+        "P3000": 1200,
+        "P4000": 2300,
+        "P7000": 2790
+    };
+
+    function updateCartQty(category, index, newQty) {
+        if(newQty < 1) newQty = 1;
+        selections[category][index].qty = parseInt(newQty); // 確保轉為數字
+        renderCartTable(category); // 🌟 新增這行：當數量改變時，立刻重新計算價格並刷新表格
+    }
+    
+    function copyForLine() {
+        const data = getFormData();
+        if(!validateForm(data)) return;
+
+        let locationParts = [];
+        if (data.store_chain) locationParts.push(data.store_chain);
+        if (data.store_city) locationParts.push(data.store_city);
+        if (data.store_branch) locationParts.push(data.store_branch);
+        let storeName = locationParts.join(' ');
+
+        let text = `【🏪 賣場特惠出單申請】\n`;
+        text += `━━━━━━━━━━━━━━━\n`;
+        text += `📍 申請單位：${storeName}\n`;
+        text += `📅 服務日期：${data.order_date}\n`;
+        text += `🧾 單號：${data.order_id}\n`;
+        text += `🧾 銷貨單號：${data.order_no} (發票: ${data.invoice_no})\n`;
+        text += `👤 顧客資訊：${data.customer_name} / ${data.mobile_phone}\n`;
+        text += `🚚 送貨地點：${data.delivery_address}\n`;
+        text += `🏢 負責門市：${data.responsible_store}\n`;
+        text += `━━━━━━━━━━━━━━━\n`;
+        text += `📦 申請機型：${data.machine_model}\n`;
+        text += `💧 搭配濾心：${data.filter_model}\n`;
+        text += `━━━━━━━━━━━━━━━\n`;
+        text += `懇請長官核准出單。`;
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('✅ 已複製申請格式，請至 LINE 群組貼上！');
+    }
+
+    async function uploadToCloud() {
+        const data = getFormData();
+        if(!validateForm(data)) return;
+
+        const btn = document.getElementById('btn-upload');
+        const originalText = btn.innerHTML;
+        btn.disabled = true; 
+        btn.innerHTML = "⏳ 上傳中...";
+        
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(data)
+            });
+            alert("✅ 資料已成功上傳至 Google Sheet 留存！");
+        } catch (e) {
+            alert("❌ 上傳失敗，請檢查網路連線或稍後再試。");
+        } finally {
+            btn.disabled = false; 
+            btn.innerHTML = originalText;
+        }
+    }
+
+    function resetForm() {
+        if(confirm("確定要清除所有內容嗎？")) location.reload();
+    }
+
+    window.onload = function() {
+        const cards = document.querySelectorAll('.question-card');
+        cards.forEach((card, index) => {
+            const title = card.querySelector('.question-title');
+            if (title) {
+                // 移除原有的數字編號
+                const originalText = title.innerHTML.replace(/^[\d\.\s]+/, '');
+                // 重新依序補上編號 (1., 2., 3....)
+                title.innerHTML = `${index + 1}. ${originalText}`;
+            }
+        });
+        
+        initAddressSelectors();
+    };
+    // --- 🧑‍💼 員工資料庫 (請在此處設定你們的編號與姓名對應) ---
+    const employeeDB = {
+        "A001": "王小明",
+        "A002": "陳大妹",
+        "B123": "林快樂",
+        "9527": "周星星"
+    };
+
+    // --- 檢查員工編號邏輯 ---
+    function checkEmployee() {
+        // 抓取輸入的編號，並自動轉大寫、去空白
+        const idInput = document.getElementById('salesperson_id').value.trim().toUpperCase(); 
+        const nameInput = document.getElementById('salesperson_name');
+        const idField = document.getElementById('salesperson_id');
+        
+        if (!idInput) {
+            alert("⚠️ 請先輸入員工編號！");
+            nameInput.value = "";
+            idField.style.borderColor = "#d93025"; // 變紅色警告
+            return;
+        }
+
+        // 去資料庫找名字
+        const name = employeeDB[idInput]; 
+        
+        if (name) {
+            // 找到了！顯示名字並將框框變綠色
+            nameInput.value = name;
+            idField.style.borderColor = "#28a745"; 
+        } else {
+            // 找不到！清空名字、變紅色並跳出錯誤
+            nameInput.value = "";
+            idField.style.borderColor = "#d93025"; 
+            alert("❌ 查無此員工編號，請確認後重新輸入！");
+        }
+    }
+</script>
+
+</body>
+</html>
