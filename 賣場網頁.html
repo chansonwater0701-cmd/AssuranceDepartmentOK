@@ -312,7 +312,8 @@
                 <thead>
                     <tr>
                         <th style="text-align: left; padding-left: 10px; width: auto;">已選機型清單</th>
-                        <th style="width: 45px;">數量</th>
+                        <th style="width: 45px;">訂單數目</th>
+                        <th style="width: 45px;">贈品</th>
                         <th style="width: 70px; line-height: 1.2;">說明確認<br><span style="font-size: 11px;">(請打勾)</span></th>
                         <th style="width: 55px;">刪除</th>
                     </tr>
@@ -561,7 +562,7 @@ document.addEventListener('change', function(e) {
         if (existing) {
             existing.qty++; 
         } else {
-            selections[category].push({ name: val, qty: 1, checked: false });
+            selections[category].push({ name: val, qty: 1, giftQty: 0, checked: false });
         }
 
         select.value = ""; 
@@ -634,6 +635,19 @@ function renderCartTable(category) {
             }
             tr.appendChild(qtyTd);
 
+            // ====== 👇 請在這裡插入下方這段「贈品」邏輯 👇 ======
+            if (category === 'machine') {
+                let giftTd = document.createElement('td');
+                if (item.isNone) {
+                    giftTd.innerText = "-";
+                } else {
+                    // 預設給他 input 框，綁定新的更新函式
+                    giftTd.innerHTML = `<input type="number" value="${item.giftQty || 0}" min="0" onchange="updateCartGiftQty('${category}', ${index}, this.value)">`;
+                }
+                tr.appendChild(giftTd);
+            }
+            // ===================================================
+
             // 3. 🌟 價格 (只有濾芯分類才會顯示價格)
             if (category === 'filter') {
                 let priceTd = document.createElement('td');
@@ -679,12 +693,18 @@ function renderCartTable(category) {
             }
         }
     }
+// 將原本的 getCartString 替換成以下版本 👇
     function getCartString(category) {
         if (selections[category].length === 0) return "";
         if (selections[category][0].isNone) return "無";
         
         return selections[category].map(item => {
-            return item.qty > 1 ? `${item.name} *${item.qty}` : item.name;
+            let str = item.qty > 1 ? `${item.name} *${item.qty}` : item.name;
+            // 如果是機型且有輸入搭贈數量，就加在後方
+            if (category === 'machine' && item.giftQty > 0) {
+                str += ` (搭贈*${item.giftQty})`;
+            }
+            return str;
         }).join(' + ');
     }
 
@@ -805,8 +825,15 @@ function validateForm(data) {
 
     function updateCartQty(category, index, newQty) {
         if(newQty < 1) newQty = 1;
-        selections[category][index].qty = parseInt(newQty); // 確保轉為數字
-        renderCartTable(category); // 🌟 新增這行：當數量改變時，立刻重新計算價格並刷新表格
+        selections[category][index].qty = parseInt(newQty); 
+        renderCartTable(category); 
+    }
+
+    // 👇 新增這個函式 👇
+    function updateCartGiftQty(category, index, newQty) {
+        if(newQty < 0) newQty = 0;
+        selections[category][index].giftQty = parseInt(newQty);
+        // 這裡不需要重新 render，只要把數字存進資料庫即可，避免使用者輸入到一半失去焦點
     }
     
     function copyForLine() {
