@@ -369,9 +369,9 @@
         </div>
     </div>
         <!-- 實際原因 (維修專用) -->
-    <div class="question-card" id="card-actual-reason">
+    <div class="question-card hidden-field" id="card-actual-reason">
         <div class="question-title">備註<span class="required">*</span></div>
-        <textarea id="actual_reason" name="actual_reason" rows="3" placeholder="請輸入備註"></textarea>
+        <textarea name="actual_reason" rows="3" placeholder="請輸入備註"></textarea>
     </div>
 
 </div>
@@ -710,78 +710,61 @@ function renderCartTable(category) {
 
     // --- 表單送出與驗證邏輯 ---
 function getFormData() {
-    const chain = document.getElementById('store_chain').value;
-    const cityRaw = document.getElementById('store_city').value; 
-    
-    // --- 拆分邏輯：將 台北區DS01-1 拆開 ---
-    let cityName = "";
-    let cityCode = "";
-    if (cityRaw.includes("DS")) {
-        const splitParts = cityRaw.split(/(?=DS)/); 
-        cityName = splitParts[0]; // 台北區
-        cityCode = splitParts[1]; // DS01-1
-    } else {
-        cityName = cityRaw;
+        const chain = document.getElementById('store_chain').value;
+        const cityRaw = document.getElementById('store_city').value; 
+        
+        // --- 拆分邏輯：將 台北區DS01-1 拆開 ---
+        let cityName = "";
+        let cityCode = "";
+        if (cityRaw.includes("DS")) {
+            const splitParts = cityRaw.split(/(?=DS)/); 
+            cityName = splitParts[0]; // 台北區
+            cityCode = splitParts[1]; // DS01-1
+        } else {
+            cityName = cityRaw;
+        }
+
+        // 處理分店邏輯
+        let branchSel = document.getElementById('store_branch_select').value;
+        let branchFinal = branchSel;
+        if (branchSel === '自己填寫') {
+            branchFinal = document.getElementById('store_branch_custom').value.trim();
+            if (branchFinal && !branchFinal.endsWith('店')) branchFinal += '店';
+        }
+
+        // 處理地址
+        const addrCity = document.getElementById('addr_city').value;
+        const addrDist = document.getElementById('addr_dist').value;
+        const addrDetail = document.getElementById('addr_detail').value.trim();
+        let fullDeliveryAddress = "";
+        if (addrCity || addrDist || addrDetail) {
+            fullDeliveryAddress = addrCity + addrDist + addrDetail;
+        }
+
+        const responsibleStoreStr = getResponsibleStore(addrCity, addrDist);
+
+        // 回傳所有收集到的資料
+        return {
+            store_chain: chain,
+            store_city: cityName,        
+            store_code: cityCode,        // 新增的編號欄位
+            store_branch: branchFinal,
+            salesperson_id: document.getElementById('salesperson_id').value.trim(),
+            salesperson_name: document.getElementById('salesperson_name').value.trim(),
+            order_date: document.getElementById('order_date').value,
+            order_id: document.getElementById('order_id').value.trim(),
+            customer_name: document.getElementById('customer_name').value.trim(),
+            landline_phone: document.getElementById('landline_phone').value.trim(),
+            mobile_phone_01: document.getElementById('mobile_phone_01').value.trim(),
+            mobile_phone_02: document.getElementById('mobile_phone_02').value.trim(),
+            invoice_no: document.getElementById('invoice_no').value.trim(),
+            delivery_address: fullDeliveryAddress,
+            machine_model: getCartString('machine'),
+            filter_model: getCartString('filter'),
+            responsible_store: responsibleStoreStr 
+        };
     }
-
-    // 處理分店邏輯
-    let branchSel = document.getElementById('store_branch_select').value;
-    let branchFinal = branchSel;
-    if (branchSel === '自己填寫') {
-        branchFinal = document.getElementById('store_branch_custom').value.trim();
-        if (branchFinal && !branchFinal.endsWith('店')) branchFinal += '店';
-    }
-
-    // 處理地址
-    const addrCity = document.getElementById('addr_city').value;
-    const addrDist = document.getElementById('addr_dist').value;
-    const addrDetail = document.getElementById('addr_detail').value.trim();
-    let fullDeliveryAddress = "";
-    if (addrCity || addrDist || addrDetail) {
-        fullDeliveryAddress = addrCity + addrDist + addrDetail;
-    }
-
-    const responsibleStoreStr = getResponsibleStore(addrCity, addrDist);
-
-    // 🌟 新增：計算濾芯總金額
-    let filterTotal = 0;
-    if (selections.filter && selections.filter.length > 0) {
-        selections.filter.forEach(item => {
-            if (!item.isNone) {
-                let unitPrice = filterPrices[item.name] || 0;
-                filterTotal += unitPrice * item.qty;
-            }
-        });
-    }
-
-    // 回傳所有收集到的資料
-    return {
-        store_chain: chain,
-        store_city: cityName,        
-        store_code: cityCode,        
-        store_branch: branchFinal,
-        salesperson_id: document.getElementById('salesperson_id').value.trim(),
-        salesperson_name: document.getElementById('salesperson_name').value.trim(),
-        order_date: document.getElementById('order_date').value,
-        order_id: document.getElementById('order_id').value.trim(),
-        customer_name: document.getElementById('customer_name').value.trim(),
-        landline_phone: document.getElementById('landline_phone').value.trim(),
-        mobile_phone_01: document.getElementById('mobile_phone_01').value.trim(),
-        mobile_phone_02: document.getElementById('mobile_phone_02').value.trim(),
-        invoice_no: document.getElementById('invoice_no').value.trim(),
-        delivery_address: fullDeliveryAddress,
-        machine_model: getCartString('machine'),
-        filter_model: getCartString('filter'),
-        responsible_store: responsibleStoreStr,
-        filter_total_price: filterTotal, // 🌟 新增：濾芯總計金額
-        actual_reason: document.getElementById('actual_reason').value.trim() // 🌟 新增：備註欄位
-    };
-}
 function validateForm(data) {
-        if (!data.actual_reason) {
-        alert("⚠️ 請填寫【備註】！");
-        return false;
-    }
         if (!data.store_chain || !data.store_city || !data.store_branch) {
             alert("⚠️ 請完整選擇【申請單位資訊】的通路、縣市與分店門市！");
             return false;
