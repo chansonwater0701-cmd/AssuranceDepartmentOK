@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>千山淨水客服作業數位手冊</title>
+    <!-- 1. 引入樣式與開發工具 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeIn 0.3s ease-out forwards; }
+        body { font-family: "Microsoft JhengHei", -apple-system, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <!-- 2. React 程式碼區塊 -->
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+
+        // --- 內置 SVG 圖示組件 (解決 Lucide 在 HTML 單檔載入問題) ---
+        const Icons = {
+            Phone: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>,
+            File: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>,
+            Map: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+            Chat: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>,
+            Book: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>,
+            Search: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>,
+            Copy: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>,
+            Drop: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22a7 7 0 007-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 007 7z"/></svg>,
+            Check: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>,
+            Tool: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('guide');
+            const [searchTerm, setSearchTerm] = useState('');
+            const [copySuccess, setCopySuccess] = useState(false);
+            const [formData, setFormData] = useState({ name: '', phone: '', address: '', model: '', issue: '', branch: '' });
+
+            const branchData = [
+                { id: 'A18', name: '大安門市', areas: '大安區、中山區、中正區、萬華區、信義區、文山區、大同區、松山區、內湖區、南港區、汐止區、萬里區' },
+                { id: 'A02', name: '三重門市', areas: '深坑區、石碇區、瑞芳區、平溪區、雙溪區、貢寮區、坪林區、石門區、金山區、基隆市、宜蘭縣、宜蘭市' },
+                { id: 'A16', name: '板橋門市', areas: '三重區、蘆洲區、五股區、泰山區、八里區、新莊區、土城區、林口區、樹林區、北投區、淡水區、三芝區' },
+                { id: 'A14', name: '桃園門市', areas: '板橋區、中和區、永和區、新店區、烏來區、八德區、三峽區、鶯歌區' },
+                { id: 'A07', name: '中壢門市', areas: '中壢區、平鎮區、龍潭區、楊梅區、新屋區、觀音區、大溪區、復興區' },
+                { id: 'A03', name: '新竹門市', areas: '新竹市、新竹縣、苗栗縣、苗栗市' },
+                { id: 'A04', name: '台中門市', areas: '西區、南區、南屯區、大里區、霧峰區、梧棲區、沙鹿區、大肚區、龍井區、烏日區、清水區、西屯區、彰化縣、彰化市' },
+                { id: 'A19', name: '中清門市', areas: '東區、北區、中區、北屯區、豐原區、神岡區、石岡區、大雅區、新社區、大甲區、外埔區、后里區、東勢區、潭子區、太平區、和平區、南投市、南投縣' },
+                { id: 'A12', name: '嘉義門市', areas: '嘉義市、雲林縣、台南市後壁區、白河區、東山區、新營區、高雄湖內區' },
+                { id: 'A08', name: '台南門市', areas: '台南市（其餘行政區）' },
+                { id: 'A06', name: '高雄門市', areas: '高雄市、高雄縣、屏東縣、屏東市' }
+            ];
+
+            const filteredBranches = useMemo(() => {
+                if (!searchTerm) return branchData;
+                return branchData.filter(b => b.name.includes(searchTerm) || b.areas.includes(searchTerm));
+            }, [searchTerm]);
+
+            const handleCopy = () => {
+                const text = `【千山淨水客服案件紀錄】\n客戶姓名：${formData.name}\n聯絡電話：${formData.phone}\n服務地址：${formData.address}\n設備型號：${formData.model}\n問題描述：${formData.issue}\n負責門市：${formData.branch}`;
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                setCopySuccess(true);
+                setTimeout(() => setCopySuccess(false), 2000);
+            };
+
+            const NavItem = ({ id, icon: IconComp, label }) => (
+                <button onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center p-3 transition-all ${activeTab === id ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-500 hover:text-blue-500'}`}>
+                    <IconComp />
+                    <span className="text-xs mt-1 font-medium">{label}</span>
+                </button>
+            );
+
+            return (
+                <div className="min-h-screen bg-gray-50 flex flex-col pb-24">
+                    <header className="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50">
+                        <div className="max-w-4xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center space-x-2">
+                                <Icons.Drop />
+                                <h1 className="text-xl font-bold">千山淨水客服作業手冊</h1>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="flex-1 max-w-4xl w-full mx-auto p-4">
+                        {activeTab === 'guide' && (
+                            <div className="space-y-6 animate-in">
+                                <section className="bg-white rounded-xl shadow-sm p-5 border">
+                                    <h2 className="text-lg font-bold flex items-center mb-4 text-blue-700">四大工作職掌</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="p-4 rounded-lg bg-orange-50 border border-orange-100">
+                                            <div className="font-bold flex items-center mb-1 text-orange-700"><Icons.Tool /> <span className="ml-2">維修案件</span></div>
+                                            <p className="text-sm">故障報修、預約排件、進度追蹤、回訪。</p>
+                                        </div>
+                                        <div className="p-4 rounded-lg bg-blue-50 border border-blue-100">
+                                            <div className="font-bold flex items-center mb-1 text-blue-700"><Icons.Drop /> <span className="ml-2">耗材服務</span></div>
+                                            <p className="text-sm">濾芯更換提醒、保養合約管理、物流。</p>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section className="bg-white rounded-xl shadow-sm p-5 border">
+                                    <h2 className="text-lg font-bold flex items-center mb-4 text-blue-700"><Icons.Phone /> 新人防漏問指南</h2>
+                                    <div className="space-y-4">
+                                        {[
+                                            { s: '1', t: '確認身分', d: '確認客戶姓名與手機' },
+                                            { s: '2', t: '釐清問題', d: '型號？漏水、不出水、或換芯？' },
+                                            { s: '3', t: '確認地址', d: '詳細地址（含行政區）' },
+                                            { s: '4', t: '結語派工', d: '核對資訊，告知負責門市' }
+                                        ].map(item => (
+                                            <div key={item.s} className="flex items-start">
+                                                <div className="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1 text-xs font-bold">{item.s}</div>
+                                                <div className="ml-4">
+                                                    <div className="font-bold text-gray-900">{item.t}</div>
+                                                    <p className="text-sm text-blue-600 font-medium mt-1">✓ 必記：{item.d}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            </div>
+                        )}
+
+                        {activeTab === 'form' && (
+                            <div className="bg-white rounded-xl shadow-sm border overflow-hidden animate-in">
+                                <div className="bg-blue-50 p-4 border-b flex justify-between items-center">
+                                    <h2 className="font-bold text-blue-800 flex items-center"><Icons.File /> 標準案件紀錄表</h2>
+                                    <button onClick={() => setFormData({name:'', phone:'', address:'', model:'', issue:'', branch:''})} className="text-xs text-blue-600 underline">清空內容</button>
+                                </div>
+                                <div className="p-5 space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="flex flex-col">
+                                            <label className="text-xs text-gray-500 mb-1 ml-1">客戶姓名</label>
+                                            <input type="text" placeholder="例：王小明" className="w-full p-2 border rounded-md" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <label className="text-xs text-gray-500 mb-1 ml-1">聯絡電話</label>
+                                            <input type="text" placeholder="例：0912-345-678" className="w-full p-2 border rounded-md" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label className="text-xs text-gray-500 mb-1 ml-1">服務地址</label>
+                                        <input type="text" placeholder="詳細地址（含行政區）" className="w-full p-2 border rounded-md" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="flex flex-col">
+                                            <label className="text-xs text-gray-500 mb-1 ml-1">設備型號</label>
+                                            <input type="text" placeholder="例：RO-650" className="w-full p-2 border rounded-md" value={formData.model} onChange={e => setFormData({...formData, model: e.target.value})} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <label className="text-xs text-gray-500 mb-1 ml-1 font-bold text-blue-600">負責門市</label>
+                                            <select 
+                                                className="w-full p-2 border rounded-md bg-blue-50 focus:ring-2 focus:ring-blue-400 outline-none" 
+                                                value={formData.branch} 
+                                                onChange={e => setFormData({...formData, branch: e.target.value})}
+                                            >
+                                                <option value="">-- 請選擇門市 --</option>
+                                                {branchData.map(b => (
+                                                    <option key={b.id} value={`${b.id} ${b.name}`}>
+                                                        {b.id} {b.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label className="text-xs text-gray-500 mb-1 ml-1">問題描述</label>
+                                        <textarea placeholder="例如：漏水、不出水、更換濾芯" rows="3" className="w-full p-2 border rounded-md" value={formData.issue} onChange={e => setFormData({...formData, issue: e.target.value})}></textarea>
+                                    </div>
+                                    <button onClick={handleCopy} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold flex items-center justify-center space-x-2 shadow-lg hover:bg-blue-700">
+                                        {copySuccess ? <Icons.Check /> : <Icons.Copy />}
+                                        <span>{copySuccess ? '已複製！' : '複製格式化紀錄'}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'map' && (
+                            <div className="bg-white rounded-xl shadow-sm border animate-in">
+                                <div className="p-4 border-b sticky top-0 bg-white">
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Icons.Search /></div>
+                                        <input type="text" placeholder="搜尋行政區 (例: 泰山, 大安...)" className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-blue-400" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                                    </div>
+                                </div>
+                                <div className="divide-y max-h-[60vh] overflow-y-auto">
+                                    {filteredBranches.map(b => (
+                                        <div key={b.id} className="p-4 hover:bg-blue-50">
+                                            <div className="flex justify-between">
+                                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-bold">{b.id}</span>
+                                                <h3 className="flex-1 ml-2 font-bold">{b.name}</h3>
+                                            </div>
+                                            <p className="text-sm text-gray-600 mt-1 ml-10">{b.areas}</p>
+                                            <button onClick={() => { setFormData({...formData, branch: b.id + ' ' + b.name}); setActiveTab('form'); }} className="ml-10 mt-2 text-xs text-blue-600 flex items-center"><Icons.Map /> 套用到紀錄表</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'faq' && (
+                            <div className="space-y-4 animate-in">
+                                {[
+                                    { t: '設備漏水 (緊急)', s: '安撫客戶 ➔ 指導關水源 ➔ 安排技師', sc: '「請先關閉設備下方進水閥。我會安排技師前往...」' },
+                                    { t: '濾芯更換原因', s: '說明功能 ➔ 強調安全 ➔ 協助預約', sc: '「濾芯會飽和影響水質，定期更換才能確保飲水安全...」' }
+                                ].map((item, i) => (
+                                    <div key={i} className="bg-white rounded-xl shadow p-5 border">
+                                        <h3 className="font-bold flex items-center text-gray-900"><Icons.Chat /> <span className="ml-2">{item.t}</span></h3>
+                                        <div className="mt-2 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded inline-block">流程：{item.s}</div>
+                                        <p className="mt-4 p-3 bg-gray-50 border-l-4 border-blue-400 text-sm italic">{item.sc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </main>
+
+                    <nav className="bg-white border-t fixed bottom-0 left-0 right-0 z-50 shadow-2xl">
+                        <div className="max-w-4xl mx-auto grid grid-cols-4">
+                            <NavItem id="guide" icon={Icons.Book} label="指引" />
+                            <NavItem id="form" icon={Icons.File} label="紀錄" />
+                            <NavItem id="map" icon={Icons.Map} label="查詢" />
+                            <NavItem id="faq" icon={Icons.Chat} label="話術" />
+                        </div>
+                    </nav>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
