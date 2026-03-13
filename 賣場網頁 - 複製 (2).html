@@ -266,50 +266,39 @@
     <div class="question-card">
         <div class="question-title">機型選擇 <span class="required">*</span></div>
         <select id="machine_dropdown" class="select-add" style="margin-bottom: 8px; padding: 14px 12px !important;" onchange="handleAddSelect('machine')">
-            <option value="">➕ 點選此處將機型 / 破規方案加入清單...</option>
-            
-            <optgroup label="🎁 PF-207 破規方案">
-                <option value="PF-207 (方案1: 贈P7000)">PF-207 (方案1: 贈P7000*1)</option>
-                <option value="PF-207 (方案2: 贈PF-203+P3000)">PF-207 (方案2: 贈PF-203*1+P3000*1)</option>
-                <option value="PF-207 (方案3: 贈PF-202+P2000)">PF-207 (方案3: 贈PF-202*1+P2000*1)</option>
-            </optgroup>
-
-            <optgroup label="🎁 TK 系列專案">
-                <option value="TK-4000 (特惠價 $20890)">TK-4000 (特惠價 $20890 贈P7000+PF-203)</option>
-                <option value="TK-5000 (方案1: $24900)">TK-5000 (方案1: $24900 贈PF-203+P3000)</option>
-                <option value="TK-5000 (方案2: $26550)">TK-5000 (方案2: $26550 贈P7000)</option>
-                <option value="TK-5000 (比賀眾: $26550 加贈P3000)">TK-5000 (比賀眾: $26550 贈P7000+P3000)</option>
-                <option value="TK-6000 (方案1: 贈P7000)">TK-6000 (方案1: 贈P7000*1)</option>
-                <option value="TK-6000 (比賀眾: 加贈P3000)">TK-6000 (比賀眾: 贈P7000+P3000)</option>
-            </optgroup>
-
-            <optgroup label="🎁 RF / RFX 系列方案">
-                <option value="RF-800 (贈P2000+P4000+R500)">RF-800 (贈P2000*1+P4000*1+R500*1)</option>
-                <option value="RF-550 (贈P2000+P4000+R500)">RF-550 (贈P2000*1+P4000*1+R500*1)</option>
-                <option value="RF-350 (贈P2000+P4000+R500)">RF-350 (贈P2000*1+P4000*1+R500*1)</option>
-                <option value="RFX-1000 (方案1: 贈P4000+R500)">RFX-1000 (方案1: 贈P4000*1+R500*1)</option>
-                <option value="RFX-1000 (比賀眾: 加贈BF-007P)">RFX-1000 (比賀眾: 贈P4000+R500+BF-007P)</option>
-            </optgroup>
-
-            <optgroup label="🎁 電解水機方案">
-                <option value="VS-705 (方案1: 贈P4000+PJ-8000)">VS-705 (方案1: 贈P4000*1+PJ-8000*1)</option>
-                <option value="VS-705 (比賀眾: 加贈BF-007P)">VS-705 (比賀眾: 贈P4000+PJ-8000+BF-007P)</option>
-                <option value="PL-705 (方案1: 贈P4000+PJ-8000)">PL-705 (方案1: 贈P4000*1+PJ-8000*1)</option>
-                <option value="PL-705 (比賀眾: 加贈BF-007P)">PL-705 (比賀眾: 贈P4000+PJ-8000+BF-007P)</option>
-            </optgroup>
-
-            <optgroup label="一般機型 (無特殊搭贈)">
+            <option value="">➕ 點選此處將機型加入清單...</option>
+            <optgroup label="IONPURE 濾菌生飲">
                 <option value="IonPure Pro 電淨盾">IonPure Pro 電淨盾</option>
+                <option value="PF-207 全效能淨水器">PF-207 全效能淨水器</option>
                 <option value="PF-203 硬水軟化淨水器">PF-203 硬水軟化淨水器</option>
                 <option value="UVC-207/203/202 醫護級">UVC-207/203/202 醫護級</option>
+            </optgroup>
+            <optgroup label="廚下型飲水機">
+                <option value="TK-6000 冰溫熱觸控">TK-6000 冰溫熱觸控</option>
+                <option value="TK-5000 雙溫觸控">TK-5000 雙溫觸控</option>
+                <option value="TK-4000 加熱雙溫">TK-4000 加熱雙溫</option>
+            </optgroup>
+            <optgroup label="電解水機">
+                <option value="VS-705 廚下型電解水機">VS-705 廚下型電解水機</option>
+                <option value="PL-705 桌上型電解水機">PL-705 桌上型電解水機</option>
+                <option value="PL-505T 桌上型電解水機">PL-505T 桌上型電解水機</option>
+                <option value="PL-B502 桌上型電解水機">PL-B502 桌上型電解水機</option>
+            </optgroup>
+            <optgroup label="RO純水機">
+                <option value="RFX-1000 大水量直出RO">RFX-1000 大水量直出RO</option>
+                <option value="RF-800 直出RO淨水器">RF-800 直出RO淨水器</option>
+                <option value="RF-550 高效磁化淨水器">RF-550 高效磁化淨水器</option>
+                <option value="RF-350 高效純水淨水器">RF-350 高效純水淨水器</option>
+            </optgroup>
+            <optgroup label="全戶式/軟水">
                 <option value="WH-300 全戶淨水系統">WH-300 全戶淨水系統</option>
                 <option value="WST-1400 Pro 智慧軟水">WST-1400 Pro 智慧軟水</option>
                 <option value="WST-2000 Pro 智慧軟水">WST-2000 Pro 智慧軟水</option>
+            </optgroup>
+            <optgroup label="飲水機 (桌上/落地)">
                 <option value="桌上型飲水機">桌上型飲水機</option>
                 <option value="落地型飲水機">落地型飲水機</option>
             </optgroup>
-
-            <option value="WDWSCR (贈Q2000+Q4000+R500)">🌟 WDWSCR (贈Q2000+Q4000+R500)</option>
             <option value="其他">📌 其他型號 (請手動輸入)</option>
         </select>
         
@@ -545,34 +534,7 @@ document.addEventListener('change', function(e) {
         filter: [],
         life: []
     };
- // --- 🎁 建立破規方案資料字典 (請放在 handleAddSelect 函式上方) ---
-    const specialPromos = {
-        "PF-207 (方案1: 贈P7000)": { base: "PF-207 全效能淨水器", gifts: ["P7000"], memo: "" },
-        "PF-207 (方案2: 贈PF-203+P3000)": { base: "PF-207 全效能淨水器", gifts: ["PF-203", "P3000"], memo: "" },
-        "PF-207 (方案3: 贈PF-202+P2000)": { base: "PF-207 全效能淨水器", gifts: ["PF-202", "P2000"], memo: "" },
-        
-        "TK-4000 (特惠價 $20890)": { base: "TK-4000 加熱雙溫", gifts: ["P7000", "PF-203"], memo: "TK-4000 專案價：$19500 + 6290 - 4900 = $20890" },
-        "TK-5000 (方案1: $24900)": { base: "TK-5000 雙溫觸控", gifts: ["PF-203", "P3000"], memo: "TK-5000 專案：$24900" },
-        "TK-5000 (方案2: $26550)": { base: "TK-5000 雙溫觸控", gifts: ["P7000"], memo: "TK-5000 專案：$24900 + 1650 = $26550" },
-        "TK-5000 (比賀眾: $26550 加贈P3000)": { base: "TK-5000 雙溫觸控", gifts: ["P7000", "P3000"], memo: "TK-5000 專案：$26550 (非活動期，遇賀眾競爭加贈 P3000)" },
-        "TK-6000 (方案1: 贈P7000)": { base: "TK-6000 冰溫熱觸控", gifts: ["P7000"], memo: "" },
-        "TK-6000 (比賀眾: 加贈P3000)": { base: "TK-6000 冰溫熱觸控", gifts: ["P7000", "P3000"], memo: "非活動期，遇賀眾競爭加贈 P3000" },
 
-        "RF-800 (贈P2000+P4000+R500)": { base: "RF-800 直出RO淨水器", gifts: ["P2000", "P4000", "R500"], memo: "" },
-        "RF-550 (贈P2000+P4000+R500)": { base: "RF-550 高效磁化淨水器", gifts: ["P2000", "P4000", "R500"], memo: "" },
-        "RF-350 (贈P2000+P4000+R500)": { base: "RF-350 高效純水淨水器", gifts: ["P2000", "P4000", "R500"], memo: "" },
-        "RFX-1000 (方案1: 贈P4000+R500)": { base: "RFX-1000 大水量直出RO", gifts: ["P4000", "R500"], memo: "" },
-        "RFX-1000 (比賀眾: 加贈BF-007P)": { base: "RFX-1000 大水量直出RO", gifts: ["P4000", "R500", "BF-007P"], memo: "非活動期，遇賀眾競爭加贈 BF-007P" },
-
-        "VS-705 (方案1: 贈P4000+PJ-8000)": { base: "VS-705 廚下型電解水機", gifts: ["P4000", "PJ-8000"], memo: "" },
-        "VS-705 (比賀眾: 加贈BF-007P)": { base: "VS-705 廚下型電解水機", gifts: ["P4000", "PJ-8000", "BF-007P"], memo: "非活動期，遇賀眾競爭加贈 BF-007P" },
-        "PL-705 (方案1: 贈P4000+PJ-8000)": { base: "PL-705 桌上型電解水機", gifts: ["P4000", "PJ-8000"], memo: "" },
-        "PL-705 (比賀眾: 加贈BF-007P)": { base: "PL-705 桌上型電解水機", gifts: ["P4000", "PJ-8000", "BF-007P"], memo: "非活動期，遇賀眾競爭加贈 BF-007P" },
-        
-        "WDWSCR (贈Q2000+Q4000+R500)": { base: "WDWSCR 系列", gifts: ["Q2000", "Q4000", "R500"], memo: "" }
-    };
-
-    // --- 替換原本的 handleAddSelect 函式 ---
     function handleAddSelect(category) {
         const select = document.getElementById(category + '_dropdown');
         const val = select.value;
@@ -594,56 +556,20 @@ document.addEventListener('change', function(e) {
             return;
         }
 
-        // --- 🤖 新增：自動攔截與處理破規方案 ---
-        let actualItemName = val;
-        let triggeredPromo = false;
-
-        if (category === 'machine' && specialPromos[val]) {
-            const rule = specialPromos[val];
-            actualItemName = rule.base; // 把購物車顯示的名字改回原本乾淨的機型名稱
-            triggeredPromo = true;
-
-            // 1. 自動把贈品加入濾芯清單
-            rule.gifts.forEach(giftName => {
-                selections.filter = selections.filter.filter(item => !item.isNone);
-                let existingFilter = selections.filter.find(item => item.name === giftName);
-                if (existingFilter) {
-                    existingFilter.qty++;
-                } else {
-                    selections.filter.push({ name: giftName, qty: 1, checked: true });
-                }
-            });
-            renderCartTable('filter'); 
-
-            // 2. 自動寫入算式/備註
-            if (rule.memo) {
-                const reasonInput = document.getElementById('actual_reason');
-                let currentText = reasonInput.value;
-                if (!currentText.includes(rule.memo)) {
-                    reasonInput.value = currentText ? currentText + "\n" + rule.memo : rule.memo;
-                }
-            }
-        }
-
-        // --- 🛒 正常加入機型/濾芯清單 ---
         selections[category] = selections[category].filter(item => !item.isNone);
 
-        let existing = selections[category].find(item => item.name === actualItemName);
+        let existing = selections[category].find(item => item.name === val);
         if (existing) {
             existing.qty++; 
         } else {
-            selections[category].push({ name: actualItemName, qty: 1, giftQty: 0, checked: false });
+            selections[category].push({ name: val, qty: 1, giftQty: 0, checked: false });
         }
 
         select.value = ""; 
         document.getElementById(category + '_other_wrap').style.display = 'none';
         renderCartTable(category);
-
-        // 如果有觸發破規，跳出小提示讓業務知道
-        if (triggeredPromo) {
-            alert(`✅ 已為您自動帶入「${actualItemName}」的搭贈濾芯與備註，請確認下方表格！`);
-        }
     }
+
     function handleAddOther(category) {
         const input = document.getElementById(category + '_other_input');
         const val = input.value.trim();
