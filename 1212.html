@@ -751,6 +751,15 @@
             <option value="無">無</option>
         </select>
     </div>
+    <!-- 安裝管線材質 -->
+    <div class="question-card hidden-field" id="card-install-pipe-material">
+        <div class="question-title">安裝管線材質<span class="required">*</span></div>
+        <select name="install_pipe_material" id="install_pipe_material">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="PVC管">PVC管</option>
+            <option value="壓接管">壓接管</option>
+        </select>
+    </div>
     <!-- 漏水斷路器 -->
     <div class="question-card hidden-field" id="card-leak-circuit">
         <div class="question-title">漏水斷路器<span class="required">*</span></div>
@@ -1144,7 +1153,8 @@
     </div>
 
 <script>
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbz2F7RDc9ktIf5TjqAqJ-CT7Ue_tG3uHSUuCJrLRbDT0GIuEj77gcingkqkaJUyTqiBUQ/exec";
+    // 替換為你剛剛產生的新網址
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
     let currentBrand = '';
     let currentServiceItem = '';
     let currentServiceDetail = '';
@@ -1568,7 +1578,7 @@
                     'card-name', 'card-invoice-number', 'card-machine-serial','card-service-date', 'card-customer',  'card-customer-code','card-machine-type',                      
                     'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app',
                     'card-raw-pressure', 'card-leak-reason','card-wp-customer',
-                    'card-pressure-pump','card-original-pressure',
+                    'card-pressure-pump','card-original-pressure','card-install-pipe-material',
                     'card-wp-note','card-principle',
                 ]);
             }else if (detail === '取消') {
