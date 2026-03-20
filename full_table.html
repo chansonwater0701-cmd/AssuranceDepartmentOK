@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>千山 vs 惟品 服務項目功能對照總表 (完整版)</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", Arial, sans-serif; margin: 20px; background-color: #f4f7f6; }
+        h2 { text-align: center; color: #333; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        .table-container { 
+            overflow: auto; 
+            max-height: 85vh;
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        table { border-collapse: collapse; white-space: nowrap; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: center; font-size: 13px; }
+        
+        /* Sticky Headers */
+        thead th { position: sticky; z-index: 2; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        thead tr:nth-child(1) th { top: 0; }
+        thead tr:nth-child(2) th { top: 29px; } 
+        thead tr:nth-child(3) th { top: 58px; font-size: 11px; }
+        
+        /* Left fixed column */
+        td:first-child, th:first-child { 
+            position: sticky; 
+            left: 0; 
+            background-color: #f9f9f9; 
+            font-weight: bold; 
+            z-index: 3; 
+            text-align: left;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+        thead th:first-child { z-index: 4; background-color: #eee; text-align: center; }
+
+        .brand-weipin { background-color: #2c3e50; color: white; }
+        .brand-qianshan { background-color: #3498db; color: white; }
+        
+        .cat-bg { background-color: #bdc3c7; color:#333; }
+        .item-bg { background-color: #ecf0f1; color:#555; }
+        
+        tbody tr:hover td { background-color: #f1f8ff; }
+        tbody tr:hover td:first-child { background-color: #e6f2ff; }
+        .check-mark { color: #27ae60; font-weight: bold; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+<h2>千山與惟品：全服務項目 x 機器型式 詳細功能對照總表</h2>
+<p class="subtitle">💡 本表格使用動態渲染，完美對齊系統中所有的 showCards 隱藏/顯示邏輯</p>
+
+<div class="table-container">
+    <table id="main-table">
+        <thead id="table-head">
+            </thead>
+        <tbody id="table-body">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // ==========================================
+    // 1. 定義所有表單欄位 (左側檢核項目)
+    // ==========================================
+    const fields = [
+      { id: 'date', name: '服務日期' },
+      { id: 'invoice', name: '銷貨單號' },
+      { id: 'code', name: '客戶代號' },
+      { id: 'customer', name: '客戶姓名' },
+      { id: 'm_type', name: '機器型號' },
+      { id: 'm_model', name: '機器版本' },
+      { id: 'm_serial', name: '機器序號' },
+      { id: 'm_type2', name: '機器型號(更換後)' },
+      { id: 'm_model2', name: '機器版本(更換後)' },
+      { id: 'm_serial2', name: '機器序號(更換後)' },
+      { id: 'filter_c', name: '是否加裝Filter-C' },
+      { id: 'faucet_type', name: '龍頭型式' },
+      { id: 'faucet_label', name: '龍頭標籤' },
+      { id: 'panel_v', name: '面板版本' },
+      { id: 'firmware', name: '韌體版本' },
+      { id: 'orig_pres', name: '原始水壓/減壓閥' },
+      { id: 'raw_tds', name: '原水TDS' },
+      { id: 'env_temp', name: '環境溫度' },
+      { id: 't100_t', name: '100°C 溫度' },
+      { id: 't100_v', name: '100°C 水量' },
+      { id: 't35_t', name: '35°C 溫度' },
+      { id: 't35_v', name: '35°C 水量' },
+      { id: 't10_t', name: '10°C 溫度' },
+      { id: 't10_v', name: '10°C 水量' },
+      { id: 'voltage', name: '場地電壓' },
+      { id: 'adj_power', name: '調整功率' },
+      { id: 'pwr_hot', name: '最大功率(熱水)' },
+      { id: 'pwr_cold', name: '最大功率(冰水)' },
+      { id: 'panel_vol', name: '面板電壓' },
+      { id: 'raw_flow', name: '原水水量' },
+      { id: 'raw_temp', name: '原水溫度' },
+      { id: 'f11_flow', name: 'F11入水水量' },
+      { id: 'hot_tank', name: '熱缸出水' },
+      { id: 'norm_tank', name: '常溫缸出水' },
+      { id: 'ice_tank', name: '冰缸出水' },
+      { id: 'ice_cool', name: '冰缸降溫' },
+      { id: 'principle', name: '原理說明' },
+      { id: 'taste', name: '技師/客戶口感' },
+      { id: 'calib', name: '校正方式' },
+      { id: 'battery', name: '電池款式' },
+      { id: 'app', name: 'App綁定' },
+      { id: 'leak_circ', name: '漏水斷路器' },
+      { id: 'leak_rsn', name: '漏水原因' },
+      { id: 'drainage', name: '排廢水型式' },
+      { id: 'pump', name: '加壓馬達' },
+      { id: 'rep_reason', name: '報修原因' },
+      { id: 'act_reason', name: '實際原因' },
+      { id: 'handling', name: '處理方式' },
+      { id: 'inspect', name: '檢修結果' },
+      { id: 'parts', name: '更換零件' },
+      { id: 'is_pay', name: '是否收款' },
+      { id: 'parts_pay', name: '料件收款' },
+      { id: 'pay_detail', name: '收款品項' },
+      { id: 'install_loc', name: '安裝位置' },
+      { id: 'floor', name: '樓層資訊' },
+      { id: 'pipe_mat_inst', name: '安裝管線材質' },
+      { id: 'water_src', name: '水源位置照' },
+      { id: 'pipe_spec', name: '水管規格照' },
+      { id: 'pump_pic', name: '全景照/近照' },
+      { id: 'pipe_mat', name: '管線材質' },
+      { id: 'signal', name: '訊號強度' },
+      { id: 'countertop', name: '流理台面' },
+      { id: 'name', name: '技師姓名' },
+      { id: 'note', name: '其他說明事項' }
+    ];
+
+    // ==========================================
+    // 2. 結構化定義表頭 (分為惟品與千山)
+    // ==========================================
+    const headers = [
+      {
+        brand: '惟品 (Weipin)', cssClass: 'brand-weipin',
+        categories: [
+          { name: '裝機', items: [
+            { id: 'WP_I_WS2C', name: '裝機|WS2-C' }, { id: 'WP_I_WS2H', name: '裝機|WS2-H' }, { id: 'WP_I_WD2C', name: '裝機|WD2-C' },
+            { id: 'WP_E_WS2C', name: '新機異常|WS2-C' }, { id: 'WP_E_WS2H', name: '新機異常|WS2-H' }, { id: 'WP_E_WD2C', name: '新機異常|WD2-C' },
+            { id: 'WP_U_WD2', name: '升級|→WD2' }, { id: 'WP_U_WS2C', name: '升級|→WS2-C' }, { id: 'WP_U_WS2H', name: '升級|→WS2-H' },
+            { id: 'WP_I_Cxl', name: '取消|All' }
+          ]},
+          { name: '維修', items: [
+            { id: 'WP_R_WS2C', name: '維修|WS2-C' }, { id: 'WP_R_WS2H', name: '維修|WS2-H' }, { id: 'WP_R_WD2C', name: '維修|WD2-C' }, { id: 'WP_R_WD1', name: '維修|WD1' }, { id: 'WP_R_WS1', name: '維修|WS1' },
+            { id: 'WP_S_WS2C', name: '店修|WS2-C' }, { id: 'WP_S_WS2H', name: '店修|WS2-H' }, { id: 'WP_S_WD2C', name: '店修|WD2-C' }, { id: 'WP_S_WD1', name: '店修|WD1' }, { id: 'WP_S_WS1', name: '店修|WS1' },
+            { id: 'WP_T_WS2C', name: '拖修|WS2-C' }, { id: 'WP_T_WS2H', name: '拖修|WS2-H' }, { id: 'WP_T_WD2C', name: '拖修|WD2-C' }, { id: 'WP_T_WD1', name: '拖修|WD1' }, { id: 'WP_T_WS1', name: '拖修|WS1' },
+            { id: 'WP_C_WS2C', name: '覆機|WS2-C' }, { id: 'WP_C_WS2H', name: '覆機|WS2-H' }, { id: 'WP_C_WD2C', name: '覆機|WD2-C' }, { id: 'WP_C_WD1', name: '覆機|WD1' }, { id: 'WP_C_WS1', name: '覆機|WS1' },
+            { id: 'WP_P_WS2C', name: '換面板|WS2-C' }, { id: 'WP_P_WS2H', name: '換面板|WS2-H' },
+            { id: 'WP_X_WS2C', name: '換機|WS2-C' }, { id: 'WP_X_WS2H', name: '換機|WS2-H' }, { id: 'WP_X_WD2C', name: '換機|WD2-C' },
+            { id: 'WP_R_Cxl', name: '取消|All' }
+          ]},
+          { name: '售服', items: [
+            { id: 'WP_F_WS2C', name: '濾芯|WS2-C' }, { id: 'WP_F_WS2H', name: '濾芯|WS2-H' }, { id: 'WP_F_WD2C', name: '濾芯|WD2-C' }, { id: 'WP_F_WD1', name: '濾芯|WD1' }, { id: 'WP_F_WS1', name: '濾芯|WS1' },
+            { id: 'WP_D_All', name: '拆機|All' },
+            { id: 'WP_N_WS2C', name: '重裝|WS2-C' }, { id: 'WP_N_WS2H', name: '重裝|WS2-H' }, { id: 'WP_N_WD2C', name: '重裝|WD2-C' }, { id: 'WP_N_WD1', name: '重裝|WD1' }, { id: 'WP_N_WS1', name: '重裝|WS1' },
+            { id: 'WP_V_All', name: '場勘|All' },
+            { id: 'WP_M_All', name: '手動輸入|All' },
+            { id: 'WP_S_Cxl', name: '取消|All' }
+          ]}
+        ]
+      },
+      {
+        brand: '千山 (Qianshan)', cssClass: 'brand-qianshan',
+        categories: [
+          { name: '裝機', items: [
+            { id: 'QS_I_Nrm', name: '一般裝機' }, { id: 'QS_I_Ful', name: '全戶裝機' }, { id: 'QS_I_Cxl', name: '取消' }
+          ]},
+          { name: '維修', items: [
+            { id: 'QS_R_Nrm', name: '一般維修' }, { id: 'QS_R_Ful', name: '全戶維修' }, { id: 'QS_R_Cxl', name: '取消' }
+          ]},
+          { name: '售服', items: [
+            { id: 'QS_S_Nrm', name: '一般場勘' }, { id: 'QS_S_Ful', name: '全戶場勘' }, { id: 'QS_S_Bnk', name: '空值' }, { id: 'QS_S_Cxl', name: '取消' }
+          ]},
+          { name: '合約', items: [
+            { id: 'QS_C_Fil', name: '換濾芯' }, { id: 'QS_C_Big', name: '大保拆機' }, { id: 'QS_C_Bnk', name: '空值' }, { id: 'QS_C_Cxl', name: '取消' }
+          ]}
+        ]
+      }
+    ];
+
+    // ==========================================
+    // 3. 定義對照資料庫 (Data Matrix)
+    // 這裡的文字會自動切分並比對是否啟用該欄位
+    // ==========================================
+    const dataMatrix = {
+        // --- 惟品 裝機 ---
+        "WP_I_WS2C": "name,date,invoice,code,m_model,m_serial,m_type,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,note,orig_pres",
+        "WP_I_WS2H": "name,date,invoice,code,m_model,m_serial,m_type,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,note,orig_pres",
+        "WP_I_WD2C": "name,date,invoice,code,m_model,m_serial,m_type,filter_c,customer,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,note,orig_pres",
+        "WP_E_WS2C": "name,date,invoice,code,m_model,m_serial,m_type,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,note",
+        "WP_E_WS2H": "name,date,invoice,code,m_model,m_serial,m_type,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,note",
+        "WP_E_WD2C": "name,date,invoice,code,m_model,m_serial,m_type,m_model2,m_serial2,m_type2,filter_c,customer,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,note",
+        "WP_U_WD2": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_U_WS2C": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_U_WS2H": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_I_Cxl": "name,date,invoice,code,customer,note",
+        
+        // --- 惟品 維修 ---
+        "WP_R_WS2C": "name,date,invoice,code,m_model,m_serial,m_type,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_R_WS2H": "name,date,invoice,code,m_model,m_serial,m_type,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_R_WD2C": "name,date,invoice,code,m_model,m_serial,m_type,filter_c,customer,voltage,adj_power,pwr_hot,pwr_cold,principle,taste,calib,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_R_WD1": "name,date,invoice,code,m_serial,voltage,pwr_hot,pwr_cold,f11_flow,filter_c,customer,hot_tank,norm_tank,firmware,ice_tank,ice_cool,taste,rep_reason,act_reason,handling,inspect,parts,t100_t,t35_t,parts_pay,pay_detail,note,m_type",
+        "WP_R_WS1": "name,date,invoice,code,m_serial,voltage,pwr_hot,pwr_cold,f11_flow,filter_c,customer,hot_tank,norm_tank,firmware,taste,rep_reason,act_reason,handling,inspect,parts,t100_t,t35_t,parts_pay,pay_detail,note,m_type",
+        
+        "WP_S_WS2C": "name,date,invoice,m_model,m_type,m_serial,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_S_WS2H": "name,date,invoice,m_model,m_type,m_serial,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,pwr_hot,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_S_WD2C": "name,date,invoice,m_model,m_type,m_serial,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_S_WD1": "name,date,invoice,m_model,m_type,m_serial,code,customer,firmware,t100_t,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note,f11_flow,hot_tank,norm_tank,ice_tank,ice_cool",
+        "WP_S_WS1": "name,date,invoice,m_model,m_type,m_serial,code,customer,firmware,t100_t,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note,f11_flow,hot_tank,norm_tank",
+        
+        "WP_T_WS2C": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_T_WS2H": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_T_WD2C": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_T_WD1":  "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_T_WS1":  "name,date,invoice,m_type,m_serial,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,f11_flow,hot_tank,norm_tank,pwr_hot,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        
+        "WP_C_WS2C": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_C_WS2H": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_C_WD2C": "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_C_WD1":  "name,date,invoice,m_type,m_serial,m_model2,m_serial2,m_type2,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts_pay,pay_detail,note",
+        "WP_C_WS1":  "name,date,invoice,m_type,m_serial,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,f11_flow,hot_tank,norm_tank,pwr_hot,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        
+        "WP_P_WS2C": "name,date,invoice,m_type,m_serial,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,panel_vol,battery,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_P_WS2H": "name,date,invoice,m_type,m_serial,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,panel_vol,battery,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        
+        "WP_X_WS2C": "name,date,invoice,code,m_model,m_serial,m_type,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,note",
+        "WP_X_WS2H": "name,date,invoice,code,m_model,m_serial,m_type,m_model2,m_serial2,m_type2,filter_c,faucet_type,faucet_label,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,note",
+        "WP_X_WD2C": "name,date,invoice,code,m_model,m_serial,m_type,m_model2,m_serial2,m_type2,filter_c,customer,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,battery,rep_reason,act_reason,handling,inspect,note",
+        
+        "WP_R_Cxl":  "name,date,invoice,customer,code,panel_v,rep_reason,act_reason,note",
+        
+        // --- 惟品 售服 ---
+        "WP_F_WS2C": "name,date,invoice,m_type,m_serial,filter_c,faucet_type,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_F_WS2H": "name,date,invoice,m_type,m_serial,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_F_WD2C": "name,date,invoice,m_type,m_serial,filter_c,faucet_label,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,adj_power,pwr_hot,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_F_WD1":  "name,date,invoice,m_serial,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,f11_flow,hot_tank,norm_tank,ice_tank,ice_cool,taste,calib,rep_reason,act_reason,handling,inspect,parts_pay,note",
+        "WP_F_WS1":  "name,date,invoice,m_model,m_serial,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,f11_flow,hot_tank,norm_tank,taste,calib,rep_reason,act_reason,handling,inspect,parts_pay,note",
+        
+        "WP_D_All":  "name,date,invoice,m_model,m_serial,code,customer,rep_reason,parts_pay,pay_detail,note,m_type",
+        
+        "WP_N_WS2C": "name,date,invoice,m_model,m_serial,filter_c,faucet_type,faucet_label,code,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,m_type,inspect,parts_pay,note",
+        "WP_N_WS2H": "name,date,invoice,m_model,m_serial,filter_c,m_type,faucet_type,faucet_label,code,customer,panel_v,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,voltage,adj_power,pwr_hot,panel_vol,raw_flow,raw_temp,principle,taste,calib,battery,app,rep_reason,act_reason,handling,inspect,parts_pay,note",
+        "WP_N_WD2C": "name,date,invoice,m_model,m_serial,filter_c,m_type,code,customer,firmware,raw_tds,env_temp,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,voltage,adj_power,pwr_hot,pwr_cold,raw_flow,raw_temp,principle,taste,calib,app,rep_reason,act_reason,handling,inspect,parts_pay,note",
+        "WP_N_WD1":  "name,date,invoice,m_serial,filter_c,code,m_type,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,f11_flow,hot_tank,norm_tank,ice_tank,ice_cool,taste,calib,rep_reason,act_reason,handling,inspect,parts_pay,note",
+        "WP_N_WS1":  "name,date,invoice,m_model,m_type,m_serial,filter_c,code,customer,firmware,t100_t,t100_v,t35_t,t35_v,t10_t,t10_v,f11_flow,hot_tank,norm_tank,taste,calib,rep_reason,act_reason,handling,inspect,parts_pay,note",
+        
+        "WP_V_All":  "name,date,invoice,code,customer,raw_tds,voltage,countertop,note",
+        "WP_M_All":  "name,date,invoice,code,customer,rep_reason,act_reason,handling,inspect,parts,parts_pay,pay_detail,note",
+        "WP_S_Cxl":  "name,date,invoice,code,customer,rep_reason,act_reason,note",
+        
+        // --- 千山 ---
+        "QS_I_Nrm":  "name,invoice,m_serial,date,customer,code,m_type,voltage,drainage,raw_tds,leak_circ,leak_rsn,orig_pres,pump,countertop,taste,note,principle,install_loc",
+        "QS_I_Ful":  "name,invoice,m_serial,date,customer,code,m_type,voltage,install_loc,floor,app,leak_rsn,pump,orig_pres,pipe_mat_inst,note,principle",
+        "QS_I_Cxl":  "date,invoice,code,customer,note,name,rep_reason,act_reason",
+        
+        "QS_R_Nrm":  "name,invoice,m_serial,date,customer,code,orig_pres,raw_tds,voltage,rep_reason,act_reason,leak_circ,leak_rsn,parts_pay,pump,drainage,taste,note,handling,inspect,is_pay,m_type",
+        "QS_R_Ful":  "name,invoice,m_serial,date,customer,code,app,rep_reason,act_reason,leak_rsn,parts_pay,pump,note,handling,inspect,is_pay,m_type",
+        "QS_R_Cxl":  "date,invoice,code,customer,note,name",
+        
+        "QS_S_Nrm":  "name,invoice,date,customer,code,orig_pres,m_type,raw_tds,voltage,leak_rsn,note,water_src,pump_pic,install_loc,countertop",
+        "QS_S_Ful":  "name,invoice,date,customer,code,orig_pres,voltage,m_type,leak_rsn,pump,note,water_src,pump_pic,pipe_mat,signal,install_loc,floor,pipe_spec",
+        "QS_S_Bnk":  "date,invoice,code,customer,note,name,rep_reason,act_reason,m_type",
+        "QS_S_Cxl":  "date,invoice,code,customer,note,name,rep_reason,act_reason",
+        
+        "QS_C_Fil":  "date,invoice,code,customer,note,name,rep_reason,act_reason,m_type,m_serial,raw_tds,taste,handling,inspect,parts,parts_pay,is_pay",
+        "QS_C_Big":  "date,invoice,code,customer,note,name,rep_reason,act_reason,m_type,m_serial",
+        "QS_C_Bnk":  "date,invoice,code,customer,note,name,rep_reason,act_reason,m_type,m_serial",
+        "QS_C_Cxl":  "date,invoice,code,customer,note,name,rep_reason,act_reason"
+    };
+
+    // ==========================================
+    // 4. 動態生成 HTML 表格
+    // ==========================================
+    window.onload = function() {
+        const thead = document.getElementById('table-head');
+        const tbody = document.getElementById('table-body');
+        
+        // 渲染標題列 (3層)
+        let tr1 = document.createElement('tr');
+        let tr2 = document.createElement('tr');
+        let tr3 = document.createElement('tr');
+        
+        let thTop = document.createElement('th');
+        thTop.rowSpan = 3;
+        thTop.style.backgroundColor = '#ccc';
+        thTop.textContent = '功能與檢核項目';
+        tr1.appendChild(thTop);
+
+        headers.forEach(brand => {
+            // 第一層: 品牌
+            let thBrand = document.createElement('th');
+            let totalCols = brand.categories.reduce((sum, cat) => sum + cat.items.length, 0);
+            thBrand.colSpan = totalCols;
+            thBrand.className = brand.cssClass;
+            thBrand.textContent = brand.brand;
+            tr1.appendChild(thBrand);
+
+            brand.categories.forEach(cat => {
+                // 第二層: 服務項目
+                let thCat = document.createElement('th');
+                thCat.colSpan = cat.items.length;
+                thCat.className = 'cat-bg';
+                thCat.textContent = cat.name;
+                tr2.appendChild(thCat);
+
+                cat.items.forEach(item => {
+                    // 第三層: 服務細項/機型
+                    let thItem = document.createElement('th');
+                    thItem.className = 'item-bg';
+                    thItem.textContent = item.name;
+                    tr3.appendChild(thItem);
+                });
+            });
+        });
+
+        thead.appendChild(tr1);
+        thead.appendChild(tr2);
+        thead.appendChild(tr3);
+
+        // 渲染資料列 (打勾)
+        fields.forEach(field => {
+            let tr = document.createElement('tr');
+            let tdLabel = document.createElement('td');
+            tdLabel.textContent = field.name;
+            tr.appendChild(tdLabel);
+
+            headers.forEach(brand => {
+                brand.categories.forEach(cat => {
+                    cat.items.forEach(item => {
+                        let td = document.createElement('td');
+                        let config = dataMatrix[item.id] || "";
+                        // 如果該欄位 ID 存在於配置字串中，印出打勾符號
+                        if (config.split(',').includes(field.id)) {
+                            td.innerHTML = '<span class="check-mark">●</span>';
+                        }
+                        tr.appendChild(td);
+                    });
+                });
+            });
+            tbody.appendChild(tr);
+        });
+    };
+</script>
+
+</body>
+</html>
