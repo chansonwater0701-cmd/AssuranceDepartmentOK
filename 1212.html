@@ -1079,9 +1079,8 @@
             <option value="是">是</option>
             <option value="否">否</option>
         </select>
-    </div>
-        
-    <!-- 收款品項 (維修專用) -->
+    </div>        
+
 <div class="question-card hidden-field" id="card-water-source">
         <div class="question-title">水源位置照<span class="required">*</span></div>
         <select name="water_source_photo" id="water_source_photo">
@@ -1586,15 +1585,15 @@
             }else if (detail === '取消') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-machine-type',
                 ]);
             }
         } else if (item === '維修') {
             if (detail === '一般維修') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
-                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer','card-machine-serial' ,                    
-                     'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer',                    
+                    'card-customer-code',  'card-wp-customer','card-original-pressure',
                     'card-raw-tds','card-site-voltage',
                     'card-repair-reason','card-actual-reason',
                     'card-leak-circuit','card-leak-reason','card-parts-payment',
@@ -1604,7 +1603,7 @@
             } else if (detail === '全戶維修') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer',' card-machine-serial' ,                        
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',' card-machine-serial' ,                        
                      'card-customer-code',  'card-wp-customer','card-app',                    
                     'card-repair-reason','card-actual-reason',
                     'card-leak-reason','card-parts-payment',
@@ -1647,11 +1646,11 @@
                 showCards([
                     'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
                 ]);
-            } else if (detail === '空值') { 
+            } else if (detail === '空值') {  
             currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
             showCards([
                 'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
-                'card-machine-type',
+                
                 // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
             ]);
             }
@@ -1661,7 +1660,7 @@
                 showCards([
                 'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
                 'card-machine-type','card-machine-serial',
-                'card-raw-tds','card-taste','card-handling','card-inspection-result','card-replaced-parts','card-parts-payment','card-is-payment',
+                'card-raw-tds','card-taste','card-handling','card-inspection-result'
                 ]);
             } else if (detail === '大保拆機') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
@@ -1969,7 +1968,7 @@
                     'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-是否加裝Filter-C','card-wp-customer', 'card-site-voltage', 'card-adjust-power', 'card-power',
                     'card-principle', 'card-taste', 'card-calibration','card-temp-group',
-                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-app', 'card-repair-reason', 'card-actual-reason','card-app',
                     'card-handling', 'card-inspection-result', 'card-replaced-parts',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note'
                 ]);
@@ -2009,10 +2008,9 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
-                    'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
+                    'card-是否加裝Filter-C', 'card-faucet-type', 
                     'card-wp-customer',
                     'card-panel-version', 'card-firmware-version',
-                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-panel-voltage', 
                     'card-raw-flow', 'card-raw-temp',
@@ -2030,10 +2028,9 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
-                    'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
+                    'card-是否加裝Filter-C', 'card-faucet-type', 
                     'card-wp-customer',
                     'card-panel-version', 'card-firmware-version',
-                    'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power-hot',
                     'card-raw-flow', 'card-raw-temp',
@@ -2053,8 +2050,7 @@
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C',
                     'card-wp-customer',
-                    'card-firmware-version',
-                    'card-raw-tds',  'card-env-temp',
+                    'card-firmware-version', 
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power', 'card-power',
                     'card-raw-flow', 'card-raw-temp',
                     'card-principle', 'card-taste', 'card-calibration', 'card-battery',
@@ -2171,7 +2167,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
-                    'card-panel-version', 'card-repair-reason', 'card-actual-reason',
+                    'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
@@ -2179,7 +2175,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
-                    'card-panel-version', 'card-repair-reason', 'card-actual-reason',
+                    'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
@@ -2187,7 +2183,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
-                    'card-panel-version', 'card-repair-reason', 'card-actual-reason',
+                    'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
@@ -2195,7 +2191,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
-                    'card-panel-version', 'card-repair-reason', 'card-actual-reason',
+                     'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '取消' && currentModel === 'WS1') {
@@ -2203,7 +2199,7 @@
                 currentRequiredIds = [];
                 showCards([
                     'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
-                    'card-panel-version', 'card-repair-reason', 'card-actual-reason',
+                    'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
 
@@ -2413,7 +2409,7 @@
                     'card-taste', 'card-calibration', 'card-battery',
                     'card-app', 'card-repair-reason', 'card-actual-reason',
                     'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                     'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
@@ -2430,7 +2426,7 @@
                     'card-taste', 'card-calibration', 'card-battery',
                     'card-app', 'card-repair-reason', 'card-actual-reason',
                     'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                     'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
@@ -2446,80 +2442,84 @@
                     'card-principle', 'card-taste', 'card-calibration',
                     'card-app', 'card-repair-reason', 'card-actual-reason',
                     'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                    'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
                 document.getElementById('temp-10').style.display = 'flex';
 
-                        } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD1') {
+            } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 
                     'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
-                    'card-wp-customer', 'card-firmware-version',
-                     'card-temp-group', 'card-f11-flow',
+                    'card-wp-customer', 'card-firmware-version','card-machine-type',
+                    'card-temp-group-100', // 👈 這裡把 card-temp-group 改成 card-temp-group-100
+                    'card-f11-flow',
                     'card-hot-tank-output', 'card-normal-tank-output',
                     'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste',
                     'card-calibration', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
                     'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
-                document.getElementById('temp-10').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none'; // 👈 這裡改成 'none' 來隱藏 10°C
             } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 
                     'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
-                    'card-wp-customer', 'card-firmware-version',
-                     'card-temp-group', 'card-f11-flow',
+                    'card-wp-customer', 'card-firmware-version','card-machine-type',
+                    'card-temp-group-100', // 👈 這裡把 card-temp-group 改成 card-temp-group-100
+                    'card-f11-flow',
                     'card-hot-tank-output', 'card-normal-tank-output',
                     'card-taste','card-calibration', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
                     'card-wp-note'
                 ]);
+                
+                // 👇 加上這三行，確保切換時只顯示 100°C 和 35°C，並隱藏 10°C
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
             // ========== 售服 → 拆機 ==========
             } else if (currentServiceDetail === '拆機' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason',
+                    'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason', 
+                     'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-parts-payment',
-                    'card-payment-detail', 'card-wp-note','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason','card-wp-note','card-machine-type',
                 ]);                                    
             // ========== 售服 → 重裝機 ==========
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WS2-C') {
@@ -2535,7 +2535,7 @@
                     'card-raw-temp', 'card-principle', 'card-taste',
                     'card-calibration', 'card-battery', 'card-app',
                     'card-repair-reason', 'card-actual-reason', 'card-handling','card-machine-type',
-                    'card-inspection-result', 'card-parts-payment', 'card-wp-note'
+                    'card-inspection-result', 'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
@@ -2553,7 +2553,7 @@
                     'card-raw-temp', 'card-principle', 'card-taste',
                     'card-calibration', 'card-battery', 'card-app',
                     'card-repair-reason', 'card-actual-reason', 'card-handling',
-                    'card-inspection-result', 'card-parts-payment', 'card-wp-note'
+                    'card-inspection-result', 'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
@@ -2569,7 +2569,7 @@
                     'card-power', 'card-raw-flow', 'card-raw-temp',
                     'card-principle', 'card-taste', 'card-calibration',
                     'card-app', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-handling', 'card-inspection-result', 
                     'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -2581,113 +2581,107 @@
                     'card-name', 'card-service-date', 'card-invoice-number', 
                     'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 'card-firmware-version',
-                     'card-temp-group', 'card-f11-flow',
-                    'card-hot-tank-output', 'card-normal-tank-output',
-                    'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste',
+                    'card-temp-group', 'card-f11-flow',
+                    'card-ice-tank-cooling', 'card-taste',
                     'card-calibration', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-handling', 'card-inspection-result', 
                     'card-wp-note'
                 ]);
+                // 只保留 100°C 和 35°C 的溫度顯示
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
-                document.getElementById('temp-10').style.display = 'flex';
+
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
                     'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
-                     'card-temp-group', 'card-f11-flow',
-                    'card-hot-tank-output', 'card-normal-tank-output',
+                    'card-temp-group', 'card-f11-flow',
                     'card-taste','card-calibration', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-handling', 'card-inspection-result', 
                     'card-wp-note'
                 ]);
+                // 只保留 100°C 和 35°C 的溫度顯示
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
-                document.getElementById('temp-10').style.display = 'flex';
             // ========== 售服 → 手動輸入 ==========
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
-                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
                 ]);                       
             // ========== 售服 → 取消 ==========
             } else if (currentServiceDetail === '取消' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             // ========== 售服 → 場勘 ==========
             } else if (currentServiceDetail === '場勘' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 'card-raw-tds',
                     'card-site-voltage', 'card-countertop',
                     'card-wp-note',
@@ -2695,7 +2689,7 @@
             }else if (currentServiceDetail === '場勘' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',
                     'card-wp-note'
@@ -2703,7 +2697,7 @@
             }else if (currentServiceDetail === '場勘' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',                    
                     'card-wp-note'
@@ -2711,7 +2705,7 @@
             }else if (currentServiceDetail === '場勘' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',                    
                     'card-wp-note'
@@ -2719,7 +2713,7 @@
             }else if (currentServiceDetail === '場勘' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',                    
                     'card-wp-note'
