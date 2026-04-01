@@ -99,37 +99,38 @@
     }
 
     // 透過 fetch 將資料傳給 Google Apps Script API
-    function sendToGAS(base64Data, mimeType, fileName) {
-      // 這是你之前成功部署的 GAS API 網址
-      const gasApiUrl = "https://script.google.com/macros/s/AKfycbzvT6IxwxP5Jmlz8huGxQUPbo0tHDLaGhqqlfK0qwdquO0vYID2CAsvu6iDmIQIoFLQ/exec"; 
+  // 透過 fetch 將資料傳給 Google Apps Script API
+  function sendToGAS(base64Data, mimeType, fileName) {
+    // 👉 這裡已經幫你換成你剛剛產生的「最新」網址了！
+    const gasApiUrl = "https://script.google.com/macros/s/AKfycbxSgaozY02_CBmtEvlf19tfIDzSeu6w4zw78nmu91qIgO_BUnxXaWJfS4KwLfgrA5dp/exec"; 
 
-      const reportData = {
-        name: profileName,
-        imageB64: base64Data,
-        mimeType: mimeType,
-        imageName: fileName
-      };
+    const reportData = {
+      name: profileName,
+      imageB64: base64Data,
+      mimeType: mimeType,
+      imageName: fileName
+    };
 
-      fetch(gasApiUrl, {
-        method: 'POST',
-        body: JSON.stringify(reportData) 
-      })
-      .then(response => response.json())
-      .then(result => {
-        if(result.status === "success") {
-          document.getElementById("status").innerText = "✅ " + result.message;
-          document.getElementById("submitBtn").innerText = "回報完成";
-          setTimeout(() => { liff.closeWindow(); }, 2000);
-        } else {
-          throw new Error(result.message);
-        }
-      })
-      .catch(error => {
-        document.getElementById("status").innerText = "❌ 傳送失敗：" + error.message;
-        document.getElementById("submitBtn").disabled = false;
-        document.getElementById("submitBtn").innerText = "重新傳送";
-      });
-    }
+    fetch(gasApiUrl, {
+      method: 'POST',
+      body: JSON.stringify(reportData) 
+    })
+    .then(response => response.json())
+    .then(result => {
+      if(result.status === "success") {
+        document.getElementById("status").innerText = "✅ " + result.message;
+        document.getElementById("submitBtn").innerText = "回報完成";
+        setTimeout(() => { liff.closeWindow(); }, 2000);
+      } else {
+        throw new Error(result.message);
+      }
+    })
+    .catch(error => {
+      document.getElementById("status").innerText = "❌ 傳送失敗：" + error.message;
+      document.getElementById("submitBtn").disabled = false;
+      document.getElementById("submitBtn").innerText = "重新傳送";
+    });
+  }
   </script>
 </body>
 </html>
