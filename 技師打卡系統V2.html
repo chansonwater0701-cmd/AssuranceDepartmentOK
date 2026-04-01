@@ -71,8 +71,8 @@
       fileInfo.style.display = "none";
       statusEl.innerHTML = "正在處理檔案...";
 
-      // 如果不是照片，檢查檔案大小 (限制 5MB)
-      const maxSize = 5 * 1024 * 1024; 
+      // 如果不是照片，檢查檔案大小 (限制 20 MB)
+      const maxSize = 20 * 1024 * 1024; 
       if (!file.type.startsWith("image/") && file.size > maxSize) {
         statusEl.innerHTML = "<b style='color:red;'>❌ 檔案太大！影片或文件請限制在 5MB 以內。</b>";
         event.target.value = ""; // 清除選取
