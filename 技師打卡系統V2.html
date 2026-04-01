@@ -4,7 +4,7 @@
   <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>技師打卡系統</title>
+  <title>技師打卡系統 V2</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     body { font-family: sans-serif; padding: 20px; text-align: center; background-color: #f0f0f0;}
@@ -38,8 +38,8 @@
   </div>
 
   <script>
-    // 你的專屬 LIFF ID
-    const myLiffId = "2009661479-jZ8feEv2"; 
+    // 👉 這裡已經幫你換成全新的 LIFF ID 了！
+    const myLiffId = "2009667627-4eOl5qm8"; 
     let profileName = "未知技師";
 
     // 初始化 LIFF 並抓取名字
@@ -100,7 +100,7 @@
 
     // 透過 fetch 將資料傳給 Google Apps Script API
     function sendToGAS(base64Data, mimeType, fileName) {
-      // 這裡已經幫你換成你最新部署的 GAS API 網址了！
+      // 這是你之前成功部署的 GAS API 網址
       const gasApiUrl = "https://script.google.com/macros/s/AKfycbzvT6IxwxP5Jmlz8huGxQUPbo0tHDLaGhqqlfK0qwdquO0vYID2CAsvu6iDmIQIoFLQ/exec"; 
 
       const reportData = {
