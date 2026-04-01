@@ -1,48 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>技師維修打卡系統 V2.1</title>
+  <title>維修現場打卡 V2.2</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
-    body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f4f7f6; color: #333; }
-    .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+    body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
+    .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; text-align: center; }
     h2 { color: #00B900; margin-bottom: 5px; }
-    #userName { font-size: 16px; color: #666; margin-bottom: 20px; }
-    .upload-area { border: 2px dashed #ddd; padding: 20px; border-radius: 10px; margin-bottom: 20px; cursor: pointer; }
-    button { padding: 15px; font-size: 18px; background-color: #00B900; color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+    #userName { font-size: 16px; color: #666; margin-bottom: 25px; font-weight: bold; }
+    .upload-box { border: 2px dashed #ddd; padding: 20px; border-radius: 10px; margin-bottom: 20px; cursor: pointer; background: #fafafa; }
+    button { padding: 16px; font-size: 18px; background-color: #00B900; color: white; border: none; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; }
     button:disabled { background-color: #ccc; }
-    #status { margin-top: 15px; font-size: 14px; min-height: 20px; }
-    .preview { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    #status { margin-top: 15px; font-size: 14px; color: #555; }
+    .preview { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; }
     input[type="file"] { display: none; }
-    label.file-label { display: block; background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 10px; cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>維修現場打卡</h2>
-    <div id="userName">正在讀取技師身分...</div>
+    <div id="userName">確認技師身分中...</div>
     
-    <div class="upload-area" onclick="document.getElementById('photoInput').click()">
-      <p style="margin:0; color:#888;">📸 點擊拍照或選擇照片</p>
-      <input type="file" id="photoInput" accept="image/*" onchange="handleFile(event)">
+    <div class="upload-box" onclick="document.getElementById('photoInput').click()">
+      <p style="margin:0; color:#888;">📸 點擊拍照或選取照片</p>
+      <input type="file" id="photoInput" accept="image/*" onchange="handleImage(event)">
       <img id="imagePreview" class="preview">
     </div>
 
-    <button id="submitBtn" onclick="processUpload()" disabled>確認送出紀錄</button>
+    <button id="submitBtn" onclick="uploadData()" disabled>確認送出</button>
     <div id="status"></div>
   </div>
 
   <script>
-    // 1. 設定你的 LIFF ID 與 GAS 網址
     const myLiffId = "2009667627-4eOl5qm8"; 
-    // 請確認 HTML 裡的這一行網址正確
     const gasApiUrl = "https://script.google.com/macros/s/AKfycbxSgaozY02_CBmtEvlf19tfIDzSeu6w4zw78nmu91qIgO_BUnxXaWJfS4KwLfgrA5dp/exec";
     
-    let profileName = "";
-    let compressedBase64 = null;
+    let displayName = "";
+    let base64Image = null;
 
     // 初始化 LIFF
     liff.init({ liffId: myLiffId }).then(() => {
@@ -50,65 +46,58 @@
         liff.login();
       } else {
         liff.getProfile().then(profile => {
-          profileName = profile.displayName;
-          document.getElementById("userName").innerText = "技師：" + profileName;
+          displayName = profile.displayName;
+          document.getElementById("userName").innerText = "技師：" + displayName;
           document.getElementById("submitBtn").disabled = false;
         });
       }
-    }).catch(err => {
-      showStatus("❌ LIFF 初始化失敗：" + err, "red");
-    });
+    }).catch(err => console.error("LIFF Error", err));
 
-    // 2. 處理圖片並壓縮 (核心功能)
-    function handleFile(event) {
+    // 處理圖片壓縮
+    function handleImage(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      showStatus("正在處理照片...", "blue");
+      document.getElementById("status").innerText = "正在處理照片...";
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          // --- 圖片壓縮邏輯 ---
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const max_size = 1024; // 最大寬度
-
+          const max = 1024; // 限制最大邊長為 1024px 避免超限
           if (width > height) {
-            if (width > max_size) { height *= max_size / width; width = max_size; }
+            if (width > max) { height *= max / width; width = max; }
           } else {
-            if (height > max_size) { width *= max_size / height; height = max_size; }
+            if (height > max) { width *= max / height; height = max; }
           }
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          
-          // 轉成 Base64，品質設定 0.8
-          compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          base64Image = canvas.toDataURL('image/jpeg', 0.8); // 壓縮品質 0.8
           
           const preview = document.getElementById("imagePreview");
-          preview.src = compressedBase64;
+          preview.src = base64Image;
           preview.style.display = "block";
-          showStatus("照片已就緒", "green");
+          document.getElementById("status").innerText = "照片處理完成";
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    // 3. 執行送出
-    function processUpload() {
+    // 上傳到 GAS
+    function uploadData() {
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
       btn.innerText = "上傳中...";
-      showStatus("正在存入雲端與試算表...", "orange");
+      document.getElementById("status").innerText = "正在儲存紀錄，請稍候...";
 
       const payload = {
-        name: profileName,
-        imageB64: compressedBase64, // 這已經是壓縮過的
-        timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+        name: displayName,
+        imageB64: base64Image
       };
 
       fetch(gasApiUrl, {
@@ -118,23 +107,17 @@
       .then(res => res.json())
       .then(result => {
         if(result.status === "success") {
-          showStatus("✅ 打卡成功！視窗即將關閉", "green");
-          setTimeout(() => { liff.closeWindow(); }, 2500);
+          document.getElementById("status").innerHTML = "<b style='color:green;'>✅ " + result.message + "</b>";
+          setTimeout(() => { liff.closeWindow(); }, 2000);
         } else {
           throw new Error(result.message);
         }
       })
       .catch(error => {
-        showStatus("❌ 失敗：" + error.message, "red");
+        document.getElementById("status").innerHTML = "<b style='color:red;'>❌ " + error.message + "</b>";
         btn.disabled = false;
         btn.innerText = "重新送出";
       });
-    }
-
-    function showStatus(msg, color) {
-      const s = document.getElementById("status");
-      s.innerText = msg;
-      s.style.color = color;
     }
   </script>
 </body>
