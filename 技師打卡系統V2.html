@@ -93,8 +93,9 @@
     }
 
     // 5. 核心：傳送至最新部署的 GAS 網址
+    // 透過 fetch 將資料傳給 Google Apps Script API
     function sendToGAS(base64Data, mimeType, fileName) {
-      // 這是你剛剛產生的最新第 3 版網址
+      // 👉 已經幫你換成你剛剛產生的最新 A5dp 網址了！
       const gasApiUrl = "https://script.google.com/macros/s/AKfycbxSgaozY02_CBmtEvlf19tfIDzSeu6w4zw78nmu91qIgO_BUnxXaWJfS4KwLfgrA5dp/exec"; 
 
       const reportData = {
