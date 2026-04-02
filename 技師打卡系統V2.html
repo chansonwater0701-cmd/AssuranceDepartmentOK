@@ -567,7 +567,7 @@
         </div>
     <!-- ========== 表單區域開始 ========== -->
     <!-- 1. 品牌選擇 -->
-    <div class="question-card" id="card-brand">
+    <div class="question-card hidden-field" id="card-upload">
         <div class="question-title">1. 請選擇品牌 <span class="required">*</span></div>
         <div class="radio-group">
             <label class="radio-label"><input type="radio" name="brand" value="千山" onclick="handleBrandChange()"> 千山</label>
@@ -2915,6 +2915,12 @@ function handleFiles(event) {
             const card = document.getElementById(id);
             if (card) card.classList.remove('hidden-field');
         });
+
+        // ★ 新增：只要有顯示任何表單題目，就一併顯示「照片上傳區塊」
+        if (ids.length > 0) {
+            const uploadCard = document.getElementById('card-upload');
+            if (uploadCard) uploadCard.classList.remove('hidden-field');
+        }
     }
     // 處理收款品項顯示邏輯
     function handlePaymentVisibility() {
