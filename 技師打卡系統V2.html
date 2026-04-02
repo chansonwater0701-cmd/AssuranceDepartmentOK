@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>維修現場打卡 V3.0</title>
+  <title>維修現場打卡 V4.0 (多檔版)</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
     body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
@@ -14,8 +14,12 @@
     button { padding: 16px; font-size: 18px; background-color: #00B900; color: white; border: none; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px;}
     button:disabled { background-color: #ccc; }
     #status { margin-top: 15px; font-size: 14px; color: #555; }
-    .preview { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; }
-    .file-info { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 8px; font-size: 14px; word-break: break-all; display: none; }
+    
+    /* 預覽區塊的 Flexbox 佈局，讓多張圖可以整齊排列 */
+    #previewContainer { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; justify-content: center; }
+    .preview-item { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
+    .file-info { padding: 8px; background: #e9ecef; border-radius: 8px; font-size: 12px; word-break: break-all; width: 100%; box-sizing: border-box;}
+    
     input[type="file"] { display: none; }
   </style>
 </head>
@@ -25,12 +29,11 @@
     <div id="userName">確認技師身分中...</div>
     
     <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-      <p style="margin:0; color:#888;">📁 點擊選取照片、影片或文件</p>
-      <p style="margin-top:5px; font-size:12px; color:#aaa;">(照片自動壓縮，其他檔案限制 5MB 內)</p>
-      <input type="file" id="fileInput" onchange="handleFile(event)">
+      <p style="margin:0; color:#888;">📁 點擊選取照片、影片或文件 (可複選)</p>
+      <p style="margin-top:5px; font-size:12px; color:#aaa;">(照片自動壓縮，其他單一檔案限制 20MB 內)</p>
+      <input type="file" id="fileInput" multiple onchange="handleFiles(event)">
       
-      <img id="imagePreview" class="preview">
-      <div id="fileInfo" class="file-info"></div>
+      <div id="previewContainer"></div>
     </div>
 
     <button id="submitBtn" onclick="uploadData()" disabled>確認送出</button>
@@ -39,13 +42,12 @@
 
   <script>
     const myLiffId = "2009667627-4eOl5qm8"; 
-    // ⚠️ 記得替換成你最新部署的網址！
+    // ⚠️ 記得替換成你剛剛重新部署的「最新」GAS 網址！
     const gasApiUrl = "https://script.google.com/macros/s/AKfycbxSgaozY02_CBmtEvlf19tfIDzSeu6w4zw78nmu91qIgO_BUnxXaWJfS4KwLfgrA5dp/exec";
     
     let displayName = "";
-    let base64Data = null;
-    let uploadFileName = "";
-    let uploadMimeType = "";
+    // 改用陣列來儲存多個檔案資料
+    let selectedFilesData = []; 
 
     liff.init({ liffId: myLiffId }).then(() => {
       if (!liff.isLoggedIn()) liff.login();
@@ -58,83 +60,119 @@
       }
     }).catch(err => console.error("LIFF Error", err));
 
-    function handleFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
+    function handleFiles(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
 
       const statusEl = document.getElementById("status");
-      const previewImg = document.getElementById("imagePreview");
-      const fileInfo = document.getElementById("fileInfo");
+      const previewContainer = document.getElementById("previewContainer");
       
-      // 重置顯示
-      previewImg.style.display = "none";
-      fileInfo.style.display = "none";
-      statusEl.innerHTML = "正在處理檔案...";
+      // 重置顯示與資料
+      previewContainer.innerHTML = "";
+      selectedFilesData = [];
+      statusEl.innerHTML = `正在處理 ${files.length} 個檔案...`;
+      
+      const maxSize = 20 * 1024 * 1024; // 20 MB
+      let promises = [];
 
-      // 如果不是照片，檢查檔案大小 (限制 20 MB)
-      const maxSize = 20 * 1024 * 1024; 
-      if (!file.type.startsWith("image/") && file.size > maxSize) {
-        statusEl.innerHTML = "<b style='color:red;'>❌ 檔案太大！影片或文件請限制在 5MB 以內。</b>";
-        event.target.value = ""; // 清除選取
-        return;
+      for(let i = 0; i < files.length; i++) {
+        let file = files[i];
+
+        // 檔案過大阻擋
+        if (!file.type.startsWith("image/") && file.size > maxSize) {
+          statusEl.innerHTML += `<br><b style='color:red;'>❌ ${file.name} 檔案過大，已被忽略。</b>`;
+          continue;
+        }
+
+        // 使用 Promise 來處理非同步的檔案讀取與 Canvas 壓縮
+        let p = new Promise((resolve) => {
+          const reader = new FileReader();
+          
+          if (file.type.startsWith("image/")) {
+            // --- 處理照片 (進行壓縮) ---
+            reader.onload = function(e) {
+              const img = new Image();
+              img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width, height = img.height;
+                const max = 1024;
+                if (width > height) {
+                  if (width > max) { height *= max / width; width = max; }
+                } else {
+                  if (height > max) { width *= max / height; height = max; }
+                }
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const base64String = canvas.toDataURL('image/jpeg', 0.8);
+                
+                resolve({
+                  // 為每張照片賦予不同檔名，避免同名覆蓋
+                  fileName: `photo_${Date.now()}_${i}.jpg`, 
+                  mimeType: 'image/jpeg',
+                  fileB64: base64String.split(',')[1], // 只擷取逗號後面的純 Base64 字串給 GAS
+                  isImage: true,
+                  previewUrl: base64String
+                });
+              };
+              img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            // --- 處理影片或文件 (不壓縮) ---
+            reader.onload = function(e) {
+              resolve({
+                fileName: file.name,
+                mimeType: file.type || "application/octet-stream",
+                fileB64: e.target.result.split(',')[1],
+                isImage: false,
+                previewUrl: null
+              });
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+        promises.push(p);
       }
 
-      uploadFileName = file.name;
-      uploadMimeType = file.type || "application/octet-stream";
+      // 等待所有檔案都處理/壓縮完畢
+      Promise.all(promises).then(results => {
+        selectedFilesData = results;
+        statusEl.innerText = `檔案已準備就緒 (共 ${results.length} 個)`;
 
-      if (file.type.startsWith("image/")) {
-        // --- 處理照片 (進行壓縮) ---
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            let width = img.width, height = img.height;
-            const max = 1024;
-            if (width > height) {
-              if (width > max) { height *= max / width; width = max; }
-            } else {
-              if (height > max) { width *= max / height; height = max; }
-            }
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            base64Data = canvas.toDataURL('image/jpeg', 0.8);
-            uploadFileName = "photo.jpg"; // 強制改檔名
-            uploadMimeType = "image/jpeg";
-            
-            previewImg.src = base64Data;
-            previewImg.style.display = "block";
-            statusEl.innerText = "照片已準備就緒";
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      } else {
-        // --- 處理影片或文件 (不壓縮，直接轉 Base64) ---
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          base64Data = e.target.result;
-          fileInfo.innerText = "📁 已準備上傳：\n" + uploadFileName;
-          fileInfo.style.display = "block";
-          statusEl.innerText = "檔案已準備就緒";
-        };
-        reader.readAsDataURL(file);
-      }
+        // 渲染預覽畫面
+        results.forEach(fileData => {
+          if (fileData.isImage) {
+            const img = document.createElement('img');
+            img.src = fileData.previewUrl;
+            img.className = 'preview-item';
+            previewContainer.appendChild(img);
+          } else {
+            const div = document.createElement('div');
+            div.className = 'file-info';
+            div.innerText = `📁 ${fileData.fileName}`;
+            previewContainer.appendChild(div);
+          }
+        });
+      });
     }
 
     function uploadData() {
+      if (selectedFilesData.length === 0) {
+        document.getElementById("status").innerHTML = "<b style='color:red;'>請先選擇檔案！</b>";
+        return;
+      }
+
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
       btn.innerText = "上傳中，請勿關閉視窗...";
-      document.getElementById("status").innerText = "正在儲存紀錄，這可能需要幾秒鐘...";
+      document.getElementById("status").innerText = "正在上傳多個檔案至資料夾，這可能需要一陣子...";
 
+      // 將資料結構改為包含檔案陣列 (files)
       const payload = {
         name: displayName,
-        fileB64: base64Data,
-        fileName: uploadFileName,
-        mimeType: uploadMimeType
+        files: selectedFilesData 
       };
 
       fetch(gasApiUrl, {
