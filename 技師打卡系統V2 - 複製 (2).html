@@ -576,7 +576,7 @@
     </div>
 
     <!-- 2. 服務項目 -->
-    <div class="question-card hidden-field" id="card-upload">
+    <div class="question-card hidden-field" id="card-service-item">
         <div class="question-title"> 服務項目 <span class="required">*</span></div>
         <select name="service_item" id="service_item" onchange="handleServiceItemChange()">
             <option value="">請選擇</option>
@@ -1221,7 +1221,7 @@ let selectedFilesData = [];
 
 // --- LIFF 初始化 (網頁載入時自動執行) ---
 document.addEventListener('DOMContentLoaded', function() {
-    initFirmwareAutoInput();
+    initFirmwareAutoInput(); // 原本 1212 的功能
     
     // 啟動 LIFF
     liff.init({ liffId: myLiffId }).then(() => {
@@ -1231,7 +1231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             liff.getProfile().then(profile => {
                 displayName = profile.displayName;
                 document.getElementById("userName").innerText = "👤 登入技師：" + displayName;
-                // 自動將名字填入原本的技師姓名欄位
+                // 自動將名字填入原本的技師姓名欄位 (可選)
                 const nameInputs = document.querySelectorAll('input[name="engineer_name"]');
                 nameInputs.forEach(input => input.value = displayName);
             });
@@ -1384,10 +1384,7 @@ function handleFiles(event) {
         currentServiceItem = '';
         currentServiceDetail = '';
         currentModel = '';
-        
         hideAllCards();
-        // 👇 請務必補上這行，保護品牌卡片不被隱藏！
-        document.getElementById('card-brand').classList.remove('hidden-field'); 
 
         // ★★★ 3. 處理客戶代號欄位 (重點修改區) ★★★
         const codeInput = document.getElementById('customer_code_input');
@@ -2919,7 +2916,7 @@ function handleFiles(event) {
             if (card) card.classList.remove('hidden-field');
         });
 
-        // 👇 補上下面這段：只要有顯示表單，就自動顯示照片上傳區塊
+        // 🌟 加上這段：只要有顯示表單，就跟著顯示「上傳照片區塊」
         if (ids.length > 0) {
             const uploadCard = document.getElementById('card-upload');
             if (uploadCard) uploadCard.classList.remove('hidden-field');
