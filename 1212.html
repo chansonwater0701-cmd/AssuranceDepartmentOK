@@ -1145,6 +1145,13 @@
         <div class="question-title">其他說明事項 </div>
         <textarea name="wp_other_notes" rows="3" placeholder="請輸入其他需要說明的事項"></textarea>
     </div>
+
+<div class="question-card hidden-field" id="card-photo-upload">
+        <div class="question-title">上傳照片 / 檔案 (可複選)<span class="required">*</span></div>
+        <p style="margin-top:0px; font-size:12px; color:#aaa;">(照片自動壓縮，其他檔案限制 20MB 內)</p>        
+        <input type="file" name="upload_photos" id="upload_photos" multiple accept="image/*,video/*,application/pdf" style="width: 100%; padding: 10px; border: 1px dashed #007377; background: #fafafa; cursor: pointer; box-sizing: border-box;">
+        <div id="file_count_display" style="margin-top: 8px; font-size: 0.9em; color: #007377; font-weight: bold;"></div>
+    </div>
     <!-- ========== 底部操作按鈕 ========== -->
     <div class="button-bar">
         <button class="btn-danger" id="btn-reset" onclick="resetToInitial()" style="display: none;">🔄 重新填寫</button>
@@ -1154,8 +1161,53 @@
     </div>
 
 <script>
-    // 替換為你剛剛產生的新網址
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
+    // 替換為 V3 版本的 API 網址
+    // 替換為 1212.html 使用的後端網址
+const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
+
+// 確保整個檔案中只有這一個 uploadToCloud 函式
+async function uploadToCloud() {
+    if (!validateForm()) return; 
+    const data = getFormData();
+    const btn = document.getElementById('btn-upload');
+    const originalText = btn.innerHTML;
+    
+    btn.disabled = true; 
+    btn.innerHTML = "⏳ 照片處理與上傳中，這可能需要幾秒鐘...";
+    
+    try {
+        // --- 處理多檔上傳 ---
+        const fileInput = document.getElementById('upload_photos');
+        if (fileInput && fileInput.files.length > 0) {
+            let fileArray = [];
+            for (let i = 0; i < fileInput.files.length; i++) {
+                let processedData = await processFileWithV3Logic(fileInput.files[i], i);
+                fileArray.push(processedData);
+            }
+            data.files = fileArray; 
+        }
+
+        // --- 送出資料 (補回 GAS 必備的 no-cors 與 headers) ---
+        await fetch(CLOUD_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(data) 
+        });
+        
+        // 因為使用 no-cors 無法讀取回傳值，只要沒進 catch 就視為成功
+        alert("✅ 表單資料與照片已成功送出！");
+        document.getElementById('btn-reset').style.display = 'block';
+        
+    } catch (e) {
+        alert(e.message || "❌ 上傳失敗，請檢查網路連線或稍後再試。");
+        console.error("上傳錯誤詳細資訊：", e);
+        document.getElementById('btn-reset').style.display = 'block';
+    } finally {
+        btn.disabled = false; 
+        btn.innerHTML = originalText;
+    }
+}
     let currentBrand = '';
     let currentServiceItem = '';
     let currentServiceDetail = '';
@@ -1165,16 +1217,26 @@
     // 千山裝機必填欄位ID
     const qsInstallRequired = [
     'card-name', 'card-service-date', 'card-customer',
-    'card-original-pressure', 'card-site-voltage', 'card-drainage-type', // 改正了
+    'card-original-pressure', 'card-site-voltage', 'card-drainage-type', 
     'card-raw-pressure', 'card-raw-tds', 
     ];
+
+    // 千山一般維修必填欄位ID
+    // ...後面繼續維持原樣...
 
     // 千山一般維修必填欄位ID
     const qsRepairRequired = [
         'card-name', 'card-service-date', 'card-customer',
         'card-replaced-parts'
     ];
-
+    document.getElementById('upload_photos')?.addEventListener('change', function() {
+    const display = document.getElementById('file_count_display');
+    if (this.files.length > 0) {
+        display.innerText = `已選擇 ${this.files.length} 張照片`;
+    } else {
+        display.innerText = '';
+    }
+    });
     // 品牌選擇處理
     function handleBrandChange() {
         const brandRadio = document.querySelector('input[name="brand"]:checked');
@@ -1566,7 +1628,7 @@
                 currentRequiredIds = [...qsInstallRequired];
                 showCards([
                     'card-name', 'card-invoice-number', 'card-machine-serial','card-service-date', 'card-customer','card-customer-code', 'card-machine-type',                    
-                    'card-faucet', 'card-site-voltage', 'card-waste-type','card-wp-customer',
+                    'card-faucet', 'card-site-voltage', 'card-waste-type','card-wp-customer','card-photo-upload',
                     'card-raw-pressure', 'card-raw-tds', 'card-leak-circuit','card-leak-reason',
                     'card-original-pressure','card-pressure-pump','card-drainage-type','card-countertop',
                     'card-taste','card-wp-note','card-principle','card-install-location',
@@ -3226,27 +3288,39 @@
         const btn = document.getElementById('btn-upload');
         const originalText = btn.innerHTML;
         btn.disabled = true; 
-        btn.innerHTML = "⏳ 上傳中...";
+        btn.innerHTML = "⏳ 照片處理與上傳中，這可能需要幾秒鐘...";
         
-        try {
-            await fetch(CLOUD_URL, {
-                method: 'POST',
-                mode: 'no-cors', // 🌟 終極殺手鐧：加入這行，強制瀏覽器不阻擋跨網域請求
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(data)
-            });
-            
-            // 加入 no-cors 後，我們無法讀取 Google 的回傳值，但只要沒跳到 catch 就是成功送出了
-            alert("✅ 資料已成功送出！請確認雲端試算表。");
-            document.getElementById('btn-reset').style.display = 'block';
-            
-        } catch (e) {
-            alert("❌ 上傳失敗，請檢查網路連線或稍後再試。");
-            console.error("上傳錯誤詳細資訊：", e);
-            document.getElementById('btn-reset').style.display = 'block';
-        } finally {
-            btn.disabled = false; 
-            btn.innerHTML = originalText;
+try {
+        // --- 處理多檔上傳 ---
+        const fileInput = document.getElementById('upload_photos');
+        if (fileInput && fileInput.files.length > 0) {
+            let fileArray = [];
+            for (let i = 0; i < fileInput.files.length; i++) {
+                let processedData = await processFileWithV3Logic(fileInput.files[i], i);
+                fileArray.push(processedData);
+            }
+            data.files = fileArray; 
+        }
+
+        // --- 送出資料 (補回 GAS 必備的 no-cors 與 headers) ---
+        await fetch(CLOUD_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(data) 
+        });
+        
+        // 因為使用 no-cors 無法讀取回傳值，只要沒進 catch 就視為成功
+        alert("✅ 表單資料與照片已成功送出！");
+        document.getElementById('btn-reset').style.display = 'block';
+        
+    } catch (e) {
+        alert(e.message || "❌ 上傳失敗，請檢查網路連線或稍後再試。");
+        console.error("上傳錯誤詳細資訊：", e);
+        document.getElementById('btn-reset').style.display = 'block';
+    } finally {
+        btn.disabled = false; 
+        btn.innerHTML = originalText;
         }
     }
 function initFirmwareAutoInput() {
@@ -3294,10 +3368,231 @@ function initFirmwareAutoInput() {
         });
     });
 }
-// ★★★ 這裡是補上的啟動指令 ★★★
-document.addEventListener('DOMContentLoaded', function() {
-    initFirmwareAutoInput();
-});
+
+// 融入 V3 版核心邏輯：單一檔案處理 (照片壓縮、其他檔案直轉)
+    function processFileWithV3Logic(file, index) {
+        return new Promise((resolve, reject) => {
+            const maxSize = 20 * 1024 * 1024; // 20MB 限制
+            if (!file.type.startsWith("image/") && file.size > maxSize) {
+                reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 20MB 以內。`));
+                return;
+            }
+
+            if (file.type.startsWith("image/")) {
+                // --- 照片壓縮處理 ---
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width, height = img.height;
+                        const max = 1024; // 最大邊長限制
+                        if (width > height) {
+                            if (width > max) { height *= max / width; width = max; }
+                        } else {
+                            if (height > max) { width *= max / height; height = max; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // 轉換為 Base64
+                        const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve({
+                            // 加上時間戳與 index 避免多張照片同名被 Google Drive 覆蓋
+                            fileName: `photo_${Date.now()}_${index}.jpg`, 
+                            mimeType: "image/jpeg",
+                            fileB64: base64Data // 完美保留 V3 的格式
+                        });
+                    };
+                    img.onerror = () => reject(new Error("圖片讀取失敗"));
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject(new Error("檔案讀取失敗"));
+                reader.readAsDataURL(file);
+            } else {
+                // --- 影片或文件 (不壓縮，直接轉 Base64) ---
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    resolve({
+                        fileName: file.name,
+                        mimeType: file.type || "application/octet-stream",
+                        fileB64: e.target.result // 完美保留 V3 的格式
+                    });
+                };
+                reader.onerror = () => reject(new Error("檔案讀取失敗"));
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // 更新版的上傳雲端函數
+    async function uploadToCloud() {
+        if (!validateForm()) return; 
+        const data = getFormData();
+        const btn = document.getElementById('btn-upload');
+        const originalText = btn.innerHTML;
+        
+        btn.disabled = true; 
+        btn.innerHTML = "⏳ 照片處理與上傳中，請稍候...";
+        
+        try {
+            // --- 處理多檔上傳 ---
+            const fileInput = document.getElementById('upload_photos');
+            if (fileInput && fileInput.files.length > 0) {
+                let fileArray = [];
+                // 跑迴圈把每一張選到的照片丟進去壓縮
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    let processedData = await processFileWithV3Logic(fileInput.files[i], i);
+                    fileArray.push(processedData);
+                }
+                // 將整理好的陣列掛在 data.files 上
+                data.files = fileArray; 
+            }
+
+            // --- 送出資料 (包含文字表單與照片陣列) ---
+            await fetch(CLOUD_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(data)
+            });
+            
+            alert("✅ 資料與照片已成功送出！");
+            document.getElementById('btn-reset').style.display = 'block';
+            
+        } catch (e) {
+            alert(e.message || "❌ 上傳失敗，請檢查網路連線或稍後再試。");
+            console.error("上傳錯誤詳細資訊：", e);
+            document.getElementById('btn-reset').style.display = 'block';
+        } finally {
+            btn.disabled = false; 
+            btn.innerHTML = originalText;
+        }
+    }
+
+
+
+
+// 顯示已選擇檔案數量的監聽器 (放在 script 區塊內即可)
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('upload_photos');
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                const display = document.getElementById('file_count_display');
+                if (this.files.length > 0) {
+                    display.innerText = `📁 已準備上傳 ${this.files.length} 個檔案`;
+                } else {
+                    display.innerText = '';
+                }
+            });
+        }
+    });
+
+    // 融入 V3 核心邏輯：單一檔案處理 (照片壓縮、其他直轉)
+    function processFileWithV3Logic(file, index) {
+        return new Promise((resolve, reject) => {
+            const maxSize = 20 * 1024 * 1024; // 20MB 限制
+            if (!file.type.startsWith("image/") && file.size > maxSize) {
+                reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 20MB 以內。`));
+                return;
+            }
+
+            if (file.type.startsWith("image/")) {
+                // --- 照片壓縮處理 ---
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width, height = img.height;
+                        const max = 1024; // 最大邊長 1024
+                        if (width > height) {
+                            if (width > max) { height *= max / width; width = max; }
+                        } else {
+                            if (height > max) { width *= max / height; height = max; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // 轉換為 Base64 (和 V3 一樣的 0.8 品質)
+                        const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve({
+                            fileName: `photo_${Date.now()}_${index}.jpg`, // 加上 index 避免檔名重複
+                            mimeType: "image/jpeg",
+                            fileB64: base64Data
+                        });
+                    };
+                    img.onerror = () => reject(new Error("圖片讀取失敗"));
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject(new Error("檔案讀取失敗"));
+                reader.readAsDataURL(file);
+            } else {
+                // --- 影片或文件 (不壓縮，直接轉 Base64) ---
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    resolve({
+                        fileName: file.name,
+                        mimeType: file.type || "application/octet-stream",
+                        fileB64: e.target.result
+                    });
+                };
+                reader.onerror = () => reject(new Error("檔案讀取失敗"));
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // 更新版的上傳雲端函數
+    async function uploadToCloud() {
+        if (!validateForm()) return; 
+        const data = getFormData();
+        const btn = document.getElementById('btn-upload');
+        const originalText = btn.innerHTML;
+        
+        btn.disabled = true; 
+        btn.innerHTML = "⏳ 照片處理與上傳中，這可能需要幾秒鐘...";
+        
+        try {
+            // --- 處理多檔上傳 ---
+            const fileInput = document.getElementById('upload_photos');
+            if (fileInput && fileInput.files.length > 0) {
+                let fileArray = [];
+                // 跑迴圈把每一張選到的照片丟進去 V3 的壓縮邏輯裡
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    let processedData = await processFileWithV3Logic(fileInput.files[i], i);
+                    fileArray.push(processedData);
+                }
+                // 將整理好的照片陣列放入 data.files 中一起傳送
+                data.files = fileArray; 
+            }
+
+            // --- 送出資料 (包含文字表單與照片陣列) ---
+            const response = await fetch(CLOUD_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(data)
+            });
+            
+            // 如果你的 GAS 像 V3 一樣有回傳 JSON 狀態，可以打開下面這段
+            // const result = await response.json();
+            // if(result.status !== "success") throw new Error(result.message);
+
+            alert("✅ 表單資料與照片已成功送出！");
+            document.getElementById('btn-reset').style.display = 'block';
+            
+        } catch (e) {
+            alert(e.message || "❌ 上傳失敗，請檢查網路連線或稍後再試。");
+            console.error("上傳錯誤詳細資訊：", e);
+            document.getElementById('btn-reset').style.display = 'block';
+        } finally {
+            btn.disabled = false; 
+            btn.innerHTML = originalText;
+        }
+    }
 </script>
 
 </body>
