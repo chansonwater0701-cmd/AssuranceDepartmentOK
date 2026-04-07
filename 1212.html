@@ -1639,7 +1639,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-invoice-number', 'card-machine-serial','card-service-date', 'card-customer',  'card-customer-code','card-machine-type',                      
-                    'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app',
+                    'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app','card-photo-upload',
                     'card-raw-pressure', 'card-leak-reason','card-wp-customer',
                     'card-pressure-pump','card-original-pressure','card-install-pipe-material',
                     'card-wp-note','card-principle',
@@ -1647,14 +1647,14 @@ async function uploadToCloud() {
             }else if (detail === '取消') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-machine-type',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-machine-type','card-photo-upload',
                 ]);
             }
         } else if (item === '維修') {
             if (detail === '一般維修') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
-                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer',                    
+                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer','card-photo-upload',                   
                     'card-customer-code',  'card-wp-customer','card-original-pressure',
                     'card-raw-tds','card-site-voltage',
                     'card-repair-reason','card-actual-reason',
@@ -1665,7 +1665,7 @@ async function uploadToCloud() {
             } else if (detail === '全戶維修') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',' card-machine-serial' ,                        
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',' card-machine-serial' , 'card-photo-upload',                       
                      'card-customer-code',  'card-wp-customer','card-app',                    
                     'card-repair-reason','card-actual-reason',
                     'card-leak-reason','card-parts-payment',
@@ -1675,7 +1675,7 @@ async function uploadToCloud() {
             } else if (detail === '取消') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-photo-upload',
                 ]);
             }
         }else if (item === '售服') {
@@ -1683,7 +1683,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
                     'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',                  
-                     'card-customer-code',  'card-wp-customer','card-original-pressure','card-machine-type',
+                     'card-customer-code',  'card-wp-customer','card-original-pressure','card-machine-type','card-photo-upload',
                     'card-raw-tds','card-site-voltage',
                     'card-leak-reason',
                     'card-wp-note',
@@ -1693,7 +1693,7 @@ async function uploadToCloud() {
             } else if (detail === '全戶場勘') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',                    
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-photo-upload',                   
                      'card-customer-code',  'card-wp-customer','card-original-pressure',
                     'card-site-voltage','card-machine-type',
                     'card-leak-reason',
@@ -1706,12 +1706,12 @@ async function uploadToCloud() {
             } else if (detail === '取消') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
                 ]);
             } else if (detail === '空值') {  
             currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
             showCards([
-                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
                 
                 // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
             ]);
@@ -1720,26 +1720,26 @@ async function uploadToCloud() {
             if (detail === '換濾芯') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
-                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
                 'card-machine-type','card-machine-serial',
                 'card-raw-tds','card-taste','card-handling','card-inspection-result'
                 ]);
             } else if (detail === '大保拆機') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
                 'card-machine-type','card-machine-serial',
                 ]);
 
             } else if (detail === '取消') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
-                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
                 ]);
             } else if (detail === '空值') { 
             currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
             showCards([
-                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
                 'card-machine-type','card-machine-serial',
                 // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
             ]);
@@ -1755,7 +1755,7 @@ async function uploadToCloud() {
             if (currentServiceDetail === '新機異常' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure','card-photo-upload',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
@@ -1776,7 +1776,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '新機異常' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure','card-photo-upload',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
@@ -1797,7 +1797,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '新機異常' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure','card-photo-upload',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C',
@@ -1817,7 +1817,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '裝機' && currentModel === 'WS2-C') {
                 currentRequiredIds = ['card-wp-customer'];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -1825,7 +1825,7 @@ async function uploadToCloud() {
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-panel-voltage', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
-                    'card-calibration', 'card-battery', 'card-app', 'card-wp-note','card-original-pressure',
+                    'card-calibration', 'card-battery', 'card-app', 'card-wp-note','card-original-pressure','card-photo-upload',
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
                 document.getElementById('temp-35').style.display = 'flex';
@@ -1833,7 +1833,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '裝機' && currentModel === 'WS2-H') {
                 currentRequiredIds = ['card-wp-customer'];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -1849,7 +1849,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '裝機' && currentModel === 'WD2-C') {
                 currentRequiredIds = ['card-wp-customer'];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-machine-model', 'card-machine-serial', 'card-machine-type','card-是否加裝Filter-C',
                     'card-wp-customer', 'card-firmware-version',
                     'card-raw-tds',  'card-env-temp',
@@ -1865,7 +1865,7 @@ async function uploadToCloud() {
                 // 升級裝機-WD1→WD2
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure','card-photo-upload',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-是否加裝Filter-C', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
@@ -1883,7 +1883,7 @@ async function uploadToCloud() {
                 // 升級裝機-WD1→WD2
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure','card-photo-upload',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-是否加裝Filter-C', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
@@ -1901,7 +1901,7 @@ async function uploadToCloud() {
                 // 升級裝機-WD1→WS2C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure','card-photo-upload',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -1921,7 +1921,7 @@ async function uploadToCloud() {
                 // 升級裝機-WD1→WS2H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure','card-photo-upload',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -1941,7 +1941,7 @@ async function uploadToCloud() {
                 // 升級裝機-WD1→WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure','card-photo-upload',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -1961,7 +1961,7 @@ async function uploadToCloud() {
                 // 升級裝機-WD1→WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
                     'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
                     'card-faucet-label', 'card-customer-code', 'card-wp-customer',
@@ -1991,7 +1991,7 @@ async function uploadToCloud() {
             if (currentServiceDetail === '維修' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
@@ -2009,7 +2009,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '維修' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
                     'card-wp-customer',
@@ -2026,7 +2026,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '維修' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-firmware-version',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-firmware-version','card-photo-upload',
                     'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
                     'card-是否加裝Filter-C','card-wp-customer', 'card-site-voltage', 'card-adjust-power', 'card-power',
                     'card-principle', 'card-taste', 'card-calibration','card-temp-group',
@@ -2040,7 +2040,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '維修' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial','card-photo-upload',
                     'card-site-voltage', 'card-power', 'card-f11-flow','card-是否加裝Filter-C' ,'card-customer',
                     'card-hot-tank-output', 'card-normal-tank-output','card-firmware-version',
                     'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste','card-wp-customer',
@@ -2052,7 +2052,7 @@ async function uploadToCloud() {
                 // 維修-維修-WS1
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial','card-photo-upload',
                     'card-site-voltage', 'card-power', 'card-f11-flow','card-是否加裝Filter-C' ,'card-customer',
                     'card-hot-tank-output', 'card-normal-tank-output','card-firmware-version', 'card-taste',
                     'card-repair-reason', 'card-actual-reason','card-wp-customer',
@@ -2068,7 +2068,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair','card-photo-upload',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C', 'card-faucet-type', 
                     'card-wp-customer',
@@ -2088,7 +2088,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair','card-photo-upload',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C', 'card-faucet-type', 
                     'card-wp-customer',
@@ -2108,7 +2108,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
-                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair','card-photo-upload',
                     'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
                     'card-是否加裝Filter-C',
                     'card-wp-customer',
@@ -2128,7 +2128,7 @@ async function uploadToCloud() {
                 // 店修-WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-temp-group', 'card-repair-reason', 'card-actual-reason',
@@ -2142,7 +2142,7 @@ async function uploadToCloud() {
                 // 店修-WD2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-temp-group', 'card-repair-reason', 'card-actual-reason',
@@ -2156,7 +2156,7 @@ async function uploadToCloud() {
                 // 店修-WD1
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial',  'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
                     'card-temp-group', 'card-repair-reason', 'card-actual-reason',
@@ -2172,7 +2172,7 @@ async function uploadToCloud() {
                 // 店修-WD1
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial',  'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
                     'card-temp-group', 'card-repair-reason', 'card-actual-reason',
@@ -2188,7 +2188,7 @@ async function uploadToCloud() {
                 // 店修-WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-temp-group', 'card-repair-reason', 'card-actual-reason','card-power-hot',
@@ -2202,7 +2202,7 @@ async function uploadToCloud() {
                 // 更換面板-WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2215,7 +2215,7 @@ async function uploadToCloud() {
                 // 更換面板-WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2228,7 +2228,7 @@ async function uploadToCloud() {
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code','card-photo-upload', 
                     'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2236,7 +2236,7 @@ async function uploadToCloud() {
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 'card-photo-upload',
                     'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2244,7 +2244,7 @@ async function uploadToCloud() {
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 'card-photo-upload',
                     'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2252,7 +2252,7 @@ async function uploadToCloud() {
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 'card-photo-upload',
                      'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2260,7 +2260,7 @@ async function uploadToCloud() {
                 // 取消-ALL
                 currentRequiredIds = [];
                 showCards([
-                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code','card-photo-upload', 
                     'card-repair-reason', 'card-actual-reason',
                     'card-wp-note'
                 ]);
@@ -2269,7 +2269,7 @@ async function uploadToCloud() {
                 // 拖修-WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
@@ -2289,7 +2289,7 @@ async function uploadToCloud() {
                 // 拖修-WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
@@ -2309,7 +2309,7 @@ async function uploadToCloud() {
                 // 拖修-WD2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
@@ -2327,7 +2327,7 @@ async function uploadToCloud() {
                 // 拖修-WD1
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
@@ -2345,7 +2345,7 @@ async function uploadToCloud() {
                 // 拖修-WS1(新增)
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-customer-code', 'card-wp-customer',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-firmware-version', 'card-temp-group', 
@@ -2361,7 +2361,7 @@ async function uploadToCloud() {
                 // 拖修-WS2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-faucet-type',  'card-customer-code',
@@ -2381,7 +2381,7 @@ async function uploadToCloud() {
                 // 拖修-WS2-H
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-faucet-type',  'card-customer-code',
@@ -2401,7 +2401,7 @@ async function uploadToCloud() {
                 // 拖修-WD2-C
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
@@ -2419,7 +2419,7 @@ async function uploadToCloud() {
                 // 拖修-WD1
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 
                     'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
@@ -2438,7 +2438,7 @@ async function uploadToCloud() {
                 // 拖修-WS1(新增)
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-customer-code', 'card-wp-customer','card-principle','card-taste','card-calibration',
                     'card-firmware-version', 
                     'card-temp-group-100',  // 👈 這裡改成 card-temp-group-100
@@ -2461,7 +2461,7 @@ async function uploadToCloud() {
             if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',  
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type', 'card-photo-upload', 
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type',  'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2478,7 +2478,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',  
+                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',  'card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2495,7 +2495,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',  
+                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',  'card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                      'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version', 'card-temp-group',
@@ -2513,7 +2513,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 
-                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-firmware-version','card-machine-type',
                     'card-temp-group-100', // 👈 這裡把 card-temp-group 改成 card-temp-group-100
                     'card-f11-flow',
@@ -2530,7 +2530,7 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 
-                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-firmware-version','card-machine-type',
                     'card-temp-group-100', // 👈 這裡把 card-temp-group 改成 card-temp-group-100
                     'card-f11-flow',
@@ -2549,14 +2549,14 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 
-                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason',
                     'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number',
+                    'card-name', 'card-service-date', 'card-invoice-number','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-repair-reason', 
                      'card-wp-note','card-machine-type',
@@ -2565,28 +2565,28 @@ async function uploadToCloud() {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number',
-                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number',
-                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 
-                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason','card-wp-note','card-machine-type',
                 ]);                                    
             // ========== 售服 → 重裝機 ==========
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2604,7 +2604,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C','card-machine-type',
                     'card-faucet-type', 'card-faucet-label', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
@@ -2622,7 +2622,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C','card-machine-type',
                     'card-customer-code', 'card-wp-customer', 'card-firmware-version',
                     'card-raw-tds',  'card-env-temp',
@@ -2639,7 +2639,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-photo-upload',
                     'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code','card-machine-type',
                     'card-wp-customer', 'card-firmware-version',
                     'card-temp-group', 'card-f11-flow',
@@ -2655,7 +2655,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '重裝機' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
                     'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
                     'card-wp-customer', 'card-firmware-version',
                     'card-temp-group', 'card-f11-flow',
@@ -2670,35 +2670,35 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                 'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
                 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                 'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
                 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                 'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
                 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                 'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
                 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                 'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
                 'card-wp-note'
                 ]);                       
@@ -2706,35 +2706,35 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '取消' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
                     'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
                     'card-wp-note'
                 ]);
@@ -2742,7 +2742,7 @@ async function uploadToCloud() {
             } else if (currentServiceDetail === '場勘' && currentModel === 'WS2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type','card-photo-upload',
                     'card-wp-customer', 'card-raw-tds',
                     'card-site-voltage', 'card-countertop',
                     'card-wp-note',
@@ -2750,7 +2750,7 @@ async function uploadToCloud() {
             }else if (currentServiceDetail === '場勘' && currentModel === 'WS2-H') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type','card-photo-upload',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',
                     'card-wp-note'
@@ -2758,7 +2758,7 @@ async function uploadToCloud() {
             }else if (currentServiceDetail === '場勘' && currentModel === 'WD2-C') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type','card-photo-upload',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',                    
                     'card-wp-note'
@@ -2766,7 +2766,7 @@ async function uploadToCloud() {
             }else if (currentServiceDetail === '場勘' && currentModel === 'WD1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type','card-photo-upload',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',                    
                     'card-wp-note'
@@ -2774,7 +2774,7 @@ async function uploadToCloud() {
             }else if (currentServiceDetail === '場勘' && currentModel === 'WS1') {
                 currentRequiredIds = [];
                 showCards([
-                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type','card-photo-upload',
                     'card-wp-customer', 
                     'card-raw-tds','card-site-voltage', 'card-countertop',                    
                     'card-wp-note'
