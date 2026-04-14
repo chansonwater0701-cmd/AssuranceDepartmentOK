@@ -339,6 +339,9 @@
         .qs-list-item .checks-box { border-left-color: #3b82f6; }
         .wp-list-item .checks-box { border-left-color: #10b981; }
         .qh-list-item .checks-box { border-left-color: #06b6d4; }
+        .qh-checks-box { white-space: normal; }
+        .qh-check-line { padding: 3px 0; line-height: 1.6; }
+        .qh-check-line + .qh-check-line { border-top: 1px dashed #e2e8f0; margin-top: 2px; }
 
         .parts-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
         .part-tag {
@@ -1432,94 +1435,6 @@ const repairData = {
     { "category": "錯誤代碼", "code": "Err18", "symptom": "散熱器溫度過高", "checks": "1.不拆機殼直接上機確認會不會跳Err18\n2.風扇：插電用轉速機測量是否正常轉速需大於2.8m/s\n3.濾網：檢查風扇過濾網是否有髒汙堵塞\n4.後面空間預留不足，需要預留空間散熱10~15cm", "parts": "散熱器" },
     { "category": "一般異常", "code": "", "symptom": "熱水不熱，沒有錯誤代碼", "checks": "1.加熱器檢查\n2.晶閘管(底蓋組合件)檢查線路\n3.1對2、熱水、進水電磁閥檢查\n4.溫、熱缸馬達測試\n5.電控板測試\n6.檢查持溫時是否有氣化現象\n7.流量計接電動作溫、熱、冰水出水量是否正常", "parts": "加熱器\n底蓋組合件\n1對2、熱水、進水電磁閥\n馬達\n電控板\n流量計\n酸洗濾心" },
     { "category": "一般異常", "code": "", "symptom": "電磁閥一直重複開關", "checks": "電控版異常\n電磁閥異常", "parts": "電控板\n電磁閥" }
-  ],
-  "全戶軟水": [
-    { "category": "顯示異常", "code": "", "symptom": "1.顯示幕亂碼", "checks": "A.顯示板與控制板連接線故障", "parts": "A.更換連接線" },
-    { "category": "顯示異常", "code": "", "symptom": "1.顯示幕亂碼", "checks": "B.主控板損壞", "parts": "B.更換主控板" },
-    { "category": "顯示異常", "code": "", "symptom": "1.顯示幕亂碼", "checks": "C.變壓器受潮或損壞", "parts": "C.檢查或更換變壓器" },
-    { "category": "顯示異常", "code": "", "symptom": "1.顯示幕亂碼", "checks": "D.電壓不穩", "parts": "D.檢查電源並調整" },
-    { "category": "顯示異常", "code": "", "symptom": "2.顯示幕無顯示", "checks": "A.顯示與控制板連接線損壞", "parts": "A.更換連接線" },
-    { "category": "顯示異常", "code": "", "symptom": "2.顯示幕無顯示", "checks": "B.顯示板損壞或有底燈沒字幕", "parts": "B.先更換供電(變壓器)一樣再更換顯示板" },
-    { "category": "顯示異常", "code": "", "symptom": "2.顯示幕無顯示", "checks": "C.主控板損壞", "parts": "C.更換主控板" },
-    { "category": "顯示異常", "code": "", "symptom": "2.顯示幕無顯示", "checks": "D.供電中斷", "parts": "D.檢查線路及供電(變壓器)" },
-    { "category": "故障碼", "code": "E1", "symptom": "3.顯示幕顯示 E1 並閃爍（定位點丟失）\n先執行手動再生，確認順序是否正確：反洗>再生逆洗>補水>正洗", "checks": "A.定位板與主控板連接線故障", "parts": "A.更換控制(軟化)閥與主控版間排線與連接線" },
-    { "category": "故障碼", "code": "E1", "symptom": "3.顯示幕顯示 E1 並閃爍（定位點丟失）", "checks": "B.定位板損壞", "parts": "B.更換控制(軟化)閥" },
-    { "category": "故障碼", "code": "E1", "symptom": "3.顯示幕顯示 E1 並閃爍（定位點丟失）", "checks": "C.機械傳動裝置損壞", "parts": "C.更換控制(軟化)閥" },
-    { "category": "故障碼", "code": "E1", "symptom": "3.顯示幕顯示 E1 並閃爍（定位點丟失）", "checks": "D.主控板損壞", "parts": "D.更換主控板" },
-    { "category": "故障碼", "code": "E1", "symptom": "3.顯示幕顯示 E1 並閃爍（定位點丟失）", "checks": "E.電機與主控板連線故障", "parts": "E.更換控制(軟化)閥、主控版" },
-    { "category": "故障碼", "code": "E1", "symptom": "3.顯示幕顯示 E1 並閃爍（定位點丟失）", "checks": "F.電機損壞", "parts": "F.更換控制(軟化)閥" },
-    { "category": "故障碼", "code": "E2", "symptom": "4.顯示幕顯示 E2 並閃爍（檢測到複數個定位點的故障）", "checks": "A.定位板上霍爾元件故障", "parts": "A.更換控制(軟化)閥" },
-    { "category": "故障碼", "code": "E2", "symptom": "4.顯示幕顯示 E2 並閃爍（檢測到複數個定位點的故障）", "checks": "B.定位板與主控板連線損壞", "parts": "B.更換控制(軟化)閥與主控版間排線與連接線" },
-    { "category": "故障碼", "code": "E2", "symptom": "4.顯示幕顯示 E2 並閃爍（檢測到複數個定位點的故障）", "checks": "C.主控板損壞", "parts": "C.更換主控板" },
-    { "category": "故障碼", "code": "E3/E4", "symptom": "5.顯示 E3 或 E4 並閃爍\nE3表示記憶晶片故障，E4表示時鐘晶片故障", "checks": "A.主控板損壞", "parts": "A.更換主控板" },
-    { "category": "警報異常", "code": "", "symptom": "6.缺鹽警報沒有聲音", "checks": "A.主控板損壞", "parts": "A.更換主控板" },
-    { "category": "警報異常", "code": "", "symptom": "7.鹽桶沒有鹽錠但無缺鹽警報(WST-1400)", "checks": "A.確認吸鹽警報有功能的方式如下（鹽錠沒有超過紅外線盒最底部的情況之下）\n技師可手動再生 > 逆洗(跳過) > 吸鹽慢洗(必須超過3分鐘) > 補水(跳過) > 正洗(跳過)\n重複最多6次就可以看到跟聽到低鹽警示了", "parts": "A.更換WST-1400 紅外線缺鹽警報接線" },
-    { "category": "警報異常", "code": "", "symptom": "8.鹽桶沒有鹽錠但無缺鹽警報或有鹽錠也有水也持續叫缺鹽警報且吸鹽功能正常 (WST-1400Pro/2000/2000Pro/3000Pro系列)", "checks": "A.TDS偵測線異常\nTDS小於5000進入缺鹽警示，TDS大於5500不會有缺鹽警示", "parts": "A更換TDS偵測線" },
-    { "category": "警報異常", "code": "", "symptom": "8.鹽桶沒有鹽錠但無缺鹽警報或有鹽錠也有水也持續叫缺鹽警報且吸鹽功能正常", "checks": "B.主控板損壞", "parts": "B.更換主控板" },
-    { "category": "系統異常", "code": "", "symptom": "9.機器一直重複啟動 (WST-1400Pro 4G/2000 4G/2000Pro 4G/3000Pro 4G系列)", "checks": "A.變壓器受潮或損壞", "parts": "A.檢查或更換變壓器" },
-    { "category": "系統異常", "code": "", "symptom": "9.機器一直重複啟動 (4G系列)", "checks": "B.將4G模組拔掉後機器不會一直重複啟動\n先確認4G模組天線是否脫落，再依序更換料件進行確認", "parts": "B.更換4G模組天線\n更換IoT模組+天線4G模沿用(ASMMTN0151-0)\n更換ESP32藍牙模組(ASMMTN0150-1)" },
-    { "category": "系統異常", "code": "", "symptom": "9.機器一直重複啟動 (4G系列)", "checks": "C.將4G模組拔掉後機器會一直重複啟動", "parts": "C.更換主控板" },
-    { "category": "顯示異常", "code": "", "symptom": "10.螢幕顯示signal error(中文意是為訊號錯誤)", "checks": "A.顯示與控制板連接線損壞", "parts": "A.請客戶重新拔掉電源重新上電，一樣無訊號先更換顯示面板連接線，沒用再更換顯示面板" },
-    { "category": "顯示異常", "code": "", "symptom": "10.螢幕顯示signal error", "checks": "B.主控板損壞", "parts": "B.更換主控板" },
-    
-    { "category": "實務問題排查", "code": "", "symptom": "1.全戶軟水不再生", "checks": "A.裝置供電中斷", "parts": "A.更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "1.全戶軟水不再生", "checks": "B.再生時間設置不正確", "parts": "B.重新設置時間" },
-    { "category": "實務問題排查", "code": "", "symptom": "1.全戶軟水不再生", "checks": "C.控制器損壞", "parts": "C.更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "1.全戶軟水不再生", "checks": "D.電機損壞", "parts": "D.更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "1.全戶軟水不再生", "checks": "E.定位板與主控板連接線故障", "parts": "E.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "1.全戶軟水不再生", "checks": "F.排水管管折無法再生排水", "parts": "F.檢查排水管是否有管折" },
-    { "category": "實務問題排查", "code": "", "symptom": "2.軟水器再生時間有誤", "checks": "A.當前時間設置不正確", "parts": "A.檢查並重設當前時間" },
-    { "category": "實務問題排查", "code": "", "symptom": "2.軟水器再生時間有誤", "checks": "B.停電超過三天，當前時間不正確", "parts": "B.重設當前時間" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "A.定位板與主控板連接線故障", "parts": "A.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "B.旁通閥打開或滲漏", "parts": "B.關閉或檢修旁通閥(更換旁通閥)" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "C.鹽箱內無鹽", "parts": "C.保證鹽箱內有固體鹽" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "D.射流器堵塞", "parts": "D.更換或清洗射流器濾網、噴嘴、喉管" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "E.流入鹽箱內的水不足\n(補水每分鐘須達800ml，低於800ml增加補水時間)", "parts": "E.檢查鹽箱注水時間" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "F.中心管O形圈(O-ring)漏水", "parts": "F.確保中心管及O形圈未破裂" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "G.閥體內部漏水", "parts": "G.檢查維修控制(軟化)閥或更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "H.不正確的再生設定或原水水質惡化", "parts": "H.正確設定及調整再生時間或週期製水量" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "I.原水水質差或流量計葉輪卡住", "parts": "I.降低進水濁度，拆下流量計清洗或更換流量計" },
-    { "category": "實務問題排查", "code": "", "symptom": "3.無軟水", "checks": "J.排水管管折無法再生排水", "parts": "J.檢查排水管是否有管折" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "A.進水壓力過低", "parts": "A.提高進水壓力" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "B.吸鹽管路堵塞", "parts": "B.檢查管路，排除堵塞物" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "C.吸鹽管路洩漏", "parts": "C.檢查管路" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "D.射流器堵塞或故障", "parts": "D.清洗或更換射流器濾網、噴嘴、喉管" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "E.閥體內部漏水", "parts": "E.檢查維修控制(軟化)閥或更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "F.排水不暢", "parts": "F.檢查排水管路" },
-    { "category": "實務問題排查", "code": "", "symptom": "4.不吸鹽", "checks": "G.定位板與主控板連接線故障", "parts": "G.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "5.系統用鹽過多", "checks": "A.鹽箱中水量過多\n(補水每分鐘須達800ml，低於800ml增加補水時間)\n若軟水機補水速率 < 700ml/min，需加裝 加壓馬達", "parts": "A.減少補水時間最短依據規定設定" },
-    { "category": "實務問題排查", "code": "", "symptom": "5.系統用鹽過多", "checks": "B.定位板與主控板連接線故障", "parts": "B.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "A.檢查閥體型號是否設定正確", "parts": "A.重新設定閥體型號到正確型號" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "B.鹽箱補水時間過長\n(補水每分鐘須達800ml，低於800ml增加補水時間)\n若軟水機補水速率 < 700ml/min，需加裝 加壓馬達", "parts": "B.重新設置鹽箱補水時間" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "C.吸鹽後剩餘的水過多", "parts": "C.檢查射流器及吸鹽管路有無堵塞" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "D.鹽閥中有異物", "parts": "D.清洗鹽井鹽閥組件及管路" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "E.程式在補水位置停電", "parts": "E.關閉進水閥，待來電後再開啟" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "F.鹽箱補水不受控制", "parts": "F.檢查鹽井鹽閥組件及管路" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "G.軟化閥跟玻璃鋼罐中間鬆動問題導致", "parts": "G.維修方式就是一手扶軟化閥，一手轉緊玻璃鋼罐(記得轉緊一點且要帶手套)" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "H.定位板與主控板連接線故障", "parts": "H.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "6.鹽箱水過量或外溢", "checks": "I.排水管漏水(導致外殼有殘留鹽結晶)", "parts": "I.檢查排水管路" },
-    { "category": "實務問題排查", "code": "", "symptom": "7.控制閥持續執行再生", "checks": "A.檢查閥體型號是否設定正確", "parts": "A.重新調整置正確的閥體型號" },
-    { "category": "實務問題排查", "code": "", "symptom": "7.控制閥持續執行再生", "checks": "B.位置信號線線路斷開", "parts": "B.重新對好插好信號線並鎖緊" },
-    { "category": "實務問題排查", "code": "", "symptom": "7.控制閥持續執行再生", "checks": "C.控制器發生故障", "parts": "C.更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "7.控制閥持續執行再生", "checks": "D.定位板與主控板連接線故障", "parts": "D.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "8.排水口持續排水", "checks": "A.檢查閥體型號是否設定正確", "parts": "A.重新調整置正確的閥體型號" },
-    { "category": "實務問題排查", "code": "", "symptom": "8.排水口持續排水", "checks": "B.閥體內部漏水", "parts": "B.檢查維修控制(軟化)閥或更換控制(軟化)閥" },
-    { "category": "實務問題排查", "code": "", "symptom": "8.排水口持續排水", "checks": "C.吸鹽、反洗或正洗時停電", "parts": "C.關閉旁通閥,待供電正常後再打開" },
-    { "category": "實務問題排查", "code": "", "symptom": "8.排水口持續排水", "checks": "D.定位板與主控板連接線故障", "parts": "D.更換軟化閥連接線" },
-    { "category": "實務問題排查", "code": "", "symptom": "9.間斷或不規則吸鹽", "checks": "A.水壓不穩或水壓低", "parts": "A.提高水壓至要求的壓力" },
-    { "category": "實務問題排查", "code": "", "symptom": "9.間斷或不規則吸鹽", "checks": "B.鹽井鹽閥組件及管路堵塞或故障", "parts": "B.清洗或更換鹽井鹽閥組件及管路" },
-    { "category": "實務問題排查", "code": "", "symptom": "9.間斷或不規則吸鹽", "checks": "C.樹脂罐內進空氣", "parts": "C.檢查並找出進空氣的原因" },
-    { "category": "實務問題排查", "code": "", "symptom": "9.間斷或不規則吸鹽", "checks": "D.逆流再生時樹脂罐內有絮狀物", "parts": "D.清除樹脂罐內的絮狀物" },
-    { "category": "實務問題排查", "code": "", "symptom": "10.再生後排水管或鹽水管仍有水流和水滴", "checks": "A.控制閥因有雜物而不能閉合", "parts": "A.沖洗控制閥內部雜物(更換鹽井鹽閥組件)" },
-    { "category": "實務問題排查", "code": "", "symptom": "10.再生後排水管或鹽水管仍有水流和水滴", "checks": "B.控制閥內部竄硬水", "parts": "B.更換鹽井鹽閥組件" },
-    { "category": "實務問題排查", "code": "", "symptom": "10.再生後排水管或鹽水管仍有水流和水滴", "checks": "C.水壓過高，閥門不到位", "parts": "C.降低水壓或用洩壓埠洩壓" },
-    { "category": "實務問題排查", "code": "", "symptom": "11.出水管中含鹽水", "checks": "A.正洗時間設定過短", "parts": "A.增加正洗時間" },
-    { "category": "實務問題排查", "code": "", "symptom": "12.週期製水量減少", "checks": "A.樹脂公升數設定錯誤", "parts": "A.設定正確的樹脂公升數" },
-    { "category": "實務問題排查", "code": "", "symptom": "12.週期製水量減少", "checks": "B.再生操作不正確", "parts": "B.按正確的操作要求重新再生" },
-    { "category": "實務問題排查", "code": "", "symptom": "12.週期製水量減少", "checks": "C.樹脂受污染或變質", "parts": "C.適當增加反洗流量和時間，用樹脂清洗劑或更換新樹脂" },
-    { "category": "實務問題排查", "code": "", "symptom": "12.週期製水量減少", "checks": "D.原水水質硬度設置不正確", "parts": "D.根據化驗結果，重新計算和設定原水硬度" },
-    { "category": "實務問題排查", "code": "", "symptom": "12.週期製水量減少", "checks": "E.原水水質惡化", "parts": "E.臨時手動再生，並重設定再生週期" },
-    { "category": "實務問題排查", "code": "", "symptom": "12.週期製水量減少", "checks": "F.流量計中渦輪被卡住", "parts": "F.拆下流量計用水沖洗，若仍不能轉動則更換流量計" }
   ]
 }
 // ====== 替換從這裡開始 ======
@@ -1690,11 +1605,41 @@ function renderRepairList(containerId, items, kw, brand) {
             list.appendChild(bar);
         }
 
-        const parts = item.parts ? item.parts.split('\n').filter(p => p.trim()) : [];
-        const partsHtml = parts.map(p => `<span class="part-tag">${esc(p.trim())}</span>`).join('');
-        const symptomDisplay = kw ? highlight(item.symptom.replace(/\n/g,' '), kw) : esc(item.symptom.replace(/\n/g,' '));
-        const codeLabel = item.category && item.category !== item.symptom ? item.category.replace(/\n/g,' ') : '—';
-        const checksDisplay = kw ? highlight(item.checks, kw) : esc(item.checks);
+        const isQh = brand === 'qh';
+
+        // 全戶軟水資料裡換行是字面的 \n（兩字符），用 /\\n|\n/ 兩種都抓
+        function splitLines(str) {
+            if (!str) return [];
+            return str.split(/\\n|\n/).filter(l => l.trim());
+        }
+
+        const parts = splitLines(item.parts);
+        let partsHtml = '';
+        if (isQh) {
+            partsHtml = parts.map(p => {
+                const clean = p.trim().replace(/^[A-Z]\.\s*/, '');
+                return clean ? `<span class="part-tag">${esc(clean)}</span>` : '';
+            }).join('');
+        } else {
+            partsHtml = parts.map(p => `<span class="part-tag">${esc(p.trim())}</span>`).join('');
+        }
+
+        const symptomDisplay = kw ? highlight(item.symptom.replace(/\\n|\n/g,' '), kw) : esc(item.symptom.replace(/\\n|\n/g,' '));
+        const codeLabel = item.category && item.category !== item.symptom ? item.category.replace(/\\n|\n/g,' ') : '—';
+
+        // checks 處理
+        let checksDisplay;
+        if (isQh) {
+            const checkLines = splitLines(item.checks);
+            checksDisplay = checkLines.map((line, i) => {
+                const letter = String.fromCharCode(65 + i);
+                const content = line.trim().replace(/^[A-Z]\.\s*/, '');
+                const text = `${letter}. ${content}`;
+                return `<div class="qh-check-line">${kw ? highlight(text, kw) : esc(text)}</div>`;
+            }).join('');
+        } else {
+            checksDisplay = kw ? highlight(item.checks, kw) : esc(item.checks);
+        }
 
         let showBadge = kw || (brand === 'qs' && currentQsMachine === 'all') || (brand === 'wp' && currentWpMachine === 'all') || brand === 'qh';
         const machineBadge = showBadge ? `<span class="repair-machine-badge">${esc(item.machine)}</span>` : '';
@@ -1702,6 +1647,9 @@ function renderRepairList(containerId, items, kw, brand) {
         const el = document.createElement('div');
         // 動態加上你寫好的 wp-list-item, qs-list-item 來套用左邊的藍綠色條
         el.className = `repair-item ${brand}-list-item`;
+
+        const checksBoxClass = isQh ? 'checks-box qh-checks-box' : 'checks-box';
+        const hasPartsHtml = partsHtml.trim() !== '';
 
         el.innerHTML = `
             <div class="repair-header" onclick="this.parentElement.classList.toggle('open')">
@@ -1713,9 +1661,9 @@ function renderRepairList(containerId, items, kw, brand) {
             <div class="repair-body">
                 <div class="repair-section">
                     <div class="sec-label">📋 檢查順序項目</div>
-                    <div class="checks-box">${checksDisplay}</div>
+                    <div class="${checksBoxClass}">${checksDisplay}</div>
                 </div>
-                ${parts.length ? `
+                ${hasPartsHtml ? `
                 <div class="repair-section">
                     <div class="sec-label">🔧 更換細項</div>
                     <div class="parts-wrap">${partsHtml}</div>
