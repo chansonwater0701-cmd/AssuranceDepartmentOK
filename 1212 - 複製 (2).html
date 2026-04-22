@@ -1388,6 +1388,9 @@ async function uploadToCloud() {
                 modelCard.classList.add('hidden-field');
             } else if (item === '合約') {
                 detailSelect.innerHTML += '<option value="換濾芯">換濾芯(保後裝機)</option>';
+                detailSelect.innerHTML += '<option value="空值">空值(手動輸入)</option>';
+                detailSelect.innerHTML += '<option value="大保拆機">大保拆機</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
                 detailCard.classList.remove('hidden-field');
                 modelCard.classList.add('hidden-field');
             }    
@@ -1717,8 +1720,29 @@ async function uploadToCloud() {
             if (detail === '換濾芯') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
-                'card-service-date','card-wp-note','card-name','card-photo-upload',
-               ]);
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
+                'card-machine-type','card-machine-serial',
+                'card-raw-tds','card-taste','card-handling','card-inspection-result'
+                ]);
+            } else if (detail === '大保拆機') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
+                'card-machine-type','card-machine-serial',
+                ]);
+
+            } else if (detail === '取消') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
+                ]);
+            } else if (detail === '空值') { 
+            currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+            showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-photo-upload',
+                'card-machine-type','card-machine-serial',
+                // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
+            ]);
             }
         }
     }
