@@ -3468,7 +3468,7 @@ function initFirmwareAutoInput() {
     // 融入 V3 核心邏輯：單一檔案處理 (照片壓縮、其他直轉)
     function processFileWithV3Logic(file, index) {
         return new Promise((resolve, reject) => {
-            const maxSize = 1000 * 1024 * 1024; // 1000MB 限制
+            const maxSize = 50 * 1024 * 1024; // 50MB 限制
             if (!file.type.startsWith("image/") && file.size > maxSize) {
                 reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 1000MB 以內。`));
                 return;
