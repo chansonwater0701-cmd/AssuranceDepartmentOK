@@ -1148,7 +1148,7 @@
 
 <div class="question-card hidden-field" id="card-photo-upload">
         <div class="question-title">上傳照片 / 檔案 (可複選)</div>
-        <p style="margin-top:0px; font-size:12px; color:#aaa;">(照片自動壓縮，其他檔案限制 1000MB 內)</p>        
+        <p style="margin-top:0px; font-size:12px; color:#aaa;">(照片自動壓縮，其他檔案限制 50MB 內)</p>        
         <input type="file" name="upload_photos" id="upload_photos" multiple accept="image/*,video/*,application/pdf" style="width: 100%; padding: 10px; border: 1px dashed #007377; background: #fafafa; cursor: pointer; box-sizing: border-box;">
         <div id="file_count_display" style="margin-top: 8px; font-size: 0.9em; color: #007377; font-weight: bold;"></div>
     </div>
@@ -3348,9 +3348,9 @@ function initFirmwareAutoInput() {
 // 融入 V3 版核心邏輯：單一檔案處理 (照片壓縮、其他檔案直轉)
     function processFileWithV3Logic(file, index) {
         return new Promise((resolve, reject) => {
-            const maxSize = 1000 * 1024 * 1024; // 1000MB 限制
+            const maxSize = 50 * 1024 * 1024; // 50MB 限制
             if (!file.type.startsWith("image/") && file.size > maxSize) {
-                reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 1000MB 以內。`));
+                reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 50MB 以內。`));
                 return;
             }
 
@@ -3470,7 +3470,7 @@ function initFirmwareAutoInput() {
         return new Promise((resolve, reject) => {
             const maxSize = 50 * 1024 * 1024; // 50MB 限制
             if (!file.type.startsWith("image/") && file.size > maxSize) {
-                reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 1000MB 以內。`));
+                reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 50MB 以內。`));
                 return;
             }
 
