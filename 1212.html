@@ -1241,7 +1241,7 @@
         </div>
 
 
-        <script>
+        <!-- <script>
             const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
 
             let currentBrand = '';
@@ -3570,79 +3570,6 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             }
 
 
-
-
-            // 顯示已選擇檔案數量的監聽器 (放在 script 區塊內即可)
-            document.addEventListener('DOMContentLoaded', function () {
-                const fileInput = document.getElementById('upload_photos');
-                if (fileInput) {
-                    fileInput.addEventListener('change', function () {
-                        const display = document.getElementById('file_count_display');
-                        if (this.files.length > 0) {
-                            display.innerText = `📁 已準備上傳 ${this.files.length} 個檔案`;
-                        } else {
-                            display.innerText = '';
-                        }
-                    });
-                }
-            });
-            0
-            // 融入 V3 核心邏輯：單一檔案處理 (照片壓縮、其他直轉)
-            function processFileWithV3Logic(file, index) {
-                return new Promise((resolve, reject) => {
-                    const maxSize = 3 * 1024 * 1024; // 20MB 限制
-                    if (!file.type.startsWith("image/") && file.size > maxSize) {
-                        reject(new Error(`❌ 檔案 ${file.name} 太大！請限制在 20MB 以內。`));
-                        return;
-                    }
-
-                    if (file.type.startsWith("image/")) {
-                        // --- 照片壓縮處理 ---
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            const img = new Image();
-                            img.onload = function () {
-                                const canvas = document.createElement('canvas');
-                                let width = img.width, height = img.height;
-                                const max = 1024; // 最大邊長 1024
-                                if (width > height) {
-                                    if (width > max) { height *= max / width; width = max; }
-                                } else {
-                                    if (height > max) { width *= max / height; height = max; }
-                                }
-                                canvas.width = width; canvas.height = height;
-                                const ctx = canvas.getContext('2d');
-                                ctx.drawImage(img, 0, 0, width, height);
-
-                                // 轉換為 Base64 (和 V3 一樣的 0.8 品質)
-                                const base64Data = canvas.toDataURL('image/jpeg', 0.8);
-                                resolve({
-                                    fileName: `photo_${Date.now()}_${index}.jpg`, // 加上 index 避免檔名重複
-                                    mimeType: "image/jpeg",
-                                    fileB64: base64Data
-                                });
-                            };
-                            img.onerror = () => reject(new Error("圖片讀取失敗"));
-                            img.src = e.target.result;
-                        };
-                        reader.onerror = () => reject(new Error("檔案讀取失敗"));
-                        reader.readAsDataURL(file);
-                    } else {
-                        // --- 影片或文件 (不壓縮，直接轉 Base64) ---
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            resolve({
-                                fileName: file.name,
-                                mimeType: file.type || "application/octet-stream",
-                                fileB64: e.target.result
-                            });
-                        };
-                        reader.onerror = () => reject(new Error("檔案讀取失敗"));
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-
             // ============================================
             // 處理單一檔案（照片壓縮 / 影片直接轉）
             // 替換你原本所有的 processFileWithV3Logic
@@ -3690,8 +3617,814 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     }
                 });
             }
-        </script>
+        </script> -->
+        <script>
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
 
+    let currentBrand = '';
+    let currentServiceItem = '';
+    let currentServiceDetail = '';
+    let currentModel = '';
+    let currentRequiredIds = [];
+    let wakeLock = null; // 用來儲存喚醒鎖定狀態的變數
+
+    // ============================================
+    // 螢幕防休眠功能
+    // ============================================
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log('螢幕喚醒鎖定已啟動 (Wake Lock active)');
+            }
+        } catch (err) {
+            console.warn('無法取得螢幕喚醒鎖定:', err.name, err.message);
+        }
+    }
+
+    function releaseWakeLock() {
+        if (wakeLock !== null) {
+            wakeLock.release().then(() => {
+                wakeLock = null;
+                console.log('螢幕喚醒鎖定已解除 (Wake Lock released)');
+            });
+        }
+    }
+
+    const qsInstallRequired = [
+        'card-name', 'card-service-date', 'card-customer',
+        'card-original-pressure', 'card-site-voltage', 'card-drainage-type',
+        'card-raw-pressure', 'card-raw-tds',
+    ];
+
+    const qsRepairRequired = [
+        'card-name', 'card-service-date', 'card-customer',
+        'card-replaced-parts'
+    ];
+// ============================================
+    // ⭐ 新增：具備「自動重試」功能的超強 Fetch
+    // 如果網路斷掉或 Google 拒絕連線，它會自動重試 3 次！
+    // ============================================
+    async function fetchWithRetry(url, options, retries = 3) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                return await response.json(); // 成功就直接回傳
+            } catch (err) {
+                console.warn(`上傳失敗 (第 ${i + 1} 次嘗試)... 準備重試`, err);
+                if (i === retries - 1) {
+                    throw new Error(`網路不穩或伺服器無回應，已嘗試重試 3 次皆失敗。`);
+                }
+                // 每次失敗後，等待時間拉長再試 (第1次等1.5秒，第2次等3秒...)
+                await new Promise(res => setTimeout(res, 1500 * (i + 1)));
+            }
+        }
+    }
+
+    // ============================================
+    // 1. 主上傳流程
+    // ============================================
+    async function uploadToCloud() {
+        if (!validateForm()) return;
+        const data = getFormData();
+        const btn = document.getElementById('btn-upload');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+
+        await requestWakeLock();
+
+        try {
+            const fileInput = document.getElementById('upload_photos');
+            const files = fileInput ? Array.from(fileInput.files) : [];
+            let uploadedUrls = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                btn.innerHTML = `⏳ 處理第 ${i + 1} / ${files.length} 個檔案...`;
+
+                // ⭐ 修改：把延遲拉長到 1 秒 (1000ms)，讓 Google 伺服器有時間消化上一張圖
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                if (file.type.startsWith('image/')) {
+                    const processed = await processOneFile(file, i);
+                    const res = await uploadSingle(processed, data);
+                    if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
+                } else if (file.size > 3 * 1024 * 1024) {
+                    const fileUrl = await uploadInChunks(file, data, btn, i);
+                    if (fileUrl) uploadedUrls.push(fileUrl);
+                } else {
+                    const processed = await processOneFile(file, i);
+                    const res = await uploadSingle(processed, data);
+                    if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
+                }
+            }
+
+            data.photoUrlsString = uploadedUrls.length > 0 ? uploadedUrls.join('\n') : "無照片";
+
+            btn.innerHTML = '⏳ 寫入維修紀錄...';
+            
+            // 表單文字也改用 fetchWithRetry 確保不會在最後一步失敗
+            await fetchWithRetry(CLOUD_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ ...data, _type: 'form_submit' })
+            });
+
+            alert('✅ 全部上傳完成！');
+            document.getElementById('btn-reset').style.display = 'block';
+
+        } catch (e) {
+            alert('❌ ' + (e.message || '上傳失敗，請檢查網路後重試'));
+            console.error(e);
+            document.getElementById('btn-reset').style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            releaseWakeLock();
+        }
+    }
+
+    // ============================================
+    // 2. 單一檔案上傳 API (改用 fetchWithRetry)
+    // ============================================
+    async function uploadSingle(processedFile, data) {
+        const payload = {
+            _type: 'file_only',
+            brand: data.brand,
+            engineer_name: data.engineer_name,
+            customer_code: data.customer_code,
+            file: processedFile
+        };
+        // 呼叫自動重試函式
+        return await fetchWithRetry(CLOUD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(payload)
+        });
+    }
+
+    // ============================================
+    // 3. 大檔分塊上傳 API (改用 fetchWithRetry)
+    // ============================================
+    async function uploadInChunks(file, data, btn, fileIndex) {
+        const chunkSize = 3 * 1024 * 1024;
+        const totalChunks = Math.ceil(file.size / chunkSize);
+        const fileId = Date.now() + "_" + fileIndex;
+
+        for (let i = 0; i < totalChunks; i++) {
+            btn.innerHTML = `⏳ 第 ${fileIndex + 1} 個檔案 (大檔分塊 ${i + 1}/${totalChunks})...`;
+            const start = i * chunkSize;
+            const end = Math.min(start + chunkSize, file.size);
+            const chunkBlob = file.slice(start, end);
+
+            const chunkB64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(chunkBlob);
+            });
+
+            const payload = {
+                _type: 'chunk', fileId: fileId, fileName: file.name,
+                mimeType: file.type || "application/octet-stream",
+                chunkIndex: i, totalChunks: totalChunks, chunkData: chunkB64,
+                brand: data.brand, engineer_name: data.engineer_name,
+                customer_code: data.customer_code
+            };
+
+            // 呼叫自動重試函式
+            const result = await fetchWithRetry(CLOUD_URL, {
+                method: 'POST', 
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (i === totalChunks - 1 && result && result.status === 'success') {
+                return result.fileUrl;
+            }
+        }
+        return null;
+    }
+    // ============================================
+    // 終極記憶體優化版壓縮函式
+    // ============================================
+    async function processOneFile(file, index) {
+        return new Promise((resolve, reject) => {
+            if (file.type.startsWith('image/')) {
+                // ⭐ 改用 URL.createObjectURL，不把大圖硬塞記憶體
+                const objectUrl = URL.createObjectURL(file);
+                const img = new Image();
+
+                img.onload = () => {
+                    // 載入完立刻釋放記憶體
+                    URL.revokeObjectURL(objectUrl);
+
+                    const canvas = document.createElement('canvas');
+                    let { width, height } = img;
+                    const max = 1024; 
+
+                    // 等比例縮放
+                    if (width > height) {
+                        if (width > max) { height = Math.round(height * max / width); width = max; }
+                    } else {
+                        if (height > max) { width = Math.round(width * max / height); height = max; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+
+                    // 畫完後把畫布歸零，強迫回收記憶體
+                    canvas.width = 0;
+                    canvas.height = 0;
+
+                    resolve({
+                        fileName: `photo_${Date.now()}_${index}.jpg`,
+                        mimeType: 'image/jpeg',
+                        fileB64: base64Data
+                    });
+                };
+
+                img.onerror = () => {
+                    URL.revokeObjectURL(objectUrl);
+                    reject(new Error('圖片讀取失敗'));
+                };
+                
+                img.src = objectUrl;
+
+            } else {
+                // 非圖片小檔直接轉
+                const reader = new FileReader();
+                reader.onload = e => resolve({
+                    fileName: `${Date.now()}_${file.name}`,
+                    mimeType: file.type || 'application/octet-stream',
+                    fileB64: e.target.result
+                });
+                reader.onerror = () => reject(new Error('讀取失敗'));
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // ============================================
+    // 介面與邏輯處理
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('upload_photos');
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                const display = document.getElementById('file_count_display');
+                if (this.files.length > 0) {
+                    display.innerText = `📁 已準備上傳 ${this.files.length} 個檔案`;
+                } else {
+                    display.innerText = '';
+                }
+            });
+        }
+    });
+
+    function handleBrandChange() {
+        const brandRadio = document.querySelector('input[name="brand"]:checked');
+        if (!brandRadio) return;
+        const brand = brandRadio.value;
+
+        if (currentBrand && currentBrand !== brand) {
+            if (!confirm("變更品牌將會清除目前所有已填寫的內容，確定要變更嗎？")) {
+                const radios = document.querySelectorAll('input[name="brand"]');
+                radios.forEach(r => { r.checked = (r.value === currentBrand); });
+                return;
+            }
+        }
+        currentBrand = brand;
+
+        const qtyRow = document.getElementById('machine_qty_row');
+        const qtySelect = document.getElementById('machine_qty');
+
+        if (currentBrand === '千山') {
+            qtyRow.style.display = 'block';
+        } else {
+            qtyRow.style.display = 'none';
+            qtySelect.value = "1";
+            generateMachineInputs();
+        }
+        resetFormValues(['brand']);
+        currentServiceItem = ''; currentServiceDetail = ''; currentModel = '';
+        hideAllCards();
+
+        const codeInput = document.getElementById('customer_code_input');
+        if (codeInput) {
+            if (currentBrand === '千山') {
+                codeInput.setAttribute('inputmode', 'text');
+                codeInput.value = "";
+                codeInput.placeholder = "請輸入完整代號 (例: A123456789)";
+            } else if (currentBrand === '惟品') {
+                codeInput.setAttribute('inputmode', 'numeric');
+                codeInput.value = "W0000";
+                codeInput.placeholder = "請輸入數字";
+            }
+        }
+
+        const serviceSelect = document.getElementById('service_item');
+        serviceSelect.innerHTML = '<option value="">請選擇</option>';
+        if (currentBrand === '千山') {
+            serviceSelect.innerHTML += `<option value="裝機">裝機</option><option value="維修">維修</option><option value="售服">售服</option><option value="合約">合約</option>`;
+        } else if (currentBrand === '惟品') {
+            serviceSelect.innerHTML += `<option value="裝機">裝機</option><option value="維修">維修</option><option value="售服">售服</option>`;
+        }
+        document.getElementById('card-service-item').classList.remove('hidden-field');
+        renumberQuestions();
+    }
+
+    function resetFormValues(excludeNames = []) {
+        const allInputs = document.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            if (excludeNames.includes(input.name)) return;
+            if (input.type === 'radio' || input.type === 'checkbox') input.checked = false;
+            else input.value = '';
+        });
+        document.getElementById('card-manual-input')?.classList.add('hidden-field');
+        document.getElementById('card-waste-note')?.classList.add('hidden-field');
+        document.getElementById('card-reduced-pressure')?.classList.add('hidden-field');
+        document.getElementById('card-leak-reason')?.classList.add('hidden-field');
+    }
+
+    function handleServiceItemChange() {
+        const item = document.getElementById('service_item').value;
+        if (!item) return;
+
+        if (currentServiceItem && currentServiceItem !== item) {
+            if (!confirm("變更服務項目將會重置後續所有欄位，確定要變更嗎？")) {
+                document.getElementById('service_item').value = currentServiceItem;
+                return;
+            }
+        }
+
+        currentServiceItem = item;
+        resetFormValues(['brand', 'service_item']);
+        currentServiceDetail = ''; currentModel = '';
+        hideAllCards(true);
+
+        const detailSelect = document.getElementById('service_detail');
+        const detailCard = document.getElementById('card-service-detail');
+        const modelSelect = document.getElementById('model');
+        const modelCard = document.getElementById('card-model');
+
+        detailSelect.innerHTML = '<option value="">請選擇</option>';
+        modelSelect.innerHTML = '<option value="">請選擇</option>';
+
+        if (currentBrand === '千山') {
+            if (item === '裝機') {
+                detailSelect.innerHTML += '<option value="一般裝機">一般裝機</option><option value="全戶裝機">全戶裝機</option><option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            } else if (item === '維修') {
+                detailSelect.innerHTML += '<option value="一般維修">一般維修</option><option value="全戶維修">全戶維修</option><option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            } else if (item === '售服') {
+                detailSelect.innerHTML += '<option value="一般場勘">一般場勘</option><option value="全戶場勘">全戶場勘</option><option value="空值">空值(手動輸入)</option><option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            } else if (item === '合約') {
+                detailSelect.innerHTML += '<option value="換濾芯">換濾芯(保後裝機)</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            }
+        } else if (currentBrand === '惟品') {
+            if (item === '裝機') {
+                detailSelect.innerHTML += '<option value="裝機">裝機</option><option value="新機異常">新機異常</option><option value="升級裝機">升級裝機</option><option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            } else if (item === '維修') {
+                detailSelect.innerHTML += '<option value="維修">客戶處維修</option><option value="店修">門市店內維修</option><option value="拖修">拖修</option><option value="維修覆機">維修覆機</option><option value="更換面板">更換面板</option><option value="換機">換機</option><option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            } else if (item === '售服') {
+                detailSelect.innerHTML += '<option value="更換濾芯">更換濾芯</option><option value="拆機">拆機</option><option value="重裝機">重裝機</option><option value="手動輸入">手動輸入</option><option value="場勘">場勘</option><option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
+            }
+        }
+        renumberQuestions();
+    }
+
+    function handleServiceDetailChange() {
+        const detailValue = document.getElementById('service_detail').value;
+        if (!detailValue) return;
+
+        if (currentServiceDetail && currentServiceDetail !== detailValue) {
+            resetFormValues(['brand', 'service_item', 'service_detail']);
+            currentModel = ''; hideAllCards(true);
+        }
+        currentServiceDetail = detailValue;
+
+        const modelCard = document.getElementById('card-model');
+        const modelSelect = document.getElementById('model');
+        const manualCard = document.getElementById('card-manual-input');
+
+        modelSelect.innerHTML = '<option value="">請選擇</option>';
+
+        if (currentBrand === '千山') {
+            if (detailValue === '其他' || detailValue === '手動輸入' || detailValue === '空值') {
+                if (manualCard) manualCard.classList.remove('hidden-field');
+            } else {
+                if (manualCard) manualCard.classList.add('hidden-field');
+            }
+            showQianshanFields();
+        } else if (currentBrand === '惟品') {
+            if (manualCard) manualCard.classList.add('hidden-field');
+            // 這裡為了精簡代碼，把惟品常用的型號選項合併
+            if (['升級裝機'].includes(detailValue)) {
+                modelSelect.innerHTML += '<option value="WD1→WD2">WD1→WD2</option><option value="WD1→WS2-C">WD1→WS2-C</option><option value="WD1→WS2-H">WD1→WS2-H</option><option value="WS1→WD2">WS1→WD2</option><option value="WS1→WS2-C">WS1→WS2-C</option><option value="WS1→WS2-H">WS1→WS2-H</option>';
+                modelCard.classList.remove('hidden-field');
+            } else if (['裝機', '新機異常', '取消', '換機', '更換面板'].includes(detailValue)) {
+                modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option><option value="WS2-H">WS2-H</option><option value="WD2-C">WD2-C</option>';
+                modelCard.classList.remove('hidden-field');
+            } else {
+                modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option><option value="WS2-H">WS2-H</option><option value="WD2-C">WD2-C</option><option value="WD1">WD1</option><option value="WS1">WS1</option>';
+                modelCard.classList.remove('hidden-field');
+            }
+        }
+        renumberQuestions();
+    }
+
+    function handleModelChange() {
+        const model = document.getElementById('model').value;
+        if (!model) return;
+        if (currentModel && currentModel !== model) {
+            resetFormValues(['brand', 'service_item', 'service_detail', 'model']);
+            hideAllCards(true);
+        }
+        currentModel = model;
+        const machineModelInputs = document.querySelectorAll('.dynamic-model-input');
+        if (machineModelInputs.length > 0) {
+            machineModelInputs[0].value = model;
+        }
+        if (currentBrand === '惟品') showWeipinFields();
+        renumberQuestions();
+    }
+
+    function showQianshanFields() {
+        hideAllCards(true);
+        const item = currentServiceItem;
+        const detail = currentServiceDetail;
+        if (item === '裝機') {
+            if (detail === '一般裝機') {
+                currentRequiredIds = [...qsInstallRequired];
+                showCards(['card-name', 'card-invoice-number', 'card-machine-serial', 'card-service-date', 'card-customer', 'card-customer-code', 'card-machine-type', 'card-faucet', 'card-site-voltage', 'card-waste-type', 'card-wp-customer', 'card-photo-upload', 'card-raw-pressure', 'card-raw-tds', 'card-leak-circuit', 'card-leak-reason', 'card-original-pressure', 'card-pressure-pump', 'card-drainage-type', 'card-countertop', 'card-taste', 'card-wp-note', 'card-principle', 'card-install-location']);
+            } else if (detail === '全戶裝機') {
+                currentRequiredIds = [];
+                showCards(['card-name', 'card-invoice-number', 'card-machine-serial', 'card-service-date', 'card-customer', 'card-customer-code', 'card-machine-type', 'card-faucet', 'card-site-voltage', 'card-waste-type', 'card-install-location', 'card-install-floor', 'card-app', 'card-photo-upload', 'card-raw-pressure', 'card-leak-reason', 'card-wp-customer', 'card-pressure-pump', 'card-original-pressure', 'card-install-pipe-material', 'card-wp-note', 'card-principle']);
+            } else if (detail === '取消') {
+                currentRequiredIds = [];
+                showCards(['card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note', 'card-name', 'card-repair-reason', 'card-actual-reason', 'card-machine-type', 'card-photo-upload']);
+            }
+        } else if (item === '維修') {
+            if (detail === '一般維修') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards(['card-name', 'card-invoice-number', 'card-machine-serial', 'card-service-date', 'card-customer', 'card-photo-upload', 'card-customer-code', 'card-wp-customer', 'card-original-pressure', 'card-raw-tds', 'card-site-voltage', 'card-repair-reason', 'card-actual-reason', 'card-leak-circuit', 'card-leak-reason', 'card-parts-payment', 'card-pressure-pump', 'card-drainage-type', 'card-taste', 'card-wp-note', 'card-handling', 'card-inspection-result', 'card-is-payment', 'card-machine-type']);
+            } else if (detail === '全戶維修') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards(['card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-machine-serial', 'card-photo-upload', 'card-customer-code', 'card-wp-customer', 'card-app', 'card-repair-reason', 'card-actual-reason', 'card-leak-reason', 'card-parts-payment', 'card-pressure-pump', 'card-wp-note', 'card-handling', 'card-inspection-result', 'card-is-payment', 'card-machine-serial', 'card-machine-type']);
+            } else if (detail === '取消') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards(['card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note', 'card-name', 'card-photo-upload']);
+            }
+        } else if (item === '售服') {
+            if (detail === '一般場勘') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards(['card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-customer-code', 'card-wp-customer', 'card-original-pressure', 'card-machine-type', 'card-photo-upload', 'card-raw-tds', 'card-site-voltage', 'card-leak-reason', 'card-wp-note', 'card-water-source', 'card-pump-photo', 'card-install-location', 'card-countertop']);
+            } else if (detail === '全戶場勘') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards(['card-name', 'card-invoice-number', 'card-service-date', 'card-customer', 'card-photo-upload', 'card-customer-code', 'card-wp-customer', 'card-original-pressure', 'card-site-voltage', 'card-machine-type', 'card-leak-reason', 'card-pressure-pump', 'card-wp-note', 'card-water-source', 'card-pump-photo', 'card-pipe-material', 'card-signal-strength', 'card-install-location', 'card-install-floor', 'card-pipe-spec', 'card-pipe-material', 'card-signal-strength']);
+            } else if (detail === '取消' || detail === '空值') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards(['card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note', 'card-name', 'card-repair-reason', 'card-actual-reason', 'card-photo-upload']);
+            }
+        } else if (item === '合約' && detail === '換濾芯') {
+            currentRequiredIds = [...qsRepairRequired];
+            showCards(['card-service-date', 'card-wp-note', 'card-name', 'card-photo-upload']);
+        }
+    }
+
+    function showWeipinFields() {
+        hideAllCards(true);
+        // 惟品的卡片配置極其龐大，我們透過合併邏輯讓它不報錯並顯示必要的
+        let cardsToShow = ['card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note', 'card-photo-upload'];
+        
+        if (currentServiceItem === '裝機') {
+            cardsToShow.push('card-machine-model', 'card-machine-serial', 'card-machine-type', 'card-是否加裝Filter-C', 'card-raw-tds', 'card-env-temp', 'card-site-voltage', 'card-adjust-power', 'card-raw-flow', 'card-raw-temp', 'card-principle', 'card-taste', 'card-calibration', 'card-battery', 'card-app');
+            if (['WS2-C', 'WS2-H'].includes(currentModel)) cardsToShow.push('card-faucet-type', 'card-faucet-label', 'card-panel-version', 'card-firmware-version');
+            if (['WS2-C', 'WD2-C'].includes(currentModel)) cardsToShow.push('card-power', 'card-temp-group');
+            if (currentModel === 'WS2-H') cardsToShow.push('card-power-hot', 'card-temp-group');
+            if (currentServiceDetail === '升級裝機') cardsToShow.push('card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2');
+        } else if (currentServiceItem === '維修' || currentServiceItem === '售服') {
+            if (currentServiceDetail !== '取消' && currentServiceDetail !== '手動輸入') {
+                cardsToShow.push('card-machine-serial', 'card-machine-type', 'card-repair-reason', 'card-actual-reason', 'card-handling', 'card-inspection-result');
+                if (currentServiceItem === '維修') cardsToShow.push('card-parts-payment', 'card-payment-detail', 'card-replaced-parts');
+                if (currentModel.includes('WS2') || currentModel.includes('WD2')) cardsToShow.push('card-firmware-version', 'card-temp-group');
+                if (currentModel.includes('WD1') || currentModel.includes('WS1')) cardsToShow.push('card-temp-group-100', 'card-f11-flow');
+            }
+        }
+
+        showCards(cardsToShow);
+
+        // 溫度顯示控制
+        const temp100 = document.getElementById('temp-100');
+        const temp35 = document.getElementById('temp-35');
+        const temp10 = document.getElementById('temp-10');
+        if(temp100) temp100.style.display = 'flex';
+        if(temp35) temp35.style.display = 'flex';
+        if(temp10) {
+            if (currentModel.includes('WS2-H') || currentModel.includes('WD1') || currentModel.includes('WS1')) {
+                temp10.style.display = 'none';
+            } else {
+                temp10.style.display = 'flex';
+            }
+        }
+    }
+
+    function hideAllCards(keepBase = false) {
+        const allCards = document.querySelectorAll('.question-card');
+        allCards.forEach(card => {
+            if (keepBase && ['card-brand', 'card-service-item', 'card-service-detail', 'card-model', 'card-manual-input'].includes(card.id)) return;
+            card.classList.add('hidden-field');
+        });
+    }
+
+    function showCards(ids) {
+        ids.forEach(id => {
+            const card = document.getElementById(id);
+            if (card) card.classList.remove('hidden-field');
+        });
+    }
+
+    function handlePaymentVisibility() {
+        const isPayment = document.getElementById('is_payment').value;
+        const paymentDetailCard = document.getElementById('card-payment-detail');
+        if (isPayment === '是') paymentDetailCard.classList.remove('hidden-field');
+        else { paymentDetailCard.classList.add('hidden-field'); paymentDetailCard.querySelector('textarea').value = ''; }
+        renumberQuestions();
+    }
+
+    function handleWasteTypeChange() {
+        const waste = document.getElementById('waste_type').value;
+        const noteCard = document.getElementById('card-waste-note');
+        if(noteCard) { waste === '回桶' ? noteCard.classList.remove('hidden-field') : noteCard.classList.add('hidden-field'); }
+        renumberQuestions();
+    }
+
+    function handlePressureValveChange() {
+        const valve = document.getElementById('pressure_valve').value;
+        const reducedCard = document.getElementById('card-reduced-pressure');
+        if(reducedCard) { valve === '有' ? reducedCard.classList.remove('hidden-field') : reducedCard.classList.add('hidden-field'); }
+        renumberQuestions();
+    }
+
+    function handleLeakCircuitChange() {
+        const leak = document.getElementById('leak_circuit').value;
+        const reasonCard = document.getElementById('card-leak-reason');
+        if(reasonCard) { leak === '未安裝' ? reasonCard.classList.remove('hidden-field') : reasonCard.classList.add('hidden-field'); }
+        renumberQuestions();
+    }
+
+    function renumberQuestions() {
+        const cards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        let count = 1;
+        let previousCardId = null;
+
+        cards.forEach((card) => {
+            const title = card.querySelector('.question-title');
+            if (title) {
+                let text = title.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+                let isRequired = title.innerHTML.includes('required') || title.innerText.includes('*') || card.id === 'card-service-detail';
+
+                let htmlContent = "";
+                if (card.id === 'card-service-detail') htmlContent = `1-1. ${text}`;
+                else if (card.id === 'card-manual-input' && previousCardId === 'card-service-detail') htmlContent = `1-2. ${text}`;
+                else if (card.id === 'card-waste-note' && previousCardId === 'card-waste-type') htmlContent = `${count - 1}-1. ${text}`;
+                else if (card.id === 'card-leak-reason' && previousCardId === 'card-leak-circuit') htmlContent = `${count - 1}-1. ${text}`;
+                else if (card.id === 'card-reduced-pressure' && previousCardId === 'card-raw-pressure') htmlContent = `${count - 1}-1. ${text}`;
+                else if (card.id === 'card-principle-reason' && previousCardId === 'card-principle') htmlContent = `${count - 1}-1. ${text}`;
+                else { htmlContent = `${count}. ${text}`; count++; }
+
+                if (isRequired) htmlContent += ` <span class="required">*</span>`;
+                title.innerHTML = htmlContent;
+                previousCardId = card.id;
+            }
+        });
+    }
+
+    function validateForm() {
+        let isValid = true; let errors = []; clearErrors();
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        visibleCards.forEach(card => {
+            const title = card.querySelector('.question-title');
+            if (title && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
+                let hasValue = false;
+                let inputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                let radios = card.querySelectorAll('input[type="radio"]');
+
+                if (['card-temp-group', 'card-power', 'card-taste'].includes(card.id)) {
+                    let allFilled = true;
+                    inputs.forEach(input => {
+                        const tempRow = input.closest('.temp-row');
+                        if (tempRow && tempRow.style.display === 'none') return;
+                        if (!input.value.trim()) allFilled = false;
+                    });
+                    hasValue = allFilled;
+                } else {
+                    if (inputs.length > 0) {
+                        inputs.forEach(input => {
+                            if (input.value.trim() || input.name.startsWith('firmware_')) hasValue = true;
+                        });
+                    }
+                    if (radios.length > 0) {
+                        radios.forEach(r => { if (r.checked) hasValue = true; });
+                    }
+                }
+
+                if (!hasValue) {
+                    isValid = false; card.classList.add('error-border');
+                    inputs.forEach(i => i.classList.add('error-input'));
+                    errors.push(title.innerText.replace('*', '').trim());
+                }
+            }
+        });
+        if (!isValid) alert("⚠️ 請填寫以下必填欄位：\n\n" + errors.join('\n'));
+        return isValid;
+    }
+
+    function clearErrors() {
+        document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
+        document.querySelectorAll('.error-input').forEach(el => el.classList.remove('error-input'));
+    }
+
+    function getFormData() {
+        let data = {};
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        visibleCards.forEach(card => {
+            if (card.id === 'card-machine-type' || card.id === 'card-machine-serial') return;
+            const inputs = card.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (!input.name || (input.type === 'radio' && !input.checked)) return;
+                let finalValue = input.value;
+                if (input.name.startsWith('firmware_') && finalValue.trim() === '') finalValue = '00';
+                data[input.name] = data[input.name] ? data[input.name] + " - " + finalValue : finalValue;
+            });
+        });
+
+        const typeCard = document.getElementById('card-machine-type');
+        if (typeCard && !typeCard.classList.contains('hidden-field')) {
+            const modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
+            let modelValues = [];
+            modelInputs.forEach(input => { if (input.value.trim()) modelValues.push(input.value.trim()); });
+            if (modelValues.length > 0) data['machine_model'] = modelValues.join(' \\ ');
+        }
+
+        const serialCard = document.getElementById('card-machine-serial');
+        if (serialCard && !serialCard.classList.contains('hidden-field')) {
+            const serialInputs = serialCard.querySelectorAll('.dynamic-serial-input');
+            let finalSerialValues = [];
+            serialInputs.forEach(sInput => { if (sInput.value.trim()) finalSerialValues.push(sInput.value.trim()); });
+            if (finalSerialValues.length > 0) data['machine_serial'] = finalSerialValues.join(' \\ ');
+        }
+
+        data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
+        data['service_item'] = document.getElementById('service_item').value || "";
+        data['service_detail'] = document.getElementById('service_detail').value || "";
+        return data;
+    }
+
+    function handlePrincipleChange() {
+        const explained = document.getElementById('principle_explained').value;
+        const reasonCard = document.getElementById('card-principle-reason');
+        if(reasonCard) {
+            if (explained === '否') reasonCard.classList.remove('hidden-field');
+            else { reasonCard.classList.add('hidden-field'); reasonCard.querySelector('textarea').value = ''; }
+        }
+        renumberQuestions();
+    }
+
+    function formatCustomerCode(input) {
+        let val = input.value.trim();
+        if (!val) return;
+        if (currentBrand === '惟品') {
+            let numericPart = val.replace(/\D/g, '');
+            input.value = numericPart.length > 0 ? 'W' + numericPart.padStart(9, '0') : "W0000";
+        } else if (currentBrand === '千山') {
+            input.value = val.toUpperCase();
+        }
+    }
+
+    function copyForLine() {
+        if (!validateForm()) return;
+        let header = currentBrand === '千山' ? `【${currentBrand} ${document.getElementById('service_item').value}回報】` + (document.getElementById('service_detail').value ? ` - ${document.getElementById('service_detail').value}` : '') : `【${currentBrand} ${currentServiceItem}回報】 - ${currentServiceDetail} - ${currentModel}`;
+        let text = header + "\n";
+        
+        document.querySelectorAll('.question-card:not(.hidden-field)').forEach(card => {
+            if (['card-brand', 'card-service-item', 'card-service-detail', 'card-model'].includes(card.id)) return;
+            const titleEl = card.querySelector('.question-title');
+            if (!titleEl) return;
+            let label = titleEl.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+            let value = "";
+
+            if (card.id === 'card-temp-group' || card.id === 'card-temp-group-100') {
+                let groupText = "";
+                card.querySelectorAll('.temp-row').forEach(row => {
+                    if (row.style.display === 'none') return;
+                    const rowLabel = row.querySelector('.temp-label').innerText;
+                    const rowInputs = Array.from(row.querySelectorAll('input')).map(i => i.value).filter(v => v !== "");
+                    if (rowInputs.length > 0) groupText += `\n   ${rowLabel}：${rowInputs.join(' / ')}`;
+                });
+                value = groupText;
+            } else {
+                const allInputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                const checkedRadio = card.querySelector('input[type="radio"]:checked');
+                if (checkedRadio) value = checkedRadio.parentElement.innerText.trim();
+                else if (allInputs.length > 0) {
+                    value = Array.from(allInputs).map(i => {
+                        let val = i.value.trim();
+                        if (i.name.startsWith('firmware_')) {
+                            if (val === '') return "00";
+                            if (val.length === 1) return "0" + val;
+                        }
+                        return val;
+                    }).filter(v => v !== "").join(' - ');
+                }
+            }
+            if (value) text += `${label}：${value}\n`;
+        });
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('✅ 已複製 LINE 格式內容！');
+    }
+
+    function resetToInitial() {
+        if (!confirm("確定要清除所有資料並準備填寫下一筆嗎？")) return;
+        resetFormValues([]); clearErrors();
+        currentBrand = ''; currentServiceItem = ''; currentServiceDetail = ''; currentModel = ''; currentRequiredIds = [];
+        document.getElementById('service_item').innerHTML = '<option value="">請選擇</option>';
+        document.getElementById('service_detail').innerHTML = '<option value="">請選擇</option>';
+        document.getElementById('model').innerHTML = '<option value="">請選擇</option>';
+        hideAllCards(false);
+        document.getElementById('card-brand').classList.remove('hidden-field');
+        document.getElementById('btn-reset').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function generateMachineInputs() {
+        const qty = parseInt(document.getElementById('machine_qty').value);
+        const modelContainer = document.getElementById('machine_inputs_container');
+        const currentModelVal = modelContainer.querySelector('input')?.value || '';
+        modelContainer.innerHTML = '';
+
+        const serialContainer = document.getElementById('machine_serial_container');
+        const currentSerialVal = serialContainer?.querySelector('input')?.value || '';
+        if (serialContainer) serialContainer.innerHTML = '';
+
+        for (let i = 1; i <= qty; i++) {
+            const mInput = document.createElement('input');
+            mInput.type = 'text'; mInput.className = 'dynamic-model-input'; mInput.style.marginBottom = '8px';
+            let sInput = null;
+            if (serialContainer) {
+                sInput = document.createElement('input');
+                sInput.type = 'text'; sInput.className = 'dynamic-serial-input'; sInput.style.marginBottom = '8px';
+            }
+            if (i === 1) {
+                mInput.value = currentModelVal; mInput.placeholder = "請輸入機器型號 (例: 222)";
+                if (sInput) { sInput.value = currentSerialVal; sInput.placeholder = "請輸入機器序號 (例: 1111)"; }
+            } else {
+                mInput.value = currentModelVal; mInput.placeholder = `第 ${i} 台型號`;
+                if (sInput) sInput.placeholder = `請輸入第 ${i} 台機器序號`;
+            }
+            modelContainer.appendChild(mInput);
+            if (serialContainer && sInput) serialContainer.appendChild(sInput);
+        }
+    }
+
+    function syncMachineInputs() {}
+
+    function initFirmwareAutoInput() {
+        const inputs = document.querySelectorAll('#card-firmware-version .fw-inputs input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', function () {
+                if (this.value.length > 2) this.value = this.value.slice(0, 2);
+                if (this.value.length === 2) {
+                    if (index < inputs.length - 1) inputs[index + 1].focus();
+                    else {
+                        const nextField = document.querySelector('input[name="panel_version"]');
+                        if (nextField && nextField.offsetParent !== null) nextField.focus();
+                    }
+                }
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key === "Backspace" && this.value.length === 0 && index > 0) inputs[index - 1].focus();
+            });
+            input.addEventListener('focus', function () { this.select(); });
+        });
+    }
+</script>
 </body>
 
 </html>
