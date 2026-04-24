@@ -1249,7 +1249,30 @@
             let currentServiceDetail = '';
             let currentModel = '';
             let currentRequiredIds = [];
+            let wakeLock = null; // 用來儲存喚醒鎖定狀態的變數
 
+            // 請求喚醒鎖定（防止螢幕休眠）
+            async function requestWakeLock() {
+                try {
+                    if ('wakeLock' in navigator) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        console.log('螢幕喚醒鎖定已啟動 (Wake Lock active)');
+                    }
+                } catch (err) {
+                    console.warn('無法取得螢幕喚醒鎖定 (可能裝置不支援或電量過低):', err.name, err.message);
+                }
+            }
+
+            // 解除喚醒鎖定（允許螢幕恢復休眠）
+            function releaseWakeLock() {
+                if (wakeLock !== null) {
+                    wakeLock.release()
+                        .then(() => {
+                            wakeLock = null;
+                            console.log('螢幕喚醒鎖定已解除 (Wake Lock released)');
+                        });
+                }
+            }
             const qsInstallRequired = [
                 'card-name', 'card-service-date', 'card-customer',
                 'card-original-pressure', 'card-site-voltage', 'card-drainage-type',
@@ -1261,7 +1284,7 @@
                 'card-replaced-parts'
             ];
 
- // ============================================
+// ============================================
 // 1. 主上傳流程：先上傳檔案，拿到網址後，再送出表單
 // ============================================
 async function uploadToCloud() {
@@ -1270,6 +1293,9 @@ async function uploadToCloud() {
     const btn = document.getElementById('btn-upload');
     const originalText = btn.innerHTML;
     btn.disabled = true;
+
+    // ⭐ 新增：上傳開始前，請求螢幕保持喚醒
+    await requestWakeLock();
 
     try {
         const fileInput = document.getElementById('upload_photos');
@@ -1287,11 +1313,11 @@ async function uploadToCloud() {
                 const res = await uploadSingle(processed, data);
                 if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
             } else if (file.size > 3 * 1024 * 1024) {
-                // 非圖片且大於 20MB -> 執行分塊上傳
+                // 非圖片且大於 3MB -> 執行分塊上傳
                 const fileUrl = await uploadInChunks(file, data, btn, i);
                 if (fileUrl) uploadedUrls.push(fileUrl);
             } else {
-                // 非圖片且小於 20MB -> 直接轉 Base64 上傳
+                // 非圖片且小於 3MB -> 直接轉 Base64 上傳
                 const processed = await processOneFile(file, i);
                 const res = await uploadSingle(processed, data);
                 if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
@@ -1305,7 +1331,6 @@ async function uploadToCloud() {
         btn.innerHTML = '⏳ 寫入維修紀錄...';
         await fetch(CLOUD_URL, {
             method: 'POST',
-            // 注意：千萬不要加 mode: 'no-cors'，否則無法讀取回傳值
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({ ...data, _type: 'form_submit' })
         });
@@ -1320,6 +1345,9 @@ async function uploadToCloud() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
+        
+        // ⭐ 新增：無論成功或失敗，上傳結束後解除螢幕喚醒，省電
+        releaseWakeLock();
     }
 }
 
