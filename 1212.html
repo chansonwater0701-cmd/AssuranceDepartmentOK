@@ -1242,6 +1242,7 @@
 
 
         <script>
+
             const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
 
             let currentBrand = '';
@@ -1260,12 +1261,47 @@
                 'card-name', 'card-service-date', 'card-customer',
                 'card-replaced-parts'
             ];
+            // 宣告一個全域變數來記住喚醒鎖
 
- // ============================================
-// 1. 主上傳流程：先上傳檔案，拿到網址後，再送出表單
+// ============================================
+// 🌟 新增：螢幕喚醒鎖 (Screen Wake Lock) 設定
+// ============================================
+let wakeLock = null;
+
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('✅ 螢幕喚醒鎖已啟動，防止休眠');
+            
+            wakeLock.addEventListener('release', () => {
+                console.log('⚠️ 螢幕喚醒鎖已釋放');
+            });
+        }
+    } catch (err) {
+        console.warn(`❌ 無法啟動喚醒鎖: ${err.message}`);
+    }
+}
+
+function releaseWakeLock() {
+    if (wakeLock !== null) {
+        wakeLock.release()
+            .then(() => {
+                wakeLock = null;
+                console.log('✅ 螢幕喚醒鎖已解除');
+            });
+    }
+}
+
+// ============================================
+// 1. 主上傳流程 (整合螢幕防休眠 + 全面改用 FormData)
 // ============================================
 async function uploadToCloud() {
     if (!validateForm()) return;
+    
+    // 🌟 1. 上傳開始前，請求螢幕保持亮起！
+    await requestWakeLock();
+
     const data = getFormData();
     const btn = document.getElementById('btn-upload');
     const originalText = btn.innerHTML;
@@ -1279,7 +1315,9 @@ async function uploadToCloud() {
         // ① 逐一上傳檔案
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            btn.innerHTML = `⏳ 處理第 ${i + 1} / ${files.length} 個檔案...`;
+            
+            // 🌟 加強防呆：更改按鈕文字提醒使用者
+            btn.innerHTML = `⏳ 上傳中(請勿鎖屏)... 第 ${i + 1} / ${files.length} 個`;
 
             if (file.type.startsWith('image/')) {
                 // 圖片壓縮後上傳
@@ -1291,7 +1329,7 @@ async function uploadToCloud() {
                 const fileUrl = await uploadInChunks(file, data, btn, i);
                 if (fileUrl) uploadedUrls.push(fileUrl);
             } else {
-                // 非圖片且小於 20MB -> 直接轉 Base64 上傳
+                // 非圖片且小於 20MB -> 上傳
                 const processed = await processOneFile(file, i);
                 const res = await uploadSingle(processed, data);
                 if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
@@ -1301,13 +1339,21 @@ async function uploadToCloud() {
         // ② 將收集到的網址綁定回表單資料中
         data.photoUrlsString = uploadedUrls.length > 0 ? uploadedUrls.join('\n') : "無照片";
 
-        // ③ 最後一次性送出表單文字與網址
+        // ③ 最後一次性送出表單文字與網址 (🌟 修改這裡：統一使用 FormData)
         btn.innerHTML = '⏳ 寫入維修紀錄...';
+        
+        // 建立一個新的 FormData 來裝最後的文字資料
+        const finalFormData = new FormData();
+        finalFormData.append('_type', 'form_submit');
+        // 將 data 物件裡面的所有欄位塞進 FormData
+        for (const key in data) {
+            finalFormData.append(key, data[key]);
+        }
+
         await fetch(CLOUD_URL, {
             method: 'POST',
-            // 注意：千萬不要加 mode: 'no-cors'，否則無法讀取回傳值
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({ ...data, _type: 'form_submit' })
+            // 💡 注意：使用 FormData 時，不要手動設定 Headers，瀏覽器會自動處理
+            body: finalFormData
         });
 
         alert('✅ 全部上傳完成！');
@@ -1320,30 +1366,34 @@ async function uploadToCloud() {
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
+        
+        // 🌟 2. 任務結束，釋放螢幕喚醒鎖，讓手機可以正常休眠！
+        releaseWakeLock();
     }
 }
-
 // ============================================
-// 2. 單一小檔案上傳 API
+// 2. 單一小檔案上傳 API -> 改用 FormData
 // ============================================
 async function uploadSingle(processedFile, data) {
-    const payload = {
-        _type: 'file_only',
-        brand: data.brand,
-        engineer_name: data.engineer_name,
-        customer_code: data.customer_code,
-        file: processedFile
-    };
+    const formData = new FormData();
+    formData.append('_type', 'file_only');
+    formData.append('brand', data.brand);
+    formData.append('engineer_name', data.engineer_name);
+    formData.append('customer_code', data.customer_code);
+    formData.append('fileName', processedFile.fileName);
+    formData.append('mimeType', processedFile.mimeType);
+    formData.append('file', processedFile.fileBlob); // 這裡接收從下面傳來的 Blob
+
     const response = await fetch(CLOUD_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload)
+        // 同樣不需要設定 Content-Type
+        body: formData
     });
     return await response.json();
 }
 
 // ============================================
-// 3. 大檔分塊上傳 API (20MB)
+// 3. 大檔分塊上傳 API (20MB) -> 改用 FormData
 // ============================================
 async function uploadInChunks(file, data, btn, fileIndex) {
     const chunkSize = 20 * 1024 * 1024; // 每塊 20MB
@@ -1358,30 +1408,26 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         const end = Math.min(start + chunkSize, file.size);
         const chunkBlob = file.slice(start, end);
 
-        // 轉 Base64
-        const chunkB64 = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(chunkBlob);
-        });
+        // ❌ 刪除了原本轉 Base64 的 Promise
 
-        const payload = {
-            _type: 'chunk',
-            fileId: fileId,
-            fileName: file.name,
-            mimeType: file.type || "application/octet-stream",
-            chunkIndex: i,
-            totalChunks: totalChunks,
-            chunkData: chunkB64,
-            brand: data.brand,
-            engineer_name: data.engineer_name,
-            customer_code: data.customer_code
-        };
+        // ✅ 改用 FormData 包裝二進位資料
+        const formData = new FormData();
+        formData.append('_type', 'chunk');
+        formData.append('fileId', fileId);
+        formData.append('fileName', file.name);
+        formData.append('mimeType', file.type || "application/octet-stream");
+        formData.append('chunkIndex', i);
+        formData.append('totalChunks', totalChunks);
+        formData.append('brand', data.brand);
+        formData.append('engineer_name', data.engineer_name);
+        formData.append('customer_code', data.customer_code);
+        formData.append('chunkData', chunkBlob); // 直接放入二進位 Blob
 
         const response = await fetch(CLOUD_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify(payload)
+            // 💡 注意：使用 FormData 時，絕對不能手動設定 Content-Type
+            // 瀏覽器會自動幫你加上正確的 multipart/form-data 與 boundary
+            body: formData
         });
 
         const result = await response.json();
@@ -3616,13 +3662,12 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             }
 
             // ============================================
-            // 處理單一檔案（照片壓縮 / 影片直接轉）
-            // 替換你原本所有的 processFileWithV3Logic
+            // 處理單一檔案（照片壓縮 / 影片直接轉 Blob）
             // ============================================
             async function processOneFile(file, index) {
                 return new Promise((resolve, reject) => {
                     if (file.type.startsWith('image/')) {
-                        // 照片 → 壓縮後轉 Base64
+                        // 照片 → 壓縮後轉 Blob (二進位)
                         const reader = new FileReader();
                         reader.onload = e => {
                             const img = new Image();
@@ -3638,11 +3683,15 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                                 canvas.width = width;
                                 canvas.height = height;
                                 canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                                resolve({
-                                    fileName: `photo_${Date.now()}_${index}.jpg`,
-                                    mimeType: 'image/jpeg',
-                                    fileB64: canvas.toDataURL('image/jpeg', 0.8)
-                                });
+                                
+                                // ✅ 改用 toBlob 取代 toDataURL
+                                canvas.toBlob((blob) => {
+                                    resolve({
+                                        fileName: `photo_${Date.now()}_${index}.jpg`,
+                                        mimeType: 'image/jpeg',
+                                        fileBlob: blob // 回傳二進位 Blob
+                                    });
+                                }, 'image/jpeg', 0.8);
                             };
                             img.onerror = () => reject(new Error('圖片讀取失敗'));
                             img.src = e.target.result;
@@ -3650,15 +3699,12 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                         reader.onerror = () => reject(new Error('讀取失敗'));
                         reader.readAsDataURL(file);
                     } else {
-                        // 影片或其他檔案 → 直接轉 Base64
-                        const reader = new FileReader();
-                        reader.onload = e => resolve({
+                        // 影片或其他檔案 → 直接把原本的 File 物件 (本身就是 Blob) 傳出去
+                        resolve({
                             fileName: `${Date.now()}_${file.name}`,
                             mimeType: file.type || 'application/octet-stream',
-                            fileB64: e.target.result
+                            fileBlob: file // 直接回傳原始 File 物件
                         });
-                        reader.onerror = () => reject(new Error('讀取失敗'));
-                        reader.readAsDataURL(file);
                     }
                 });
             }
