@@ -1382,7 +1382,7 @@ async function uploadSingle(processedFile, data) {
     formData.append('customer_code', data.customer_code);
     formData.append('fileName', processedFile.fileName);
     formData.append('mimeType', processedFile.mimeType);
-    formData.append('file', processedFile.fileBlob); // 這裡接收從下面傳來的 Blob
+    formData.append('file', processedFile.fileBlob, processedFile.fileName);
 
     const response = await fetch(CLOUD_URL, {
         method: 'POST',
@@ -1421,7 +1421,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         formData.append('brand', data.brand);
         formData.append('engineer_name', data.engineer_name);
         formData.append('customer_code', data.customer_code);
-        formData.append('chunkData', chunkBlob); // 直接放入二進位 Blob
+        formData.append('chunkData', chunkBlob, file.name);
 
         const response = await fetch(CLOUD_URL, {
             method: 'POST',
