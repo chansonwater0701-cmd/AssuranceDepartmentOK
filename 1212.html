@@ -3675,8 +3675,8 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 if (i === retries - 1) {
                     throw new Error(`網路不穩或伺服器無回應，已嘗試重試 3 次皆失敗。`);
                 }
-                // 每次失敗後，等待時間拉長再試 (第1次等1.5秒，第2次等3秒...)
-                await new Promise(res => setTimeout(res, 1500 * (i + 1)));
+                // 每次失敗後，等待時間拉長再試 (第1次等2.5秒，第2次等5秒...)
+                await new Promise(res => setTimeout(res, 2500 * (i + 1)));
             }
         }
     }
