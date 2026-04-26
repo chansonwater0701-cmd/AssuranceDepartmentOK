@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客訴與派工異常通報系統</title>
+    <!-- 使用 Tailwind CSS 進行快速樣式排版 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 自定義一些簡單的轉場動畫 */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen py-8 px-4 sm:px-6 lg:px-8 font-sans text-slate-800">
+
+    <div class="max-w-3xl mx-auto">
+        <!-- 表頭區塊 -->
+        <div class="bg-blue-600 rounded-t-xl p-6 text-white shadow-md">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                客訴與派工異常通報單
+            </h1>
+            <p class="mt-2 text-blue-100 text-sm">請詳實填寫異常狀況，以利總公司後續追蹤與財損計算。</p>
+        </div>
+
+        <!-- 系統提示區塊 (防呆機制) -->
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 shadow-sm mb-6 mt-0 rounded-b-xl flex items-start gap-3">
+            <span class="text-amber-500 text-xl">⚠️</span>
+            <div class="text-sm text-amber-800">
+                <strong class="block mb-1">填表規範注意：</strong>
+                1. 為了確保後續財損金額對帳準確，<strong class="text-red-600">一筆表單僅限填寫一位客戶的案件</strong>，請勿將多位客戶合併填寫。<br>
+                2. 客戶代號請務必填寫正確格式 (例：A030013093)。
+            </div>
+        </div>
+
+        <!-- 表單主體 -->
+        <form id="complaintForm" class="bg-white shadow-md rounded-xl p-6 space-y-6 fade-in">
+            
+            <!-- 系統自動生成資訊 (唯讀) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-slate-100">
+                <div>
+                    <label class="block text-sm font-medium text-slate-500">系統單號 (自動生成)</label>
+                    <input type="text" id="sysId" readonly class="mt-1 block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-slate-500 cursor-not-allowed sm:text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-500">填報時間</label>
+                    <input type="text" id="reportTime" readonly class="mt-1 block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-slate-500 cursor-not-allowed sm:text-sm">
+                </div>
+            </div>
+
+            <!-- 填報人與門市 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="reporter" class="block text-sm font-medium text-slate-700">回報人 <span class="text-red-500">*</span></label>
+                    <input type="text" id="reporter" required placeholder="例：CSC03-游芷瑜" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                </div>
+                <div>
+                    <label for="storeName" class="block text-sm font-medium text-slate-700">門市名稱 <span class="text-red-500">*</span></label>
+                    <select id="storeName" required class="mt-1 block w-full px-3 py-2 border border-slate-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                        <option value="">請選擇門市...</option>
+                        <option value="總公司客服部">總公司客服部</option>
+                        <option value="台北直營店">台北直營店</option>
+                        <option value="板橋門市">板橋門市</option>
+                        <option value="新竹門市">新竹門市</option>
+                        <option value="台中門市">台中門市</option>
+                        <option value="高雄門市">高雄門市</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 客戶資訊 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                <div>
+                    <label for="customerId" class="block text-sm font-medium text-slate-700">客戶代號 <span class="text-red-500">*</span></label>
+                    <input type="text" id="customerId" required pattern="[a-zA-Z0-9]+" placeholder="例：A030013093" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                    <p class="mt-1 text-xs text-slate-500">限填英數字，勿包含符號與空白</p>
+                </div>
+                <div>
+                    <label for="customerName" class="block text-sm font-medium text-slate-700">客戶姓名 <span class="text-red-500">*</span></label>
+                    <input type="text" id="customerName" required placeholder="例：王小明 先生" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                </div>
+            </div>
+
+            <!-- 案件細節 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="apptDate" class="block text-sm font-medium text-slate-700">原預約日期 <span class="text-red-500">*</span></label>
+                    <input type="date" id="apptDate" required class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                </div>
+                <div>
+                    <label for="technician" class="block text-sm font-medium text-slate-700">相關技師 (引發客怨者) <span class="text-red-500">*</span></label>
+                    <input type="text" id="technician" required placeholder="例：林大衛" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                </div>
+                <div>
+                    <label for="anomalyType" class="block text-sm font-medium text-slate-700">異常分類 <span class="text-red-500">*</span></label>
+                    <select id="anomalyType" required class="mt-1 block w-full px-3 py-2 border border-slate-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                        <option value="">請選擇...</option>
+                        <option value="未到(放鴿子)">未到 (放鴿子)</option>
+                        <option value="遲到">遲到</option>
+                        <option value="態度不佳">態度不佳</option>
+                        <option value="施工瑕疵/漏水">施工瑕疵 / 漏水</option>
+                        <option value="零件帶錯">零件帶錯</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 詳細說明 -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-slate-700">客怨與處理說明 <span class="text-red-500">*</span></label>
+                <textarea id="description" rows="4" required placeholder="請詳細描述客人抱怨內容，以及目前的安撫/處理進度..." class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"></textarea>
+            </div>
+
+            <!-- 賠償與懲處 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
+                <div>
+                    <label for="compItem" class="block text-sm font-medium text-slate-700">賠償項目</label>
+                    <select id="compItem" onchange="toggleCompAmount()" class="mt-1 block w-full px-3 py-2 border border-slate-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                        <option value="無">無</option>
+                        <option value="濾心折抵券">濾心折抵券</option>
+                        <option value="紅利點數">紅利點數</option>
+                        <option value="實體商品">實體商品</option>
+                        <option value="維修費減免">維修費減免</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="compAmount" class="block text-sm font-medium text-slate-700">賠償金額 / 數量 <span id="compAmountReq" class="text-red-500 hidden">*</span></label>
+                    <input type="number" id="compAmount" placeholder="0" disabled class="mt-1 block w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                    <p class="mt-1 text-xs text-slate-500">若無賠償請留白或填0</p>
+                </div>
+                <div>
+                    <label for="responsibility" class="block text-sm font-medium text-slate-700">建議責任歸屬 / 懲處</label>
+                    <input type="text" id="responsibility" placeholder="例：技師大過乙支、無" class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors">
+                </div>
+            </div>
+
+            <!-- 送出按鈕 -->
+            <div class="pt-6 flex items-center justify-end gap-4">
+                <button type="button" onclick="resetForm()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    重新填寫
+                </button>
+                <button type="submit" id="submitBtn" class="flex items-center justify-center px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    <span>送出通報</span>
+                    <!-- 載入動畫 (預設隱藏) -->
+                    <svg id="loadingSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+
+        <!-- 成功訊息 Modal (預設隱藏) -->
+        <div id="successModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center fade-in">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+                    <svg class="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">通報已成功送出！</h3>
+                <p class="text-sm text-slate-500 mb-6">資料已傳送至中繼資料庫，系統單號：<br><span id="modalSysId" class="font-mono font-bold text-blue-600 mt-1 inline-block"></span></p>
+                <button onclick="closeModalAndReset()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm transition-colors">
+                    繼續填寫下一筆
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            generateSystemInfo();
+        });
+
+        // 產生模擬的系統單號與目前時間
+        function generateSystemInfo() {
+            const now = new Date();
+            // 格式化日期為 YYYYMMDD
+            const dateStr = now.getFullYear().toString() + 
+                           (now.getMonth() + 1).toString().padStart(2, '0') + 
+                           now.getDate().toString().padStart(2, '0');
+            // 隨機產生 3 位序號
+            const randomSeq = Math.floor(Math.random() * 900) + 100; 
+            
+            document.getElementById('sysId').value = `REP-${dateStr}-${randomSeq}`;
+            
+            // 格式化時間 YYYY-MM-DD HH:mm:ss
+            const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+            document.getElementById('reportTime').value = timeStr;
+        }
+
+        // 動態控制「賠償金額」欄位：如果選了賠償項目，才開放填寫金額
+        function toggleCompAmount() {
+            const item = document.getElementById('compItem').value;
+            const amountInput = document.getElementById('compAmount');
+            const reqStar = document.getElementById('compAmountReq');
+            
+            if (item === '無') {
+                amountInput.disabled = true;
+                amountInput.value = '';
+                amountInput.classList.add('bg-slate-100');
+                amountInput.required = false;
+                reqStar.classList.add('hidden');
+            } else {
+                amountInput.disabled = false;
+                amountInput.classList.remove('bg-slate-100');
+                amountInput.required = true;
+                reqStar.classList.remove('hidden');
+                amountInput.focus();
+            }
+        }
+
+        // 處理表單送出 (模擬 AJAX / GAS 請求)
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止預設送出行為
+            
+            const btn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+            const currentSysId = document.getElementById('sysId').value;
+            
+            // 鎖定按鈕、顯示載入中
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            spinner.classList.remove('hidden');
+
+            // 模擬發送資料到 Google Apps Script 的延遲 (1.5秒)
+            setTimeout(() => {
+                // 恢復按鈕狀態
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                spinner.classList.add('hidden');
+                
+                // 顯示成功 Modal
+                document.getElementById('modalSysId').textContent = currentSysId;
+                document.getElementById('successModal').classList.remove('hidden');
+            }, 1500);
+        });
+
+        // 關閉 Modal 並重置表單
+        function closeModalAndReset() {
+            document.getElementById('successModal').classList.add('hidden');
+            resetForm();
+        }
+
+        // 重置表單
+        function resetForm() {
+            document.getElementById('complaintForm').reset();
+            toggleCompAmount(); // 重置賠償金額欄位狀態
+            generateSystemInfo(); // 重新產生新的單號與時間
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

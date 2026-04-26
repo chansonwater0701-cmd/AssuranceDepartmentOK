@@ -1,0 +1,3501 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技師維修回報系統</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/888/888846.png" type="image/png">
+    <style>
+        /* =========================================
+           1. 全局基礎設定
+           ========================================= */
+        body { 
+            background-color: #efeff4; 
+            font-family: -apple-system, "Microsoft JhengHei", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px 0 100px 0; 
+            display: flex; 
+            justify-content: center; 
+            color: #333; 
+            line-height: 1.5;
+        }
+
+        .form-container { 
+            width: 100%; 
+            max-width: 640px; 
+            margin: 0 12px; 
+        }
+        .instruction-note {
+            font-size: 0.85em;   /* 字體稍微縮小 */
+            color: #6c757d;      /* 使用深灰色，讓視覺比較柔和 */
+            margin-left: 8px;    /* 與前面的星號保持一點距離 */
+            font-weight: normal; /* 如果標題是粗體，這裡設為一般粗細以做區隔 */
+        }
+        /* 讓輸入框看起來扁扁的，像底線或小方格 */
+        /* 容器設定為換行排列 */
+            .fw-container {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap; /* 內容過寬時自動折行 */
+                gap: 5px;
+                font-size: 1.1rem;
+                padding: 5px 0;
+            }
+
+            /* 輸入框群組 */
+            .fw-inputs {
+                display: flex;
+                align-items: center;
+            }
+
+            /* 單個小輸入框樣式 */
+            .fw-inputs input {
+                width: 35px;
+                text-align: center;
+                border: none;
+                border-bottom: 2px solid #007bff; /* 使用顯眼的底線 */
+                background: transparent;
+                padding: 2px 0;
+                outline: none;
+            }
+
+            .dash {
+                margin: 0 2px;
+                color: #888;
+            }
+
+            .fw-prefix, .fw-suffix {
+                font-weight: bold;
+                color: #333;
+            }
+        
+        /* =========================================
+           2. HEADER 區域樣式
+           ========================================= */
+        .header-card { 
+            background: linear-gradient(135deg, #007377 0%, #005a5e 100%); 
+            color: white; 
+            padding: 24px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+
+        .header-main-title { 
+            font-size: 32px; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            color: #ffeb3b; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.3); 
+            padding-bottom: 15px; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .header-section { 
+            margin-bottom: 15px; 
+            padding: 14px; 
+            background: rgba(0, 0, 0, 0.15); 
+            border-radius: 6px; 
+            font-size: 16px; 
+            line-height: 1.7; 
+        }
+
+        .header-title-small { 
+            font-weight: bold; 
+            color: #81d4fa; 
+            margin-bottom: 6px; 
+            font-size: 18px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title-small::before {
+            content: '📌';
+            margin-right: 6px;
+            font-size: 14px;
+        }
+        
+        .header-list {
+            margin: 5px 0 0 20px; 
+            padding: 0;
+            list-style-type: disc;
+        }
+        
+        .header-list li {
+            margin-bottom: 4px;
+        }
+
+        .header-link { 
+            color: #ffeb3b; 
+            text-decoration: underline; 
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        
+        .header-link:hover {
+            color: #fff;
+        }
+        
+        .highlight-text {
+            color: #d93025; 
+            font-weight: bold;
+        }
+
+        .header-footer { 
+            font-size: 12px; 
+            text-align: center; 
+            opacity: 0.8; 
+            margin-top: 15px; 
+            border-top: 1px dashed rgba(255,255,255,0.2);
+            padding-top: 10px;
+        }
+        .voltage-grid {
+        display: grid;
+        /* 平分為三欄 */
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid-item label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .grid-item input {
+            width: 100%;
+            padding: 8px 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px; /* 防止 iOS 自動放大 */
+        }
+
+        /* 點擊輸入框時變色 */
+        .grid-item input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* =========================================
+           3. 表單題目卡片樣式
+           ========================================= */
+        .question-card { 
+            background-color: #fff; 
+            padding: 16px 20px; 
+            margin-bottom: 12px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+            border-left: 4px solid transparent; 
+            transition: all 0.2s ease; 
+        }
+
+        .question-card:focus-within { 
+            border-left-color: #007377; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .question-title { 
+            font-size: 16px; 
+            font-weight: 600; 
+            margin-bottom: 10px; 
+            color: #242424; 
+            display: flex;
+            align-items: center;
+        }
+        
+        /* 必填星號樣式 */
+        .required { 
+            color: #d93025; 
+            margin-left: 4px; 
+            font-weight: bold; 
+        }
+
+        /* 錯誤狀態樣式 */
+        .error-border { 
+            border-left-color: #d93025 !important; 
+            background-color: #fff0f0;
+        }
+        
+        .error-input { 
+            border: 2px solid #d93025 !important; 
+            background-color: #fff8f8; 
+        }
+        
+        .hidden-field { 
+            display: none !important; 
+        } 
+
+        /* =========================================
+           4. 輸入框與元件樣式
+           ========================================= */
+        input[type="text"], input[type="date"], input[type="number"], select, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            font-size: 16px; 
+            border: 1px solid #dadce0; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            background-color: #fafafa; 
+            transition: border 0.2s, background 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus { 
+            border-color: #007377; 
+            background-color: #fff; 
+            outline: none; 
+            box-shadow: 0 0 0 2px rgba(0, 115, 119, 0.1);
+        }
+        
+        /* Radio Group */
+        .radio-group { 
+            display: flex; 
+            gap: 20px; 
+            margin-top: 5px; 
+            padding: 5px 0;
+        }
+
+        .radio-label { 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer; 
+            font-size: 16px; 
+            padding: 5px; 
+            border-radius: 4px; 
+        }
+        
+        .radio-label:hover { background-color: #f0f0f0; }
+
+        .radio-label input { 
+            width: 20px; height: 20px; 
+            margin-right: 8px; 
+            accent-color: #007377; cursor: pointer; 
+        }
+
+        /* Multi-input row */
+        .multi-input-row { display: flex; gap: 10px; }
+        .multi-input-row input { flex: 1; }
+
+        .small-note { 
+            font-size: 13px; color: #666; 
+            margin-top: 6px; background-color: #f5f5f5; 
+            padding: 4px 8px; border-radius: 4px; 
+            display: inline-block; 
+        }
+
+        /* =========================================
+           5. 溫度橫式排列
+           ========================================= */
+        .temp-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        
+        .temp-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .temp-label {
+            font-weight: bold;
+            width: 50px;
+            flex-shrink: 0;
+            text-align: left;
+            color: #333;
+        }
+
+        .temp-row input {
+            width: 100px;
+            padding: 8px;
+            font-size: 15px;
+        }
+
+        .temp-unit {
+            color: #666;
+            font-size: 14px;
+            width: 70px;
+            flex-shrink: 0;
+        }
+
+        /* =========================================
+           6. 底部固定操作區
+           ========================================= */
+        .button-bar { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); 
+            backdrop-filter: blur(5px); 
+            padding: 12px 15px; 
+            display: flex; 
+            gap: 10px; 
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1); 
+            z-index: 9999;
+        }
+
+        .button-bar button { 
+            flex: 1; 
+            padding: 14px 10px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .button-bar button:active { 
+            transform: scale(0.98); 
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, #007377, #005a5e); 
+            color: white; 
+        }
+
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #005a5e, #004548); 
+        }
+
+        .btn-secondary { 
+            background: linear-gradient(135deg, #4CAF50, #45a049); 
+            color: white; 
+        }
+
+        .btn-secondary:hover { 
+            background: linear-gradient(135deg, #45a049, #3d8b40); 
+        }
+        /* ... 前面的按鈕樣式 ... */
+        .btn-secondary:hover { 
+            background: linear-gradient(135deg, #45a049, #3d8b40); 
+        }
+
+        /* ▼▼▼ 新增這段重置按鈕的樣式 ▼▼▼ */
+        .btn-danger { 
+            background: linear-gradient(135deg, #dc3545, #c82333); 
+            color: white; 
+        }
+
+        .btn-danger:hover { 
+            background: linear-gradient(135deg, #c82333, #bd2130); 
+        }
+        /* =========================================
+           7. RWD 手機直向優化
+           ========================================= */
+        @media (max-width: 600px) {
+            body { padding: 15px 0 100px 0; }
+            .form-container { margin: 0 10px; }
+            .header-card { padding: 18px; }
+            .header-main-title { font-size: 22px; }
+            .question-card { padding: 14px 16px; }
+            .question-title { font-size: 15px; }
+            input, select, textarea { font-size: 16px; padding: 10px; }
+            .button-bar { gap: 8px; padding: 10px; }
+            .button-bar button { padding: 12px 8px; font-size: 15px; }
+            .temp-row input { width: 80px; padding: 6px; font-size: 14px; }
+            .temp-label { width: 45px; font-size: 14px; }
+            .temp-unit { font-size: 13px; }
+        }
+
+
+
+        /* =========================================
+   8. 照片上傳與預覽區塊樣式
+   ========================================= */
+.upload-box { 
+    border: 2px dashed #007377; 
+    padding: 20px; 
+    border-radius: 8px; 
+    margin-top: 10px; 
+    cursor: pointer; 
+    background: #f0f8f8; 
+    text-align: center;
+    transition: background 0.3s;
+}
+.upload-box:hover { background: #e0f2f1; }
+#previewContainer { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 10px; 
+    margin-top: 15px; 
+    justify-content: center; 
+}
+.preview-item { 
+    width: 80px; 
+    height: 80px; 
+    border-radius: 8px; 
+    object-fit: cover; 
+    border: 1px solid #ddd; 
+}
+.file-info { 
+    padding: 8px; 
+    background: #e9ecef; 
+    border-radius: 8px; 
+    font-size: 12px; 
+    word-break: break-all; 
+    width: 100%; 
+    box-sizing: border-box;
+}
+    </style>
+</head>
+<body>
+    
+    <div class="form-container">
+        <!-- ========== 頁面頂部說明 ========== -->
+            <div class="header-card">
+                <div class="header-main-title">🛠️ 技師維修回報系統</div>
+                
+    <div class="header-section">
+        <div class="header-title-small">📢 公司內部公告</div>
+        
+        <div style="color: #e0e0e0; font-size: 0.95em; line-height: 1.8;">
+            
+            <p style="margin-bottom: 8px;">
+                歡迎使用技師維修回報系統。本系統為公司內部專用作業系統，
+                僅限技師本人於實際執行安裝、維修、保養等勤務時使用。
+            </p>
+
+            <ul style="margin: 0 0 10px 20px; padding-left: 0;">
+                <li>
+                    <strong style="color: #fff;">資料保密：</strong>
+                    本系統包含客戶、設備及作業相關之機敏資訊，
+                    <span style="color: #ffcc00; font-weight: bold;">
+                        嚴禁以任何形式公開、轉傳系統連結、截圖或洩露相關資料
+                    </span>。
+                </li>
+
+                <li>
+                    <strong style="color: #fff;">填寫責任：</strong>
+                    所有回報內容將作為維修紀錄、保固判定、客訴處理及內部稽核之依據，
+                    資料一經送出即視同本人實際作業紀錄，請務必確認內容正確。
+                </li>
+
+                <li>
+                    <strong style="color: #fff;">填寫時效：</strong>
+                    回報資料請於實際作業完成後即時填寫，
+                    不得事後補填、代填或使用他人帳號填寫。
+                </li>
+
+                <li>
+                    <strong style="color: #fff;">帳號使用：</strong>
+                    本系統帳號僅限本人使用，
+                    禁止借用、共用或代他人進行回報作業。
+                </li>
+
+                <li>
+                    <strong style="color: #fff;">系統支援：</strong>
+                    如遇系統異常、操作問題或錯誤訊息，
+                    請即時聯繫 <span style="text-decoration: underline;">品保部</span> 協助處理。
+                </li>
+            </ul>
+
+            <p style="margin-top: 5px; font-size: 0.9em; color: #aaa;">
+                ⚠️ 本系統所有操作與填寫紀錄皆留存備查，
+                違反上述規範者，將依公司相關管理辦法及資訊安全規定辦理。
+            </p>
+
+        </div>
+    </div>
+
+
+            <div class="header-section">
+                            <div class="header-title-small">★ 最新作業公告 ★</div>
+                            <p style="margin-bottom: 10px;">目前已正式上線「新版儀器維修回報系統」，即日起請全面改用新版系統進行回報。</p>
+                            
+                            <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/test.html" target="_blank" style="display: block; background: rgba(255,255,255,0.2); color: #fff; text-decoration: none; padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.3);">
+                                🚀 點擊前往新版系統
+                            </a>
+
+                            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                                <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/%E6%83%9F%E5%93%81%E5%B8%83%E9%81%94%E4%BA%8B%E9%A0%85.pptx" target="_blank" style="flex: 1; background: rgba(0,0,0,0.2); color: #81d4fa; text-decoration: none; padding: 8px; border-radius: 4px; text-align: center; font-size: 13px;">
+                                    📄 惟品布達 PPT
+                                </a>
+                                <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/千山布達注意事項.pptx" target="_blank" style="flex: 1; background: rgba(0,0,0,0.2); color: #81d4fa; text-decoration: none; padding: 8px; border-radius: 4px; text-align: center; font-size: 13px;">
+                                    📄 千山布達 PPT
+                                </a>
+                            </div>
+
+                            <div style="border-top: 1px dashed rgba(255,255,255,0.3); margin: 15px 0;"></div>
+
+                            <div class="header-title-small">💳 現場服務結帳專區</div>
+                            <p style="font-size: 13px; opacity: 0.9; margin-bottom: 8px;">CLAR | 瞬冰瞬熱淨水器 | 技師服務與耗材付款</p>
+                            
+                            <a href="https://www.myclar.com/Service" target="_blank" style="display: flex; justify-content: space-between; align-items: center; background: #004d40; color: #ffeb3b; text-decoration: none; padding: 10px 15px; border-radius: 6px; font-weight: bold;">
+                                <span>前往 CLAR 官方支付</span>
+                                <span>➔</span>
+                            </a>
+                        </div>
+
+            <div class="header-section">
+                <div class="header-title-small">📋 填寫須知與規範</div>
+                <ul class="header-list">
+                    <li>請依實際作業情況確實、完整填寫本表單內容。</li>
+                    <li>凡標示「 <span class="highlight-text">*</span>」之欄位皆為【必填項目】，未填寫將無法送出或視為資料不完整。</li>
+                </ul>
+            </div>
+            <div class="header-section">
+                <div class="header-title-small">🧾 服務項目定義說明</div>
+                <ul class="header-list">
+                    <li><strong>新機安裝</strong>：設備裝設、測試與 <u>App 綁定</u></li>
+                    <li><strong>故障維修</strong>：異常排除、零件更換與 <u>保固判定</u></li>
+                    <li><strong>定期保養</strong>：例行檢查、<u>內部清潔</u>與水質檢測</li>
+                    <li><strong>耗材更換</strong>：濾芯更換與 <u>TDS 值複測</u></li>
+                    <li><strong>移機 / 撤機</strong>：異地裝卸作業或設備收回</li>
+                    <li><strong>操作教學</strong>：基本操作說明、App 功能講解</li>
+                    <li><strong>現場檢測</strong>：水壓、水質、電壓等數據量測</li>
+                    <li><strong>配件安裝</strong>：支架、龍頭、管線等配件加裝或調整</li>
+                    <li><strong>到場未施工</strong>：已到場但因條件或客戶因素未實際作業</li>
+                    <li><strong>非保固處理</strong>：過保或人為因素之維修與報價</li>
+                    <li><strong>異常回報</strong>：無法施工、客戶取消或其他異常狀況紀錄</li>
+                    <li><strong>後續處理</strong>：需另行派工、回廠或申請零件之案件</li>
+                </ul>
+            </div>
+            <div class="header-footer">※ 除非您自行提供，否則不會自動收集您的詳細數據。</div>
+        </div>
+    <!-- ========== 表單區域開始 ========== -->
+    <!-- 1. 品牌選擇 -->
+<div class="question-card" id="card-brand">
+        <div class="question-title">1. 請選擇品牌 <span class="required">*</span></div>
+        <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="brand" value="千山" onclick="handleBrandChange()"> 千山</label>
+            <label class="radio-label"><input type="radio" name="brand" value="惟品" onclick="handleBrandChange()"> 惟品</label>
+        </div>
+    </div>
+
+    <!-- 2. 服務項目 -->
+    <div class="question-card hidden-field" id="card-upload">
+        <div class="question-title"> 服務項目 <span class="required">*</span></div>
+        <select name="service_item" id="service_item" onchange="handleServiceItemChange()">
+            <option value="">請選擇</option>
+            <option value="裝機">裝機</option>
+            <option value="維修">維修</option>
+            <option value="售服">售服</option>
+            <option value="合約">合約</option>
+        </select>
+    </div>
+
+    <!-- 2-1. 服務細項 (根據品牌與服務項目動態變化) -->
+    <div class="question-card hidden-field" id="card-service-detail">
+        <div class="question-title">服務細項 <span class="required">*</span></div>
+        <select name="service_detail" id="service_detail" onchange="handleServiceDetailChange()">
+            <option value="">請選擇</option>
+        </select>
+    </div>
+
+    <!-- 2-2. 手動輸入服務細項 (當選擇"其他"時顯示) -->
+    <div class="question-card hidden-field" id="card-manual-input">
+        <div class="question-title">請輸入服務細項</div>
+        <input type="text" name="manual_service_detail" placeholder="請輸入詳細服務內容">
+    </div>
+
+    <!-- 3. 機器型式 -->
+    <div class="question-card hidden-field" id="card-model">
+        <div class="question-title">機器型式 <span class="required">*</span></div>
+        <select name="machine_type" id="model" inputmode="url" onchange="handleModelChange()">
+            <option value="">請選擇</option>
+        </select>
+    </div>
+    <!-- ========== 以下是千山的欄位 (保持原樣) ========== -->
+    <!-- 技師姓名 -->
+    <div class="question-card hidden-field" id="card-name">
+        <div class="question-title">技師姓名 <span class="required">*</span></div>
+        <input type="text" name="engineer_name" placeholder="請輸入技師姓名">
+    </div>
+
+    <!-- 客戶姓名 -->
+    <div class="question-card hidden-field" id="card-wp-customer">
+        <div class="question-title">客戶姓名 <span class="required">*</span></div>
+        <input type="text" name="wp_customer_name" placeholder="請輸入客戶姓名">
+    </div>
+    <!-- 客戶代號 -->
+
+    <div class="question-card hidden-field" id="card-customer-code">
+        <div class="question-title">客戶代號</div>
+        <input 
+            type="text" 
+            name="customer_code" 
+            id="customer_code_input"
+            placeholder="請輸入客戶代號" 
+            onblur="formatCustomerCode(this)"
+        >
+        <div class="small-note" style="margin-top: 8px; color: #666; font-size: 0.9rem;">
+            💡 輸入提醒： 惟品請輸入數字（系統將自動補全為 W 開頭 10 碼）；千山請依原代號輸入即可。<br>
+            (例：輸入 1234 ➔ W000001234)
+        </div>
+    </div>
+
+    <!-- 客戶地址 -->
+    <div class="question-card hidden-field" id="card-address">
+        <div class="question-title">客戶地址<span class="required">*</span></div>
+        <input type="text" name="customer_address" placeholder="請輸入客戶地址">
+    </div>
+
+    <!-- 客戶電話 -->
+    <div class="question-card hidden-field" id="card-phone">
+        <div class="question-title">客戶電話 <span class="required">*</span></div>
+        <input type="text" name="customer_phone" placeholder="請輸入客戶電話">
+    </div>
+
+
+
+    <!-- ========== 新增維修相關欄位 ========== -->
+    <!-- 服務日期 -->
+    <div class="question-card hidden-field" id="card-service-date">
+        <div class="question-title">服務日期<span class="required">*</span></div>
+        <input 
+            type="date" 
+            name="service_date"
+        >
+    </div>
+    <!-- 銷貨單號 -->
+    <div class="question-card hidden-field" id="card-invoice-number">
+        <div class="question-title">銷貨單號<span class="required">*</span></div>
+        <input type="number" name="invoice_number" placeholder="請輸入銷貨單號">
+    </div>
+    <!-- 機器型號 -->
+<div class="question-card hidden-field" id="card-machine-type">
+        <div class="question-title">機器型號<span class="required">*</span></div>
+        
+        <div id="machine_qty_row" style="display: none; margin-bottom: 10px; padding: 8px; background-color: #e3f2fd; border-radius: 4px;">
+            <label style="font-weight: bold; color: #007377;">機台數量：</label>
+            <select id="machine_qty" onchange="generateMachineInputs()" style="width: auto; padding: 4px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+            </select>
+            <span style="font-size: 0.85em; color: #666; margin-left: 5px;">(選擇後下方會自動增加欄位)</span>
+        </div>
+        <div id="machine_inputs_container">
+            <input type="text" name="machine_model_1" class="dynamic-model-input" placeholder="請輸入機器型號" oninput="syncMachineInputs()">
+        </div>
+        
+        <div class="small-note" style="margin-top: 8px; color: #666; font-size: 0.9rem;">
+            💡 提醒：請輸入完整機型
+        </div>
+    </div>
+    <!-- 機器序號 -->
+    <div class="question-card hidden-field" id="card-machine-serial">
+        <div class="question-title">機器序號<span class="required">*</span></div>
+        
+        <div id="machine_serial_container">
+            <input type="text" name="machine_serial_1" class="dynamic-serial-input" placeholder="請輸入機器序號">
+        </div>
+    </div>
+    <!-- 機器版本 -->
+    <div class="question-card hidden-field" id="card-machine-model">
+        <div class="question-title">機器版本<span class="required">*</span></div>
+        <input type="text" name="machine_version" placeholder="請輸入機器版本">
+    </div>
+    
+    <!-- 安裝位置 -->
+    <div class="question-card hidden-field" id="card-install-location">
+        <div class="question-title">安裝位置<span class="required">*</span></div>
+        <input type="text" name="install_location" placeholder="請輸入安裝位置">
+    </div>
+
+
+    <!-- 安裝樓層< -->
+    <div class="question-card hidden-field" id="card-install-floor">
+        <div class="question-title">樓層資訊<span class="required">*</span></div>
+        <div class="multi-input-row">
+            <input type="text" name="install_floor" placeholder="安裝樓層 (例: 3F)">
+            <input type="text" name="total_floors" placeholder="總樓層數 (例: 12F)">
+        </div>
+    </div>
+    <div class="question-card hidden-field" id="card-machine-type-2">
+        <div class="question-title">機器型號(更換後機台)<span class="required">*</span></div>
+        <input type="text" name="machine_type_2" placeholder="請輸入更換後機台機器型號">
+    </div>
+
+    <div class="question-card hidden-field" id="card-machine-serial-2">
+        <div class="question-title">機器序號(更換後機台)<span class="required">*</span></div>
+        <input type="text" name="machine_serial_2" placeholder="請輸入更換後機台機器序號">
+    </div>
+
+
+    <div class="question-card hidden-field" id="card-machine-model-2">
+        <div class="question-title">機器版本(更換後機台)<span class="required">*</span></div>
+        <input type="text" name="machine_style_2" placeholder="請輸入更換後機台機器型式">
+    </div>
+
+
+    <!-- 收款金額 -->
+    <div class="question-card hidden-field" id="card-payment">
+        <div class="question-title">收款金額<span class="required">*</span></div>
+        <input type="number" name="payment_amount" placeholder="請輸入金額">
+    </div>
+
+    <!-- 付款方式 -->
+    <div class="question-card hidden-field" id="card-payment-method">
+        <div class="question-title">付款方式<span class="required">*</span></div>
+        <select name="payment_method">
+            <option value="">請選擇</option>
+            <option value="現金">現金</option>
+            <option value="刷卡">刷卡</option>
+            <option value="轉帳">轉帳</option>
+            <option value="LINE PAY">LINE PAY</option>
+        </select>
+    </div>
+    <!-- 原水TDS -->
+    <div class="question-card hidden-field" id="card-raw-tds">
+        <div class="question-title">原水TDS<span class="required">*</span></div>
+        <input type="number" name="raw_tds" placeholder="請輸入原水TDS">
+    </div>
+    <!-- 原始水壓 (用於一般裝機，包含減壓閥選項) -->
+    <div class="question-card hidden-field" id="card-original-pressure">
+        <div class="question-title">原始水壓<span class="required">*</span></div>
+        <input type="number" name="original_pressure" placeholder="原始水壓值">
+        <div class="question-title" style="margin-top: 15px;">減壓閥</div>
+            <select name="pressure_valve" id="pressure_valve" onchange="handlePressureValveChange()">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+    <!-- 減壓水壓 (當減壓閥選擇"有"時顯示) -->
+    <div class="question-card hidden-field" id="card-reduced-pressure">
+        <div class="question-title">減壓水壓<span class="required">*</span></div>
+        <input type="text" name="reduced_pressure" placeholder="減壓後水壓值">
+    </div>
+
+    <!-- 場地電壓 -->
+    <div class="question-card hidden-field" id="card-site-voltage">
+        <div class="question-title">場地電壓<span class="required">*</span></div>
+        <input type="number" name="water_install_location" placeholder="請輸入場地電壓">
+    </div>
+
+    <!-- 加壓馬達 -->
+    <div class="question-card hidden-field" id="card-pressure-pump">
+        <div class="question-title">加壓馬達<span class="required">*</span></div>
+        <select name="pressure_pump" id="pressure_pump">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+    <!-- 安裝管線材質 -->
+    <div class="question-card hidden-field" id="card-install-pipe-material">
+        <div class="question-title">安裝管線材質<span class="required">*</span></div>
+        <select name="install_pipe_material" id="install_pipe_material">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="PVC管">PVC管</option>
+            <option value="壓接管">壓接管</option>
+        </select>
+    </div>
+    <!-- 漏水斷路器 -->
+    <div class="question-card hidden-field" id="card-leak-circuit">
+        <div class="question-title">漏水斷路器<span class="required">*</span></div>
+        <select name="leak_circuit" id="leak_circuit" onchange="handleLeakCircuitChange()">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有安裝">有安裝</option>
+            <option value="未安裝">未安裝</option>
+        </select>
+    </div>
+    <div class="question-card hidden-field" id="card-drainage-type">
+        <div class="question-title">排廢水型式<span class="required">*</span></div>
+        <select name="drainage_type">
+            <option value="無">無</option>
+            <option value="" disabled selected>請選擇...</option>
+            <option value="Ｔ字３通">使用T字3通</option>
+            <option value="地排">直接插入地排</option>
+            <option value="破管">排水管破管插入</option>
+            <option value="新增">其他方式</option>
+        </select>
+    </div>
+
+
+    <div class="question-card hidden-field" id="card-countertop">
+        <div class="question-title">流理台面<span class="required">*</span></div>
+        <input type="text" name="countertop" placeholder="請輸入流理台面說明原因">
+    </div>
+
+
+    <!-- 龍頭型式 -->
+    <div class="question-card hidden-field" id="card-faucet-type">
+        <div class="question-title">龍頭型式<span class="required">*</span></div>
+        <select name="faucet_type">
+            <option value="">請選擇</option>
+            <option value="經典-基本款">經典-基本款</option>
+            <option value="經典-石墨黑">經典-石墨黑</option>
+            <option value="經典-玫瑰金">經典-玫瑰金</option>
+            <option value="智慧-太空銀">智慧-太空銀</option>
+            <option value="智慧-曜石黑">智慧-曜石黑</option>
+            <option value="智慧-浮光金">智慧-浮光金</option>
+            <option value="智慧-月影灰">智慧-月影灰</option>
+        </select>
+    </div>
+    <!-- 龍頭標籤 -->
+    <div class="question-card hidden-field" id="card-faucet-label">
+        <div class="question-title">龍頭標籤<span class="required">*</span></div>
+        <input type="text" name="faucet_label" placeholder="請輸入龍頭標籤">
+    </div>
+
+
+    <!-- 減壓水壓 (子項目) -->
+    <div class="question-card hidden-field" id="card-reduced-pressure">
+        <div class="question-title">減壓水壓<span class="required">*</span></div>
+        <input type="text" name="reduced_pressure" placeholder="請輸入減壓後的水壓">
+    </div>
+
+
+    <!-- ========== 以下是惟品的專屬欄位 ========== -->
+
+
+
+    <!-- 韌體版本 -->
+    <div class="question-card hidden-field" id="card-firmware-version">
+        <div class="question-title">韌體版本<span class="required">*</span></div>
+        <div class="fw-container">
+            <div class="fw-inputs">
+                <input type="number" name="firmware_1" maxlength="2" placeholder="00">
+                <span class="dash">-</span>
+                <input type="number" name="firmware_2" maxlength="2" placeholder="00">
+                <span class="dash">-</span>
+                <input type="number" name="firmware_3" maxlength="2" placeholder="00">
+                <span class="dash">-</span>
+                <input type="number" name="firmware_4" maxlength="2" placeholder="00">
+            </div>
+        </div>
+    </div>
+        <!-- 面板版本 -->
+    <div class="question-card hidden-field" id="card-panel-version">
+        <div class="question-title">面板版本<span class="required">*</span></div>
+        <div class="fw-container">
+            <div class="fw-inputs">
+                <input type="text" name="panel_version" maxlength="15" placeholder="填寫面板版本">
+            </div>
+        </div>
+    </div>
+        <div class="question-card hidden-field" id="card-panel-voltage">
+        <div class="question-title">面板電壓 (V)<span class="required">*</span></div>
+        
+        <div class="voltage-grid">
+            <div class="grid-item">
+                <label>面板休眠</label>
+                <input type="number" name="voltage_sleep" step="0.01" placeholder="0.01">
+            </div>
+            
+            <div class="grid-item">
+                <label>喚醒</label>
+                <input type="number" name="voltage_wake" step="1" placeholder="158">
+            </div>
+            
+            <div class="grid-item">
+                <label>充電電壓(mV)</label>
+                <input type="number" name="voltage_charge" step="0.001" placeholder="0.502">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 環境溫度 -->
+    <div class="question-card hidden-field" id="card-env-temp">
+        <div class="question-title">環境溫度<span class="required">*</span></div>
+        <input type="number" name="env_temp" placeholder="請輸入環境溫度">
+    </div>
+
+    <!-- 溫度與水量組合 (用於WS2-C和WD2-C) -->
+    <div class="question-card hidden-field" id="card-temp-group">
+        <div class="question-title">溫度與水量 <span class="required">*</span></div>
+        
+        <div class="temp-row" id="temp-100">
+            <span class="temp-label">100°C</span>
+            <input type="number" name="temp_100" placeholder="溫度">
+            <span class="temp-unit">℃</span>
+            <input type="number" name="flow_100" placeholder="水量">
+            <span class="temp-unit">ml/min</span>
+        </div>
+        
+        <div class="temp-row" id="temp-35">
+            <span class="temp-label">35°C</span>
+            <input type="number" name="temp_35" placeholder="溫度">
+            <span class="temp-unit">℃</span>
+            <input type="number" name="flow_35" placeholder="水量">
+            <span class="temp-unit">ml/min</span>
+        </div>
+        
+        <div class="temp-row" id="temp-10">
+            <span class="temp-label">10°C</span>
+            <input type="number" name="temp_10" placeholder="溫度">
+            <span class="temp-unit">℃</span>
+            <input type="number" name="flow_10" placeholder="水量">
+            <span class="temp-unit">ml/min</span>
+        </div>
+    </div>
+
+        <!-- 溫度與水量組合 (用於WS2-C和WD2-C) -->
+    <div class="question-card hidden-field" id="card-temp-group-100">
+        <div class="question-title">溫度與水量 <span class="required">*</span></div>
+        
+        <div class="temp-row" id="temp-100">
+            <span class="temp-label">100°C</span>
+            <input type="number" name="temp_100" placeholder="溫度">
+            <span class="temp-unit">℃</span>
+        </div>
+        
+        <div class="temp-row" id="temp-35">
+            <span class="temp-label">35°C</span>
+            <input type="number" name="temp_35" placeholder="溫度">
+            <span class="temp-unit">℃</span>
+        </div>
+
+    </div>
+
+    <!-- 調整功率 -->
+    <div class="question-card hidden-field" id="card-adjust-power">
+        <div class="question-title">調整功率<span class="required">*</span></div>
+        <input type="number" name="adjust_power" placeholder="請輸入調整功率">
+    </div>
+
+    <!-- 功率組合 (熱水與冰水最大功率) -->
+    <div class="question-card hidden-field" id="card-power">
+        <div class="question-title">最大功率 <span class="required">*</span></div>
+        <div class="multi-input-row">
+            <input type="number" name="hot_max_power" placeholder="熱水最大功率">
+            <input type="number" name="cold_max_power" placeholder="冰水最大功率">
+        </div>
+    </div>
+
+    <div class="question-card hidden-field" id="card-power-hot">
+        <div class="question-title">最大功率 <span class="required">*</span></div>
+        <input type="number" name="hot_max_power" placeholder="熱水最大功率">
+    </div>
+
+    <!-- 原水水量 -->
+    <div class="question-card hidden-field" id="card-raw-flow">
+        <div class="question-title">原水水量<span class="required">*</span></div>
+        <input type="number" name="raw_flow" placeholder="請輸入原水水量">
+    </div>
+
+    <!-- 原水溫度 -->
+    <div class="question-card hidden-field" id="card-raw-temp">
+        <div class="question-title">原水溫度<span class="required">*</span></div>
+            <div class="fw-inputs">
+                <input type="number" name="fw_1" maxlength="5" placeholder="0分鐘 ℃">
+
+                <input type="number" name="fw_2" maxlength="5" placeholder="1分鐘 ℃">
+
+                <input type="number" name="fw_3" maxlength="5" placeholder="2分鐘 ℃">
+
+                <input type="number" name="fw_4" maxlength="5" placeholder="3分鐘 ℃">
+            </div>
+    </div>
+    <!-- 溫度原理及充電方法客戶是否接受理解 -->
+    <div class="question-card hidden-field" id="card-principle">
+        <div class="question-title">溫度原理及充電方法客戶是否接受理解<span class="required">*</span></div>
+        <select name="principle_explained" id="principle_explained" onchange="handlePrincipleChange()">
+            <option value="">請選擇</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
+        </select>
+    </div>
+
+    <div class="question-card hidden-field" id="card-principle-reason">
+        <div class="question-title">未向客戶說明原因<span class="required">*</span></div>
+        <textarea name="principle_reason" rows="2" placeholder="請描述未向客戶說明原因"></textarea>
+    </div>
+
+    <!-- 口感組合 (技師與客戶) -->
+    <div class="question-card hidden-field" id="card-taste">
+        <div class="question-title">技師/客戶口感評價 <span class="required">*</span></div>
+        <div class="multi-input-row">
+            <input type="text" name="engineer_taste" placeholder="技師口感">
+            <input type="text" name="customer_taste" placeholder="客戶口感">
+        </div>
+    </div>
+
+    <!-- 水量校正方式 -->
+    <div class="question-card hidden-field" id="card-calibration">
+        <div class="question-title">水量校正方式<span class="required">*</span></div>
+        <input type="text" name="calibration" placeholder="請輸入水量校正方式">
+    </div>
+
+    <!-- 電池款式 -->
+    <div class="question-card hidden-field" id="card-battery">
+        <div class="question-title">電池款式<span class="required">*</span></div>
+        <input type="text" name="battery" placeholder="請輸入電池款式">
+    </div>
+
+    <!-- 是否加裝Filter-C -->
+    <div class="question-card hidden-field" id="card-是否加裝Filter-C">
+        <div class="question-title">是否加裝Filter-C<span class="required">*</span></div>
+        <select name="add_filter_c" id="add_filter_c">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
+        </select>
+    </div>
+    <!-- F11入水水量 (WD1專用) -->
+    <div class="question-card hidden-field" id="card-f11-flow">
+        <div class="question-title">F11入水水量<span class="required">*</span></div>
+        <input type="text" name="f11_flow" placeholder="請輸入F11入水水量">
+    </div>
+
+    <!-- 熱缸出水 (WD1專用) -->
+    <div class="question-card hidden-field" id="card-hot-tank-output">
+        <div class="question-title">熱缸出水<span class="required">*</span></div>
+        <input type="text" name="hot_tank_output" placeholder="請輸入熱缸出水">
+    </div>
+
+    <!-- 常溫缸出水 (WD1專用) -->
+    <div class="question-card hidden-field" id="card-normal-tank-output">
+        <div class="question-title">常溫缸出水<span class="required">*</span></div>
+        <input type="text" name="normal_tank_output" placeholder="請輸入常溫缸出水">
+    </div>
+
+    <!-- 冰缸出水 (WD1專用) -->
+    <div class="question-card hidden-field" id="card-ice-tank-output">
+        <div class="question-title">冰缸出水<span class="required">*</span></div>
+        <input type="text" name="ice_tank_output" placeholder="請輸入冰缸出水">
+    </div>
+
+    <!-- 冰缸降溫 (WD1專用) -->
+    <div class="question-card hidden-field" id="card-ice-tank-cooling">
+        <div class="question-title">冰缸降溫<span class="required">*</span></div>
+        <select name="principle_explained" id="principle_explained" onchange="handlePrincipleChange()">
+            <option value="" disabled selected>請選擇狀態</option>
+            <option value="yes">是</option>
+            <option value="no">否</option>
+        </select>
+    </div>
+
+    <!-- 報修原因 (維修專用) -->
+    <div class="question-card hidden-field" id="card-repair-reason">
+        <div class="question-title">報修原因<span class="required">*</span></div>
+        <textarea name="repair_reason" rows="3" placeholder="請輸入報修原因"></textarea>
+    </div>
+
+    <!-- 實際原因 (維修專用) -->
+    <div class="question-card hidden-field" id="card-actual-reason">
+        <div class="question-title">實際原因<span class="required">*</span></div>
+        <textarea name="actual_reason" rows="3" placeholder="請輸入實際原因"></textarea>
+    </div>
+
+    <!-- 處理方式 (維修專用) -->
+    <div class="question-card hidden-field" id="card-handling">
+        <div class="question-title">處理方式<span class="required">*</span></div>
+        <textarea name="handling" rows="3" placeholder="請輸入處理方式"></textarea>
+    </div>
+
+    <!-- 檢修結果 (維修專用) -->
+    <div class="question-card hidden-field" id="card-inspection-result">
+        <div class="question-title">檢修結果<span class="required">*</span></div>
+        <textarea name="inspection_result" rows="3" placeholder="請輸入檢修結果"></textarea>
+    </div>
+
+    <!-- 更換零件 (維修專用) -->
+    <div class="question-card hidden-field" id="card-replaced-parts">
+        <div class="question-title">更換零件<span class="required">*</span></div>
+        <input type="text" name="wp_replaced_parts" placeholder="請輸入更換的零件">
+    </div>
+
+    <!-- 料件收款 (維修專用) -->
+    <div class="question-card hidden-field" id="card-parts-payment">
+        <div class="question-title">料件收款<span class="required">*</span></div>
+        <input type="number" name="parts_payment" placeholder="請輸入料件收款金額">
+    </div>
+    <div class="question-card hidden-field" id="card-is-payment">
+        <div class="question-title">是否收款 <span class="required">*</span></div>
+        <select name="is_payment" id="is_payment" onchange="handlePaymentVisibility()">
+            <option value="">請選擇</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
+        </select>
+    </div>        
+
+<div class="question-card hidden-field" id="card-water-source">
+        <div class="question-title">水源位置照<span class="required">*</span></div>
+        <select name="water_source_photo" id="water_source_photo">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+
+    <div class="question-card hidden-field" id="card-pipe-spec">
+        <div class="question-title">水管規格照<span class="required">*</span></div>
+        <select name="pipe_spec_photo" id="pipe_spec_photo">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+
+    <div class="question-card hidden-field" id="card-pump-photo">
+        <div class="question-title">全景照/近照<span class="required">*</span></div>
+        <select name="pump_photo" id="pump_photo">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+
+    <div class="question-card hidden-field" id="card-pipe-material">
+        <div class="question-title">管線材質<span class="required">*</span></div>
+        <input type="text" name="pipe_material" placeholder="請輸入現有管線的材質" required>
+    </div>
+
+    <div class="question-card hidden-field" id="card-signal-strength">
+        <div class="question-title">訊號強度<span class="required">*</span></div>
+        <select name="signal_strength" id="signal_strength">
+            <option value="" disabled selected>請選擇...</option>
+            <option value="高">高</option>
+            <option value="中">中</option>
+            <option value="低">低</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+
+
+
+    <!-- 收款品項 (維修專用) -->
+    <div class="question-card hidden-field" id="card-payment-detail">
+        <div class="question-title">收款品項<span class="required">*</span></div>
+        <textarea name="payment_detail" rows="3" placeholder="請輸入收款品項"></textarea>
+    </div>
+    <!-- 是否已綁定App -->
+    <div class="question-card hidden-field" id="card-app">
+        <div class="question-title">是否已綁定App<span class="required">*</span></div>
+        <select name="app_binding" id="app_binding" required>
+            <option value="" disabled selected>請選擇...</option>
+            <option value="有">有</option>
+            <option value="無">無</option>
+        </select>
+    </div>
+    <!-- 其他說明事項 (惟品) -->
+    <div class="question-card hidden-field" id="card-wp-note">
+        <div class="question-title">其他說明事項 </div>
+        <textarea name="wp_other_notes" rows="3" placeholder="請輸入其他需要說明的事項"></textarea>
+    </div>
+    <!-- ========== 底部操作按鈕 ========== -->
+     <div class="question-card hidden-field" id="card-upload">
+    <div class="question-title">現場照片與檔案上傳 <span class="required">*</span></div>
+    
+    <div id="userName" style="color: #007377; font-weight: bold; margin-bottom: 10px; font-size: 14px;">
+        🔄 讀取技師身分中...
+    </div>
+    
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <p style="margin:0; color:#007377; font-weight: bold;">📁 點擊選取照片或檔案 (可複選)</p>
+        <p style="margin-top:5px; font-size:12px; color:#666;">照片會自動壓縮，請耐心等候預覽圖出現</p>
+        
+        <input type="file" id="fileInput" multiple onchange="handleFiles(event)" style="display: none;">
+        <div id="previewContainer"></div>
+    </div>
+    
+    <div id="status" style="margin-top: 10px; font-size: 14px; font-weight: bold; color: #d93025;"></div>
+</div>
+    <div class="button-bar">
+        <button class="btn-danger" id="btn-reset" onclick="resetToInitial()" style="display: none;">🔄 重新填寫</button>
+        
+        <button class="btn-primary" onclick="copyForLine()">📋 複製LINE格式</button>
+        <button class="btn-secondary" id="btn-upload" onclick="uploadToCloud()">☁️ 上傳資料</button>
+    </div>
+
+<script>
+    // 替換為你剛剛產生的新網址
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec";
+    // --- 整合上傳所需的全域變數 ---
+const myLiffId = "2009667627-4eOl5qm8"; 
+let displayName = "";
+let selectedFilesData = []; 
+
+// --- LIFF 初始化 (網頁載入時自動執行) ---
+document.addEventListener('DOMContentLoaded', function() {
+    initFirmwareAutoInput();
+    
+    // 啟動 LIFF
+    liff.init({ liffId: myLiffId }).then(() => {
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        } else {
+            liff.getProfile().then(profile => {
+                displayName = profile.displayName;
+                document.getElementById("userName").innerText = "👤 登入技師：" + displayName;
+                // 自動將名字填入原本的技師姓名欄位
+                const nameInputs = document.querySelectorAll('input[name="engineer_name"]');
+                nameInputs.forEach(input => input.value = displayName);
+            });
+        }
+    }).catch(err => console.error("LIFF 發生錯誤", err));
+});
+
+// --- 處理檔案讀取與照片壓縮 (移植自 V2) ---
+function handleFiles(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const statusEl = document.getElementById("status");
+    const previewContainer = document.getElementById("previewContainer");
+    
+    previewContainer.innerHTML = "";
+    selectedFilesData = [];
+    statusEl.innerHTML = `⏳ 正在處理 ${files.length} 個檔案，請稍候...`;
+    
+    const maxSize = 20 * 1024 * 1024; // 20 MB
+    let promises = [];
+
+    for(let i = 0; i < files.length; i++) {
+        let file = files[i];
+
+        if (!file.type.startsWith("image/") && file.size > maxSize) {
+            statusEl.innerHTML += `<br><span style='color:red;'>❌ ${file.name} 檔案過大，已被忽略。</span>`;
+            continue;
+        }
+
+        let p = new Promise((resolve) => {
+            const reader = new FileReader();
+            
+            if (file.type.startsWith("image/")) {
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width, height = img.height;
+                        const max = 1024;
+                        if (width > height) {
+                            if (width > max) { height *= max / width; width = max; }
+                        } else {
+                            if (height > max) { width *= max / height; height = max; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const base64String = canvas.toDataURL('image/jpeg', 0.8);
+                        
+                        resolve({
+                            fileName: `photo_${Date.now()}_${i}.jpg`, 
+                            mimeType: 'image/jpeg',
+                            fileB64: base64String.split(',')[1],
+                            isImage: true,
+                            previewUrl: base64String
+                        });
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                reader.onload = function(e) {
+                    resolve({
+                        fileName: file.name,
+                        mimeType: file.type || "application/octet-stream",
+                        fileB64: e.target.result.split(',')[1],
+                        isImage: false,
+                        previewUrl: null
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        promises.push(p);
+    }
+
+    Promise.all(promises).then(results => {
+        selectedFilesData = results;
+        statusEl.innerHTML = `<span style="color: #00B900;">✅ 檔案已準備就緒 (共 ${results.length} 個)</span>`;
+
+        results.forEach(fileData => {
+            if (fileData.isImage) {
+                const img = document.createElement('img');
+                img.src = fileData.previewUrl;
+                img.className = 'preview-item';
+                previewContainer.appendChild(img);
+            } else {
+                const div = document.createElement('div');
+                div.className = 'file-info';
+                div.innerText = `📁 ${fileData.fileName}`;
+                previewContainer.appendChild(div);
+            }
+        });
+    });
+}
+    let currentBrand = '';
+    let currentServiceItem = '';
+    let currentServiceDetail = '';
+    let currentModel = '';
+    let currentRequiredIds = [];
+
+    // 千山裝機必填欄位ID
+    const qsInstallRequired = [
+    'card-name', 'card-service-date', 'card-customer',
+    'card-original-pressure', 'card-site-voltage', 'card-drainage-type', // 改正了
+    'card-raw-pressure', 'card-raw-tds', 
+    ];
+
+    // 千山一般維修必填欄位ID
+    const qsRepairRequired = [
+        'card-name', 'card-service-date', 'card-customer',
+        'card-replaced-parts'
+    ];
+
+    // 品牌選擇處理
+    function handleBrandChange() {
+        const brandRadio = document.querySelector('input[name="brand"]:checked');
+        if (!brandRadio) return;
+        const brand = brandRadio.value;
+
+        // 1. 確認是否切換品牌
+        if (currentBrand && currentBrand !== brand) {
+            if (!confirm("變更品牌將會清除目前所有已填寫的內容，確定要變更嗎？")) {
+                const radios = document.querySelectorAll('input[name="brand"]');
+                radios.forEach(r => { r.checked = (r.value === currentBrand); });
+                return;
+            }
+        }
+
+        // 2. 更新品牌狀態與重置
+        currentBrand = brand;
+
+        // ▼▼▼ 新增這段：控制數量選單的顯示與隱藏 ▼▼▼
+        const qtyRow = document.getElementById('machine_qty_row');
+        const qtySelect = document.getElementById('machine_qty');
+
+        if (currentBrand === '千山') {
+            // 千山：顯示數量選單
+            qtyRow.style.display = 'block';
+        } else {
+            // 惟品：隱藏選單，並強制重置回 1 台
+            qtyRow.style.display = 'none';
+            qtySelect.value = "1"; 
+            generateMachineInputs(); // 呼叫這個函式，讓畫面變回只有一個輸入框
+        }
+        resetFormValues(['brand']); // 保留品牌勾選，其餘清除
+        
+        currentServiceItem = '';
+        currentServiceDetail = '';
+        currentModel = '';
+        
+        hideAllCards();
+        // 👇 請務必補上這行，保護品牌卡片不被隱藏！
+        document.getElementById('card-brand').classList.remove('hidden-field'); 
+
+        // ★★★ 3. 處理客戶代號欄位 (重點修改區) ★★★
+        const codeInput = document.getElementById('customer_code_input');
+        if (codeInput) {
+            if (currentBrand === '千山') {
+                // 千山設定：
+                // 1. 允許文字輸入 (text) 以便輸入 A
+                // 2. 值是空的，讓技師自己填
+                codeInput.setAttribute('inputmode', 'text');
+                codeInput.value = ""; 
+                codeInput.placeholder = "請輸入完整代號 (例: A123456789)";
+            } else if (currentBrand === '惟品') {
+                // 惟品設定：
+                // 1. 預設填好 "W0000" (寫死開頭)
+                // 2. 用數字鍵盤 (numeric) 方便打後面的數字
+                codeInput.setAttribute('inputmode', 'numeric');
+                codeInput.value = "W0000"; 
+                codeInput.placeholder = "請輸入數字";
+            }
+        }
+        // ★★★ 修改結束 ★★★
+
+        // 4. 重建服務項目選單 (這部分保持原本邏輯)
+        const serviceSelect = document.getElementById('service_item');
+        serviceSelect.innerHTML = '<option value="">請選擇</option>';
+
+        if (currentBrand === '千山') {
+            serviceSelect.innerHTML += `
+                <option value="裝機">裝機</option>
+                <option value="維修">維修</option>
+                <option value="售服">售服</option>
+                <option value="合約">合約</option>`;
+        } else if (currentBrand === '惟品') {
+            serviceSelect.innerHTML += `
+                <option value="裝機">裝機</option>
+                <option value="維修">維修</option>
+                <option value="售服">售服</option>`;
+        }
+
+        document.getElementById('card-service-item').classList.remove('hidden-field');
+        renumberQuestions();
+    }
+    /**
+    * 強制清除所有輸入欄位的值
+    * @param {Array} excludeNames 不想要被清除的欄位名稱 (例如 ['brand'])
+    */
+    function resetFormValues(excludeNames = []) {
+        const allInputs = document.querySelectorAll('input, select, textarea');
+        allInputs.forEach(input => {
+            // ★★★ 補回這行：如果這個欄位在排除清單內，就不動它 ★★★
+            if (excludeNames.includes(input.name)) return;
+
+            if (input.type === 'radio' || input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                // 全部清空成空白
+                input.value = '';
+            }
+        });
+        
+        // 額外重置一些自定義的狀態 (如隱藏的子欄位)
+        document.getElementById('card-manual-input')?.classList.add('hidden-field');
+        document.getElementById('card-waste-note')?.classList.add('hidden-field');
+        document.getElementById('card-reduced-pressure')?.classList.add('hidden-field');
+        document.getElementById('card-leak-reason')?.classList.add('hidden-field');
+    }
+    // 服務項目選擇處理
+    function handleServiceItemChange() {
+        const item = document.getElementById('service_item').value;
+        if (!item) return;
+
+        if (currentServiceItem && currentServiceItem !== item) {
+            if (!confirm("變更服務項目將會重置後續所有欄位，確定要變更嗎？")) {
+                document.getElementById('service_item').value = currentServiceItem;
+                return;
+            }
+        }
+
+        currentServiceItem = item;
+        resetFormValues(['brand', 'service_item']); 
+        currentServiceDetail = '';
+        currentModel = '';
+        hideAllCards(true); 
+
+        const detailSelect = document.getElementById('service_detail');
+        const detailCard = document.getElementById('card-service-detail');
+        const modelSelect = document.getElementById('model'); // 確保這裡有獲取元件
+        const modelCard = document.getElementById('card-model');
+
+        detailSelect.innerHTML = '<option value="">請選擇</option>';
+        modelSelect.innerHTML = '<option value="">請選擇</option>'; // 修正定義問題
+
+        if (currentBrand === '千山') {
+            if (item === '裝機') {
+                detailSelect.innerHTML += '<option value="一般裝機">一般裝機</option>';
+                detailSelect.innerHTML += '<option value="全戶裝機">全戶裝機</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            } else if (item === '維修') {
+                detailSelect.innerHTML += '<option value="一般維修">一般維修</option>';
+                detailSelect.innerHTML += '<option value="全戶維修">全戶維修</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            } else if (item === '售服') {
+                detailSelect.innerHTML += '<option value="一般場勘">一般場勘</option>';
+                detailSelect.innerHTML += '<option value="全戶場勘">全戶場勘</option>';
+                detailSelect.innerHTML += '<option value="空值">空值(手動輸入)</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            } else if (item === '合約') {
+                detailSelect.innerHTML += '<option value="換濾芯">換濾芯(保後裝機)</option>';
+                detailSelect.innerHTML += '<option value="空值">空值(手動輸入)</option>';
+                detailSelect.innerHTML += '<option value="大保拆機">大保拆機</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            }    
+        } else if (currentBrand === '惟品') {
+            if (item === '裝機') {
+                // 惟品裝機:先選服務細項
+                detailSelect.innerHTML += '<option value="裝機">裝機</option>';
+                detailSelect.innerHTML += '<option value="新機異常">新機異常</option>';
+                detailSelect.innerHTML += '<option value="升級裝機">升級裝機</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            } else if (item === '維修') {
+                // 惟品維修:先選服務細項
+                detailSelect.innerHTML += '<option value="維修">客戶處維修</option>';
+                detailSelect.innerHTML += '<option value="店修">門市店內維修</option>';                
+                detailSelect.innerHTML += '<option value="拖修">拖修</option>';
+                detailSelect.innerHTML += '<option value="維修覆機">維修覆機</option>';
+                detailSelect.innerHTML += '<option value="更換面板">更換面板</option>';
+                detailSelect.innerHTML += '<option value="換機">換機</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            } else if (item === '售服') {
+                // 惟品售服:先選服務細項
+                detailSelect.innerHTML += '<option value="更換濾芯">更換濾芯</option>';
+                detailSelect.innerHTML += '<option value="拆機">拆機</option>';
+                detailSelect.innerHTML += '<option value="重裝機">重裝機</option>';
+                detailSelect.innerHTML += '<option value="手動輸入">手動輸入</option>';
+                detailSelect.innerHTML += '<option value="場勘">場勘</option>';
+                detailSelect.innerHTML += '<option value="取消">取消</option>';
+                detailCard.classList.remove('hidden-field');
+                modelCard.classList.add('hidden-field');
+            }
+        }
+        
+        renumberQuestions();
+    }
+
+    // 服務細項選擇處理
+    function handleServiceDetailChange() {
+        const detailValue = document.getElementById('service_detail').value;
+        if (!detailValue) return;
+
+        if (currentServiceDetail && currentServiceDetail !== detailValue) {
+            resetFormValues(['brand', 'service_item', 'service_detail']);
+            currentModel = ''; 
+            hideAllCards(true); 
+        }
+        currentServiceDetail = detailValue;
+        
+        const modelCard = document.getElementById('card-model');
+        const modelSelect = document.getElementById('model');
+        const manualCard = document.getElementById('card-manual-input'); // 新增這行修正 ReferenceError
+
+        modelSelect.innerHTML = '<option value="">請選擇</option>';
+        
+        if (currentBrand === '千山') {
+                if (detailValue === '其他' || detailValue === '手動輸入'|| detailValue === '空值') { // 增加判斷
+                    if(manualCard) manualCard.classList.remove('hidden-field');
+                } else {
+                    if(manualCard) manualCard.classList.add('hidden-field');
+                }
+                showQianshanFields();
+        } else if (currentBrand === '惟品') {
+            if(manualCard) manualCard.classList.add('hidden-field');
+            
+            // 根據服務項目和服務細項顯示機器型號選項
+            modelSelect.innerHTML = '<option value="">請選擇</option>';
+            
+            if (currentServiceItem === '裝機') {
+                if (detailValue === '裝機') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '新機異常') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '升級裝機') {
+                    modelSelect.innerHTML += '<option value="WD1→WD2">WD1→WD2</option>';
+                    modelSelect.innerHTML += '<option value="WD1→WS2-C">WD1→WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1→WS2-H">WD1→WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WS1→WD2">WS1→WD2</option>';
+                    modelSelect.innerHTML += '<option value="WS1→WS2-C">WS1→WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS1→WS2-H">WS1→WS2-H</option>';
+                    modelCard.classList.remove('hidden-field');    
+                } else if (detailValue === '取消') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelCard.classList.remove('hidden-field');
+                }
+            } else if (currentServiceItem === '維修') {
+                if (detailValue === '維修') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '店修') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '拖修') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '維修覆機') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '更換面板') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '換機') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelCard.classList.remove('hidden-field');
+    
+                } else if (detailValue === '取消') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                }
+            } else if (currentServiceItem === '售服') {
+                if (detailValue === '更換濾芯') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '拆機') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '重裝機') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '場勘') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '手動輸入') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                } else if (detailValue === '取消') {
+                    modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
+                    modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                    modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
+                    modelSelect.innerHTML += '<option value="WD1">WD1</option>';
+                    modelSelect.innerHTML += '<option value="WS1">WS1</option>';
+                    modelCard.classList.remove('hidden-field');
+                }
+            }
+        }
+        
+        renumberQuestions();
+    }
+
+    // 機器型號選擇處理
+    function handleModelChange() {
+        const model = document.getElementById('model').value;
+        if (!model) return;
+
+        // 如果型號改變，重置型號之後的所有輸入欄位
+        if (currentModel && currentModel !== model) {
+            // 保留前三個階層，其餘清除
+            resetFormValues(['brand', 'service_item', 'service_detail', 'model']);
+            hideAllCards(true);
+        }
+        
+        currentModel = model;
+        
+        // ==========================================
+        // ★ 修改：確保惟品選擇型號時，填入第一個格子
+        // ==========================================
+        // 原本：const machineModelInput = document.querySelector('input[name="machine_model"]');
+        // 改為：
+        const machineModelInputs = document.querySelectorAll('.dynamic-model-input');
+        if (machineModelInputs.length > 0) {
+            machineModelInputs[0].value = model; 
+        }
+        // ==========================================
+
+        if (currentBrand === '惟品') {
+            showWeipinFields();
+        }
+        renumberQuestions();
+    }
+
+    // 顯示千山欄位(保持原樣)
+    function showQianshanFields() {
+        hideAllCards(true);
+        
+        const item = currentServiceItem;
+        const detail = currentServiceDetail;
+        
+        if (item === '裝機') {
+            if (detail === '一般裝機') {
+                currentRequiredIds = [...qsInstallRequired];
+                showCards([
+                    'card-name', 'card-invoice-number', 'card-machine-serial','card-service-date', 'card-customer','card-customer-code', 'card-machine-type',                    
+                    'card-faucet', 'card-site-voltage', 'card-waste-type','card-wp-customer',
+                    'card-raw-pressure', 'card-raw-tds', 'card-leak-circuit','card-leak-reason',
+                    'card-original-pressure','card-pressure-pump','card-drainage-type','card-countertop',
+                    'card-taste','card-wp-note','card-principle','card-install-location',
+
+
+                ]);
+            } else if (detail === '全戶裝機') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-invoice-number', 'card-machine-serial','card-service-date', 'card-customer',  'card-customer-code','card-machine-type',                      
+                    'card-faucet', 'card-site-voltage', 'card-waste-type','card-install-location','card-install-floor','card-app',
+                    'card-raw-pressure', 'card-leak-reason','card-wp-customer',
+                    'card-pressure-pump','card-original-pressure','card-install-pipe-material',
+                    'card-wp-note','card-principle',
+                ]);
+            }else if (detail === '取消') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason','card-machine-type',
+                ]);
+            }
+        } else if (item === '維修') {
+            if (detail === '一般維修') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards([
+                    'card-name', 'card-invoice-number','card-machine-serial', 'card-service-date', 'card-customer',                    
+                    'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-raw-tds','card-site-voltage',
+                    'card-repair-reason','card-actual-reason',
+                    'card-leak-circuit','card-leak-reason','card-parts-payment',
+                    'card-pressure-pump','card-drainage-type','card-taste','card-wp-note','card-handling',
+                    'card-inspection-result','card-is-payment','card-machine-type',
+                ]);
+            } else if (detail === '全戶維修') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',' card-machine-serial' ,                        
+                     'card-customer-code',  'card-wp-customer','card-app',                    
+                    'card-repair-reason','card-actual-reason',
+                    'card-leak-reason','card-parts-payment',
+                    'card-pressure-pump','card-wp-note','card-handling',
+                    'card-inspection-result','card-is-payment','card-machine-serial','card-machine-type',
+                ]);
+            } else if (detail === '取消') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name',
+                ]);
+            }
+        }else if (item === '售服') {
+            if (detail === '一般場勘') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards([
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',                  
+                     'card-customer-code',  'card-wp-customer','card-original-pressure','card-machine-type',
+                    'card-raw-tds','card-site-voltage',
+                    'card-leak-reason',
+                    'card-wp-note',
+                    'card-water-source','card-pump-photo',
+                    'card-install-location','card-countertop',
+                ]);
+            } else if (detail === '全戶場勘') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',                    
+                     'card-customer-code',  'card-wp-customer','card-original-pressure',
+                    'card-site-voltage','card-machine-type',
+                    'card-leak-reason',
+                    'card-pressure-pump','card-wp-note',
+                    'card-water-source','card-pump-photo',
+                    'card-pipe-material','card-signal-strength','card-install-location','card-install-floor',
+                    'card-pipe-spec','card-pipe-material','card-signal-strength',
+                ]);
+
+            } else if (detail === '取消') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                ]);
+            } else if (detail === '空值') {  
+            currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+            showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                
+                // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
+            ]);
+            }
+        }else if (item === '合約') {
+            if (detail === '換濾芯') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-machine-type','card-machine-serial',
+                'card-raw-tds','card-taste','card-handling','card-inspection-result'
+                ]);
+            } else if (detail === '大保拆機') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-machine-type','card-machine-serial',
+                ]);
+
+            } else if (detail === '取消') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                ]);
+            } else if (detail === '空值') { 
+            currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+            showCards([
+                'card-service-date','card-invoice-number','card-customer-code','card-wp-customer','card-wp-note','card-name','card-repair-reason','card-actual-reason',
+                'card-machine-type','card-machine-serial',
+                // 您可以依需求在這裡加入更多欄位，例如 'card-parts-payment' 等
+            ]);
+            }
+        }
+    }
+
+    // 顯示惟品欄位(根據需求更新)
+    function showWeipinFields() {
+        hideAllCards(true);
+        
+        if (currentServiceItem === '裝機') {
+            if (currentServiceDetail === '新機異常' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '新機異常' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot',
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '新機異常' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-original-pressure',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-是否加裝Filter-C',
+                    'card-wp-customer',
+                    'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power', 'card-power',
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-app',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '裝機' && currentModel === 'WS2-C') {
+                currentRequiredIds = ['card-wp-customer'];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app', 'card-wp-note','card-original-pressure',
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '裝機' && currentModel === 'WS2-H') {
+                currentRequiredIds = ['card-wp-customer'];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds', 
+                    'card-env-temp', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot',, 'card-temp-group', 'card-raw-flow', 'card-raw-temp', 
+                    'card-principle', 'card-taste', 'card-calibration',
+                    'card-battery', 'card-app', 'card-wp-note','card-original-pressure','card-panel-voltage'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '裝機' && currentModel === 'WD2-C') {
+                currentRequiredIds = ['card-wp-customer'];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-是否加裝Filter-C',
+                    'card-wp-customer', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-wp-note','card-original-pressure','card-app',
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+                        } else if (currentServiceDetail === '升級裝機' && currentModel === 'WD1→WD2') {
+                // 升級裝機-WD1→WD2
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
+                    'card-machine-type-2', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage','card-env-temp',
+                    'card-adjust-power', 'card-power', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-app', 'card-repair-reason',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WS1→WD2') {
+                // 升級裝機-WD1→WD2
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
+                    'card-machine-type-2', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage','card-env-temp',
+                    'card-adjust-power', 'card-power', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-app', 'card-repair-reason',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WD1→WS2-C') {
+                // 升級裝機-WD1→WS2C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
+                    'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
+                    'card-faucet-label', 'card-customer-code', 'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version', 'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-payment-detail',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WS1→WS2-H') {
+                // 升級裝機-WD1→WS2H
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
+                    'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
+                    'card-faucet-label', 'card-customer-code', 'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version', 'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result',  'card-payment-detail',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WS1→WS2-C') {
+                // 升級裝機-WD1→WS2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-original-pressure',
+                    'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
+                    'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
+                    'card-faucet-label', 'card-customer-code', 'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version', 'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result',  'card-payment-detail',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '升級裝機' && currentModel === 'WD1→WS2-H') {
+                // 升級裝機-WD1→WS2-H
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-model-2', 'card-machine-serial-2',
+                    'card-machine-type-2', 'card-是否加裝Filter-C', 'card-faucet-type',
+                    'card-faucet-label', 'card-customer-code', 'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version', 
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result',  'card-payment-detail',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';    
+            } else if (currentServiceDetail === '取消' && currentModel ==='WS2-C') {
+                currentRequiredIds = [];
+                showCards(['card-name','card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards(['card-name','card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards(['card-name','card-service-date', 'card-invoice-number', 'card-customer-code', 'card-wp-customer', 'card-wp-note']);
+            }
+        } else if (currentServiceItem === '維修') {
+            if (currentServiceDetail === '維修' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
+                    'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '維修' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
+                    'card-是否加裝Filter-C', 'card-faucet-type', 'card-faucet-label',
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '維修' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-firmware-version',
+                    'card-machine-serial', 'card-machine-type','card-machine-type-repair',                    
+                    'card-是否加裝Filter-C','card-wp-customer', 'card-site-voltage', 'card-adjust-power', 'card-power',
+                    'card-principle', 'card-taste', 'card-calibration','card-temp-group',
+                    'card-app', 'card-repair-reason', 'card-actual-reason','card-app',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '維修' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial',
+                    'card-site-voltage', 'card-power', 'card-f11-flow','card-是否加裝Filter-C' ,'card-customer',
+                    'card-hot-tank-output', 'card-normal-tank-output','card-firmware-version',
+                    'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste','card-wp-customer',
+                    'card-repair-reason', 'card-actual-reason','card-machine-type-repair',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts','card-temp-group-100',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note','card-machine-type'
+                ]);
+            } else if (currentServiceDetail === '維修' && currentModel === 'WS1') {
+                // 維修-維修-WS1
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-serial',
+                    'card-site-voltage', 'card-power', 'card-f11-flow','card-是否加裝Filter-C' ,'card-customer',
+                    'card-hot-tank-output', 'card-normal-tank-output','card-firmware-version', 'card-taste',
+                    'card-repair-reason', 'card-actual-reason','card-wp-customer',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts','card-temp-group-100',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note','card-machine-type',
+                ]);
+                // WS1只顯示100°C和35°C
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+
+                } else if (currentServiceDetail === '換機' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-是否加裝Filter-C', 'card-faucet-type', 
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '換機' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-是否加裝Filter-C', 'card-faucet-type', 
+                    'card-wp-customer',
+                    'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot',
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '換機' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-machine-model', 'card-machine-serial', 'card-machine-type','card-machine-type-repair',
+                    'card-machine-model-2', 'card-machine-serial-2', 'card-machine-type-2',
+                    'card-是否加裝Filter-C',
+                    'card-wp-customer',
+                    'card-firmware-version', 
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power', 'card-power',
+                    'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration', 'card-battery',
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                     'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';         
+                
+            } else if (currentServiceDetail === '店修' && currentModel === 'WS2-C') {
+                // 店修-WS2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '店修' && currentModel === 'WD2-C') {
+                // 店修-WD2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '店修' && currentModel === 'WD1') {
+                // 店修-WD1
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial',  'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                    'card-temp-group', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note','card-f11-flow',
+                    'card-hot-tank-output','card-normal-tank-output','card-ice-tank-output','card-ice-tank-cooling', 
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';                
+                // 👇👇 修改這裡：改成 'none' 就會隱藏了 👇👇
+                document.getElementById('temp-35').style.display = 'none';                
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '店修' && currentModel === 'WS1') {
+                // 店修-WD1
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial',  'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                    'card-temp-group', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note','card-f11-flow',
+                    'card-hot-tank-output','card-normal-tank-output',
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';                
+                // 👇👇 修改這裡：改成 'none' 就會隱藏了 👇👇
+                document.getElementById('temp-35').style.display = 'none';                
+                document.getElementById('temp-10').style.display = 'none';                
+            } else if (currentServiceDetail === '店修' && currentModel === 'WS2-H') {
+                // 店修-WS2-H
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-repair-reason', 'card-actual-reason','card-power-hot',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '更換面板' && currentModel === 'WS2-C') {
+                // 更換面板-WS2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-panel-voltage', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-replaced-parts', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '更換面板' && currentModel === 'WS2-H') {
+                // 更換面板-WS2-H
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-panel-voltage', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-replaced-parts', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WS2-C') {
+                // 取消-ALL
+                currentRequiredIds = [];
+                showCards([
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
+                // 取消-ALL
+                currentRequiredIds = [];
+                showCards([
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
+                // 取消-ALL
+                currentRequiredIds = [];
+                showCards([
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
+                // 取消-ALL
+                currentRequiredIds = [];
+                showCards([
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                     'card-repair-reason', 'card-actual-reason',
+                    'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '取消' && currentModel === 'WS1') {
+                // 取消-ALL
+                currentRequiredIds = [];
+                showCards([
+                    'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 
+                    'card-repair-reason', 'card-actual-reason',
+                    'card-wp-note'
+                ]);
+
+            } else if (currentServiceDetail === '拖修' && currentModel === 'WS2-C') {
+                // 拖修-WS2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power', 'card-panel-voltage',
+                    'card-raw-flow', 'card-raw-temp', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '拖修' && currentModel === 'WS2-H') {
+                // 拖修-WS2-H
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power-hot', 'card-panel-voltage',
+                    'card-raw-flow', 'card-raw-temp', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '拖修' && currentModel === 'WD2-C') {
+                // 拖修-WD2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-customer-code', 'card-wp-customer', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-app', 'card-repair-reason',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '拖修' && currentModel === 'WD1') {
+                // 拖修-WD1
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair',
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-customer-code', 'card-wp-customer', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',                    
+                    'card-calibration', 'card-app', 'card-repair-reason',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '拖修' && currentModel === 'WS1') {
+                // 拖修-WS1(新增)
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-customer-code', 'card-wp-customer',
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-firmware-version', 'card-temp-group', 
+                    'card-power-hot',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            }else if (currentServiceDetail === '維修覆機' && currentModel === 'WS2-C') {
+                // 拖修-WS2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-faucet-type',  'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power', 'card-panel-voltage',
+                    'card-raw-flow', 'card-raw-temp', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '維修覆機' && currentModel === 'WS2-H') {
+                // 拖修-WS2-H
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-faucet-type',  'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power-hot', 'card-panel-voltage',
+                    'card-raw-flow', 'card-raw-temp', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '維修覆機' && currentModel === 'WD2-C') {
+                // 拖修-WD2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-machine-model-2',
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-customer-code', 'card-wp-customer', 'card-firmware-version',
+                     'card-temp-group', 'card-site-voltage',
+                    'card-adjust-power', 'card-power', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-app', 'card-repair-reason',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '維修覆機' && currentModel === 'WD1') {
+                // 拖修-WD1
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-machine-type-repair', 
+                    'card-machine-serial-2', 'card-machine-type-2', 'card-是否加裝Filter-C',
+                    'card-customer-code', 'card-wp-customer', 'card-firmware-version',
+                     // 👇 將這裡的 card-temp-group 改成 card-temp-group-100
+                    'card-temp-group-100', 'card-site-voltage',
+                    'card-power', 'card-principle', 'card-taste','card-hot-tank-output','card-normal-tank-output','card-ice-tank-output','card-ice-tank-cooling',
+                    'card-calibration',  'card-repair-reason','card-f11-flow',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-parts-payment', 'card-payment-detail', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                // 👇 一樣將 10°C 設為隱藏
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '維修覆機' && currentModel === 'WS1') {
+                // 拖修-WS1(新增)
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-customer-code', 'card-wp-customer','card-principle','card-taste','card-calibration',
+                    'card-firmware-version', 
+                    'card-temp-group-100',  // 👈 這裡改成 card-temp-group-100
+                    'card-f11-flow',
+                    'card-hot-tank-output', 'card-normal-tank-output','card-power-hot',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note','card-machine-type-2','card-machine-serial-2','ard-是否加裝Filter-C',
+                ]);
+                
+                // 改用 card-temp-group-100 後，這三行其實可以省略，
+                // 因為該區塊本來就只有 100°C 和 35°C，沒有 10°C。
+                // 但如果你想保留這三行以防萬一也可以：
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            }  
+        } else if (currentServiceItem === '售服') {
+            // ========== 售服 → 更換濾芯 ==========
+            if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',  
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
+                    'card-faucet-type',  'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                     'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',  
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot', 'card-panel-voltage', 'card-principle',
+                    'card-taste', 'card-calibration', 'card-battery',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                     'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number','card-machine-type',  
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
+                     'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version', 'card-temp-group',
+                    'card-adjust-power', 'card-power-hot',
+                    'card-principle', 'card-taste', 'card-calibration',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+
+            } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version','card-machine-type',
+                    'card-temp-group-100', // 👈 這裡把 card-temp-group 改成 card-temp-group-100
+                    'card-f11-flow',
+                    'card-hot-tank-output', 'card-normal-tank-output',
+                    'card-ice-tank-output', 'card-ice-tank-cooling', 'card-taste',
+                    'card-calibration', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none'; // 👈 這裡改成 'none' 來隱藏 10°C
+            } else if (currentServiceDetail === '更換濾芯' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version','card-machine-type',
+                    'card-temp-group-100', // 👈 這裡把 card-temp-group 改成 card-temp-group-100
+                    'card-f11-flow',
+                    'card-hot-tank-output', 'card-normal-tank-output',
+                    'card-taste','card-calibration', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-wp-note'
+                ]);
+                
+                // 👇 加上這三行，確保切換時只顯示 100°C 和 35°C，並隱藏 10°C
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            // ========== 售服 → 拆機 ==========
+            } else if (currentServiceDetail === '拆機' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason',
+                    'card-wp-note','card-machine-type',
+                ]);
+            } else if (currentServiceDetail === '拆機' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 
+                     'card-wp-note','card-machine-type',
+                ]);
+            } else if (currentServiceDetail === '拆機' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
+                ]);
+            } else if (currentServiceDetail === '拆機' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
+                ]);
+            } else if (currentServiceDetail === '拆機' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason','card-wp-note','card-machine-type',
+                ]);                                    
+            // ========== 售服 → 重裝機 ==========
+            } else if (currentServiceDetail === '重裝機' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling','card-machine-type',
+                    'card-inspection-result', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '重裝機' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C','card-machine-type',
+                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-wp-customer', 'card-panel-version', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power-hot', 'card-panel-voltage', 'card-raw-flow',
+                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-calibration', 'card-battery', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'none';
+            } else if (currentServiceDetail === '重裝機' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C','card-machine-type',
+                    'card-customer-code', 'card-wp-customer', 'card-firmware-version',
+                    'card-raw-tds',  'card-env-temp',
+                    'card-temp-group', 'card-site-voltage', 'card-adjust-power',
+                    'card-power', 'card-raw-flow', 'card-raw-temp',
+                    'card-principle', 'card-taste', 'card-calibration',
+                    'card-app', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+                document.getElementById('temp-10').style.display = 'flex';
+            } else if (currentServiceDetail === '重裝機' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code','card-machine-type',
+                    'card-wp-customer', 'card-firmware-version',
+                    'card-temp-group', 'card-f11-flow',
+                    'card-ice-tank-cooling', 'card-taste',
+                    'card-calibration', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                // 只保留 100°C 和 35°C 的溫度顯示
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+
+            } else if (currentServiceDetail === '重裝機' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type',
+                    'card-machine-serial', 'card-是否加裝Filter-C', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version',
+                    'card-temp-group', 'card-f11-flow',
+                    'card-taste','card-calibration', 'card-repair-reason', 'card-actual-reason',
+                    'card-handling', 'card-inspection-result', 
+                    'card-wp-note'
+                ]);
+                // 只保留 100°C 和 35°C 的溫度顯示
+                document.getElementById('temp-100').style.display = 'flex';
+                document.getElementById('temp-35').style.display = 'flex';
+            // ========== 售服 → 手動輸入 ==========
+            } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '手動輸入' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-note'
+                ]);                       
+            // ========== 售服 → 取消 ==========
+            } else if (currentServiceDetail === '取消' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '取消' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '取消' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '取消' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
+                    'card-wp-note'
+                ]);
+            // ========== 售服 → 場勘 ==========
+            } else if (currentServiceDetail === '場勘' && currentModel === 'WS2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-wp-customer', 'card-raw-tds',
+                    'card-site-voltage', 'card-countertop',
+                    'card-wp-note',
+                ]);
+            }else if (currentServiceDetail === '場勘' && currentModel === 'WS2-H') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-wp-customer', 
+                    'card-raw-tds','card-site-voltage', 'card-countertop',
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '場勘' && currentModel === 'WD2-C') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-wp-customer', 
+                    'card-raw-tds','card-site-voltage', 'card-countertop',                    
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '場勘' && currentModel === 'WD1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-wp-customer', 
+                    'card-raw-tds','card-site-voltage', 'card-countertop',                    
+                    'card-wp-note'
+                ]);
+            }else if (currentServiceDetail === '場勘' && currentModel === 'WS1') {
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type',
+                    'card-wp-customer', 
+                    'card-raw-tds','card-site-voltage', 'card-countertop',                    
+                    'card-wp-note'
+                ]);
+
+                
+            }
+        }
+    }
+
+    // 隱藏所有卡片
+    function hideAllCards(keepBase = false) {
+        const allCards = document.querySelectorAll('.question-card');
+        allCards.forEach(card => {
+            // 如果 keepBase 為 true，則不隱藏基礎階層
+            if (keepBase) {
+                const baseIds = ['card-brand', 'card-service-item', 'card-service-detail', 'card-model', 'card-manual-input'];
+                if (baseIds.includes(card.id)) return;
+            }
+            card.classList.add('hidden-field');
+        });
+    }
+
+  // 顯示指定卡片
+    function showCards(ids) {
+        ids.forEach(id => {
+            const card = document.getElementById(id);
+            if (card) card.classList.remove('hidden-field');
+        });
+
+        // 👇 補上下面這段：只要有顯示表單，就自動顯示照片上傳區塊
+        if (ids.length > 0) {
+            const uploadCard = document.getElementById('card-upload');
+            if (uploadCard) uploadCard.classList.remove('hidden-field');
+        }
+    }
+    // 處理收款品項顯示邏輯
+    function handlePaymentVisibility() {
+        const isPayment = document.getElementById('is_payment').value;
+        const paymentDetailCard = document.getElementById('card-payment-detail');
+        
+        if (isPayment === '是') {
+            paymentDetailCard.classList.remove('hidden-field');
+        } else {
+            paymentDetailCard.classList.add('hidden-field');
+            // 可選：切換為「否」時自動清空已填寫的品項
+            paymentDetailCard.querySelector('textarea').value = '';
+        }
+        renumberQuestions(); // 重新編號
+    }
+
+
+
+
+    // 排廢水型式變更處理
+    function handleWasteTypeChange() {
+        const waste = document.getElementById('waste_type').value;
+        const noteCard = document.getElementById('card-waste-note');
+        if (waste === '回桶') {
+            noteCard.classList.remove('hidden-field');
+        } else {
+            noteCard.classList.add('hidden-field');
+        }
+        renumberQuestions();
+    }
+
+    // 減壓閥變更處理
+    function handlePressureValveChange() {
+        const valve = document.getElementById('pressure_valve').value;
+        const reducedCard = document.getElementById('card-reduced-pressure');
+        if (valve === '有') {
+            reducedCard.classList.remove('hidden-field');
+        } else {
+            reducedCard.classList.add('hidden-field');
+        }
+        renumberQuestions();
+    }
+
+    // 漏水斷路器變更處理
+    function handleLeakCircuitChange() {
+        const leak = document.getElementById('leak_circuit').value;
+        const reasonCard = document.getElementById('card-leak-reason');
+        if (leak === '未安裝') {
+            reasonCard.classList.remove('hidden-field');
+        } else {
+            reasonCard.classList.add('hidden-field');
+        }
+        renumberQuestions();
+    }
+
+    // 重新編號問題
+    function renumberQuestions() {
+        const cards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        let count = 1;
+        let previousCardId = null;
+        
+        const item = document.getElementById('service_item').value;
+        const isInstall = (item === '裝機');
+
+        cards.forEach((card) => {
+            const title = card.querySelector('.question-title');
+            if (title) {
+                let text = title.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+                let isRequired = false;
+
+                if (title.innerHTML.includes('required') || title.innerText.includes('*')) {
+                    isRequired = true;
+                }
+                if (card.id === 'card-service-detail') isRequired = true;
+
+                let htmlContent = "";
+                if (card.id === 'card-service-detail') {
+                    htmlContent = `1-1. ${text}`;
+                } else if (card.id === 'card-manual-input' && previousCardId === 'card-service-detail') {
+                    htmlContent = `1-2. ${text}`;
+                } else if (card.id === 'card-waste-note' && previousCardId === 'card-waste-type') {
+                    htmlContent = `${count - 1}-1. ${text}`;
+                } else if (card.id === 'card-leak-reason' && previousCardId === 'card-leak-circuit') {
+                    htmlContent = `${count - 1}-1. ${text}`;
+                } else if (card.id === 'card-reduced-pressure' && previousCardId === 'card-raw-pressure') {
+                    htmlContent = `${count - 1}-1. ${text}`;
+                }else if (card.id === 'card-principle-reason' && previousCardId === 'card-principle') {
+                    htmlContent = `${count - 1}-1. ${text}`;
+                } else {
+                    htmlContent = `${count}. ${text}`;
+                    count++;
+                }
+
+                if (isRequired) {
+                    htmlContent += ` <span class="required">*</span>`;
+                }
+                
+                title.innerHTML = htmlContent;
+                previousCardId = card.id;
+            }
+        });
+    }
+
+    // 表單驗證
+// 表單驗證
+    function validateForm() {
+        let isValid = true;
+        let errors = [];
+        clearErrors();
+
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        visibleCards.forEach(card => {
+            const title = card.querySelector('.question-title');
+            if (title && (title.innerHTML.includes('required') || title.innerText.includes('*'))) {
+                
+                let hasValue = false;
+                let inputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                let radios = card.querySelectorAll('input[type="radio"]');
+                
+                const isStrictCard = ['card-temp-group', 'card-power', 'card-taste'].includes(card.id);
+
+                if (isStrictCard) {
+                    let allFilled = true;
+                    inputs.forEach(input => {
+                        const tempRow = input.closest('.temp-row');
+                        if (tempRow && tempRow.style.display === 'none') {
+                            return;
+                        }
+                        if (!input.value.trim()) allFilled = false;
+                    });
+                    hasValue = allFilled;
+                } else {
+                    if (inputs.length > 0) {
+                        inputs.forEach(input => { 
+                            // ★ 修改處：如果欄位有值，或者它是韌體欄位(允許空白)，就算通過
+                            if(input.value.trim() || input.name.startsWith('firmware_')) {
+                                hasValue = true;
+                            }
+                        }); // <---原本這裡少這行，導致語法錯誤
+                    }
+                    
+                    // 如果有 radio button，也要檢查是否有被選中
+                    if (radios.length > 0) {
+                        let radioChecked = false;
+                        radios.forEach(r => { if(r.checked) radioChecked = true; });
+                        if(radioChecked) hasValue = true;
+                    }
+                }
+
+                if (!hasValue) {
+                    isValid = false;
+                    card.classList.add('error-border');
+                    inputs.forEach(i => i.classList.add('error-input'));
+                    let errText = title.innerText.replace('*', '').trim();
+                    errors.push(errText);
+                }
+            }
+        });
+
+        if (!isValid) alert("⚠️ 請填寫以下必填欄位：\n\n" + errors.join('\n'));
+        return isValid;
+    }
+
+    // 清除錯誤標記
+    function clearErrors() {
+        document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
+        document.querySelectorAll('.error-input').forEach(el => el.classList.remove('error-input'));
+    }
+
+    // 獲取表單資料 (修正版)
+// 獲取表單資料 (修正版：移除序號後的型號串接)
+    function getFormData() {
+        let data = {};
+        
+        // 1. 獲取所有「可見卡片」中的一般欄位
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        
+        visibleCards.forEach(card => {
+            // ▼ 跳過特殊處理的卡片：機器型號 & 機器序號
+            if (card.id === 'card-machine-type' || card.id === 'card-machine-serial') return;
+
+            const inputs = card.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (!input.name) return;
+                
+                // 如果是 radio button 但沒被選中，就跳過
+                if (input.type === 'radio' && !input.checked) return;
+                
+                let finalValue = input.value;
+                // 特殊處理：如果是韌體欄位且是空白，自動視為 "00"
+                if (input.name.startsWith('firmware_') && finalValue.trim() === '') {
+                    finalValue = '00';
+                }
+
+                // 處理多選或同名欄位
+                if (data[input.name]) {
+                    data[input.name] += " - " + finalValue;
+                } else {
+                    data[input.name] = finalValue;
+                }
+            });
+        });
+
+        // ▼▼▼ 特殊處理 2：機器型號 (串接) ▼▼▼
+        const typeCard = document.getElementById('card-machine-type');
+        // 只有當機器型號卡片是「顯示狀態」才抓取
+        if (typeCard && !typeCard.classList.contains('hidden-field')) {
+            const modelInputs = typeCard.querySelectorAll('.dynamic-model-input');
+            let modelValues = [];
+            
+            modelInputs.forEach(input => {
+                if (input.value.trim()) {
+                    modelValues.push(input.value.trim());
+                }
+            });
+
+            // 用 " \ " 符號連接，例如：PF-203 \ RFX600S
+            if (modelValues.length > 0) {
+                data['machine_model'] = modelValues.join(' \\ ');
+            }
+        }
+
+        // ▼▼▼ 特殊處理 3：機器序號 (單純串接，不帶型號) ▼▼▼
+        const serialCard = document.getElementById('card-machine-serial');
+        
+        // 只有當機器序號卡片是「顯示狀態」才抓取
+        if (serialCard && !serialCard.classList.contains('hidden-field')) {
+            const serialInputs = serialCard.querySelectorAll('.dynamic-serial-input');
+            let finalSerialValues = [];
+
+            serialInputs.forEach((sInput) => {
+                let sVal = sInput.value.trim();
+                
+                // ★ 修改處：這裡不再去抓型號來串接，直接用原本輸入的序號
+                if (sVal) {
+                    finalSerialValues.push(sVal);
+                }
+            });
+
+            // 用 " \ " 符號連接，例如：PF203L... \ RFX600L...
+            if (finalSerialValues.length > 0) {
+                data['machine_serial'] = finalSerialValues.join(' \\ ');
+            }
+        }
+
+        // 4. 加入基本全域變數
+        data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
+        data['service_item'] = document.getElementById('service_item').value || "";
+        data['service_detail'] = document.getElementById('service_detail').value || "";
+        
+        return data;
+    }
+    function handlePrincipleChange() {
+    const explained = document.getElementById('principle_explained').value;
+    const reasonCard = document.getElementById('card-principle-reason');
+    
+    if (explained === '否') {
+        reasonCard.classList.remove('hidden-field');
+    } else {
+        reasonCard.classList.add('hidden-field');
+        // 切換回「是」或「請選擇」時，清空已填寫的原因
+        reasonCard.querySelector('textarea').value = '';
+    }
+    renumberQuestions(); // 重新觸編號
+}
+    function formatCustomerCode(input) {
+        let val = input.value.trim();
+        if (!val) return;
+
+        if (currentBrand === '惟品') {
+            // 惟品邏輯：
+            // 1. 先把所有非數字的字元刪掉 (這會把 W 刪掉，沒關係我們後面補)
+            let numericPart = val.replace(/\D/g, ''); 
+            
+            // 2. 如果刪完還有數字，或是原本就是 W0000，就幫它補成標準格式
+            // 這裡維持您原本邏輯：W + 9位數字 (共10碼)
+            if (numericPart.length > 0) {
+                input.value = 'W' + numericPart.padStart(9, '0');
+            } else {
+                // 如果刪光光沒剩半個數字，就回復預設值
+                input.value = "W0000";
+            }
+        } else if (currentBrand === '千山') {
+            // 千山邏輯：
+            // 1. 強制轉大寫 (a -> A)
+            // 2. 不刪除任何字，保留 A 開頭
+            input.value = val.toUpperCase();
+        }
+    }
+
+    // 複製LINE格式
+    // 複製LINE格式
+    function copyForLine() {
+        if (!validateForm()) return;
+        
+        let header = '';
+        if (currentBrand === '千山') {
+            const item = document.getElementById('service_item').value;
+            const detailSelect = document.getElementById('service_detail');
+            header = `【${currentBrand} ${item}回報】`;
+            if (detailSelect.value) header += ` - ${detailSelect.value}`;
+        } else {
+            header = `【${currentBrand} ${currentServiceItem}回報】 - ${currentServiceDetail} - ${currentModel}`;
+        }
+
+        let text = header + "\n";
+        const visibleCards = document.querySelectorAll('.question-card:not(.hidden-field)');
+        
+        visibleCards.forEach(card => {
+            // 跳過前幾個基礎選擇卡片，避免重複
+            if (['card-brand', 'card-service-item', 'card-service-detail', 'card-model'].includes(card.id)) return;
+
+            const titleEl = card.querySelector('.question-title');
+            if (!titleEl) return;
+
+            let label = titleEl.innerText.replace(/^[\d\.\-\s]+/, '').replace('*', '').trim();
+            let value = "";
+
+            // 特殊處理：溫度與水量 (已有邏輯，保留並優化)
+            if (card.id === 'card-temp-group' || card.id === 'card-temp-group-100') {
+                let groupText = "";
+                const rows = card.querySelectorAll('.temp-row');
+                rows.forEach(row => {
+                    if (row.style.display === 'none') return;
+                    const rowLabel = row.querySelector('.temp-label').innerText;
+                    const rowInputs = Array.from(row.querySelectorAll('input')).map(i => i.value).filter(v => v !== "");
+                    if (rowInputs.length > 0) {
+                        groupText += `\n   ${rowLabel}：${rowInputs.join(' / ')}`;
+                    }
+                });
+                value = groupText;
+            } 
+            // 通用處理：處理所有包含多個 input/select 的卡片
+            else {
+                const allInputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                const checkedRadio = card.querySelector('input[type="radio"]:checked');
+
+                if (checkedRadio) {
+                    value = checkedRadio.parentElement.innerText.trim();
+                } else if (allInputs.length > 0) {
+                    // ★ 修改重點：加入 map 處理，讓韌體版本自動補 00
+                    const values = Array.from(allInputs)
+                        .map(i => {
+                            let val = i.value.trim();
+                            
+                            // 針對「韌體版本」做特殊處理
+                            if (i.name.startsWith('firmware_')) {
+                                // 1. 如果是空的，視為 "00"
+                                if (val === '') return "00";
+                                // 2. 如果只打 1 碼 (例如 "0")，自動補成 "00"
+                                if (val.length === 1) return "0" + val;
+                            }
+                            return val;
+                        })
+                        .filter(v => v !== ""); // 過濾掉真的沒填的其他欄位
+
+                    value = values.join(' - ');
+                }
+            }
+            
+            if (value) text += `${label}：${value}\n`;
+        });
+
+        // 複製到剪貼簿邏輯...
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('✅ 已複製 LINE 格式內容！');
+    }
+
+    // ========== 韌體版本自動跳格功能 (包含跳轉到面板版本) ==========
+// ========== 重置表單到初始狀態 ==========
+    function resetToInitial() {
+        if (!confirm("確定要清除所有資料並準備填寫下一筆嗎？")) return;
+
+        // 1. 清空所有輸入欄位 (不保留任何欄位)
+        resetFormValues([]);
+
+        // 2. 清除可能殘留的錯誤紅框標記
+        clearErrors();
+
+        // 3. 重置全域變數
+        currentBrand = '';
+        currentServiceItem = '';
+        currentServiceDetail = '';
+        currentModel = '';
+        currentRequiredIds = [];
+
+        // 4. 初始化所有連動的下拉選單
+        document.getElementById('service_item').innerHTML = '<option value="">請選擇</option>';
+        document.getElementById('service_detail').innerHTML = '<option value="">請選擇</option>';
+        document.getElementById('model').innerHTML = '<option value="">請選擇</option>';
+
+        // 5. 隱藏所有題目卡片，然後單獨顯示「1. 請選擇品牌」
+        hideAllCards(false); 
+        document.getElementById('card-brand').classList.remove('hidden-field');
+
+        // 6. 重新把這顆重置按鈕隱藏起來
+        document.getElementById('btn-reset').style.display = 'none';
+
+        // 7. 將畫面平滑滾動到最上方
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+// ========== 千山多機台處理邏輯 ==========
+
+    // 1. 產生輸入框
+// ========== 千山多機台處理邏輯 (修改版) ==========
+// 1. 產生輸入框 (修改版：預設帶入第一台型號，但允許手動修改)
+    function generateMachineInputs() {
+        const qty = parseInt(document.getElementById('machine_qty').value);
+        
+        // --- 處理機器型號 ---
+        const modelContainer = document.getElementById('machine_inputs_container');
+        // 先抓第一台目前的值，當作預設值
+        const firstModelInput = modelContainer.querySelector('input');
+        const currentModelVal = firstModelInput ? firstModelInput.value : '';
+        
+        modelContainer.innerHTML = ''; // 清空
+
+        // --- 處理機器序號 ---
+        const serialContainer = document.getElementById('machine_serial_container');
+        const firstSerialInput = serialContainer ? serialContainer.querySelector('input') : null;
+        const currentSerialVal = firstSerialInput ? firstSerialInput.value : '';
+
+        if(serialContainer) serialContainer.innerHTML = ''; // 清空
+
+        for (let i = 1; i <= qty; i++) {
+            // --- 建立型號輸入框 ---
+            const mInput = document.createElement('input');
+            mInput.type = 'text';
+            mInput.className = 'dynamic-model-input'; 
+            mInput.style.marginBottom = '8px';
+            
+            // --- 建立序號輸入框 ---
+            let sInput = null;
+            if (serialContainer) {
+                sInput = document.createElement('input');
+                sInput.type = 'text';
+                sInput.className = 'dynamic-serial-input';
+                sInput.style.marginBottom = '8px';
+            }
+
+            if (i === 1) {
+                // 第一台：填入原本的值
+                mInput.value = currentModelVal;
+                mInput.placeholder = "請輸入機器型號 (例: 222)";
+                // ★ 重點：這裡拿掉 oninput = syncMachineInputs，不再強制連動
+
+                if (sInput) {
+                    sInput.value = currentSerialVal;
+                    sInput.placeholder = "請輸入機器序號 (例: 1111)";
+                }
+            } else {
+                // 第二台以後：
+                // ★ 預設幫您填入第一台的型號 (方便)，但您可以隨便改
+                mInput.value = currentModelVal; 
+                mInput.placeholder = `第 ${i} 台型號`;
+                
+                if (sInput) {
+                    sInput.placeholder = `請輸入第 ${i} 台機器序號`;
+                }
+            }
+            
+            modelContainer.appendChild(mInput);
+            if (serialContainer && sInput) serialContainer.appendChild(sInput);
+        }
+    }
+
+    // 2. 自動連動型號 (移除 -1, -2 邏輯，改為單純複製)
+    function syncMachineInputs() {
+            // 留空即可
+            // 這樣當您修改第一台型號時，就不會雞婆地去覆蓋第二台
+            // 您可以自由地在第二台填寫 333
+        }
+// --- 整合版：上傳資料與檔案到 Google 雲端 ---
+async function uploadToCloud() {
+        if (!validateForm()) return; 
+        
+        // 檢查有沒有選照片
+        if (selectedFilesData.length === 0) {
+            alert("⚠️ 請至少上傳一張照片或檔案！");
+            document.getElementById('card-upload').classList.add('error-border');
+            return;
+        }
+        
+        const btn = document.getElementById('btn-upload');
+        const statusEl = document.getElementById("status");
+        const originalText = btn.innerHTML;
+        
+        btn.disabled = true; 
+        btn.innerHTML = "⏳ 上傳中，請勿關閉...";
+        statusEl.innerHTML = "🚀 正在傳輸表單資料與照片至雲端，這可能需要幾十秒...";
+
+        // 打包資料與照片
+        const formData = getFormData();
+        formData.files = selectedFilesData; 
+        if (displayName) formData.name = displayName;
+
+        try {
+            const response = await fetch(CLOUD_URL, {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            
+            if(result.status === "success") {
+                statusEl.innerHTML = `<span style="color: #00B900;">✅ ${result.message}</span>`;
+                alert("✅ 資料與照片已成功送出！");
+                document.getElementById('btn-reset').style.display = 'block';
+                setTimeout(() => { liff.closeWindow(); }, 2000);
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (e) {
+            statusEl.innerHTML = `<span style="color: red;">❌ 上傳失敗：${e.message}</span>`;
+            alert("❌ 上傳失敗，請檢查網路連線或稍後再試。");
+            document.getElementById('btn-reset').style.display = 'block';
+        } finally {
+            btn.disabled = false; 
+            btn.innerHTML = originalText;
+        }
+    }
+function initFirmwareAutoInput() {
+    // 1. 選取韌體版本的 4 個輸入框
+    const inputs = document.querySelectorAll('#card-firmware-version .fw-inputs input');
+
+    inputs.forEach((input, index) => {
+        // --- 監聽輸入事件 ---
+        input.addEventListener('input', function() {
+            // A. 強制限制只能輸入 2 碼
+            if (this.value.length > 2) {
+                this.value = this.value.slice(0, 2);
+            }
+
+            // B. 判斷是否跳格
+            if (this.value.length === 2) {
+                if (index < inputs.length - 1) {
+                    // 如果不是最後一格，跳到下一格韌體框
+                    inputs[index + 1].focus();
+                } else {
+                    // ★★★ 這裡是修改重點 ★★★
+                    // 如果是最後一格 (第四格)，跳到「面板版本」
+                    const nextField = document.querySelector('input[name="panel_version"]');
+                    // 確保面板版本欄位存在且沒有被隱藏才跳過去
+                    if (nextField && nextField.offsetParent !== null) {
+                        nextField.focus();
+                    }
+                }
+            }
+        });
+
+        // --- 監聽刪除鍵 (Backspace) ---
+        input.addEventListener('keydown', function(e) {
+            // 如果按了刪除鍵且格子是空的，跳回上一格
+            if (e.key === "Backspace" && this.value.length === 0) {
+                if (index > 0) {
+                    inputs[index - 1].focus();
+                }
+            }
+        });
+        
+        // --- 點擊時全選 ---
+        input.addEventListener('focus', function() {
+            this.select();
+        });
+    });
+
+}
+</script>
+
+</body>
+</html>

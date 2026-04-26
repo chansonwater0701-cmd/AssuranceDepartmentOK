@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>千山淨水 - 客訴與派工異常通報單</title>
+    <style>
+        :root {
+            --primary-color: #005b9f; /* 假設的千山淨水企業藍色調 */
+            --bg-color: #f4f7f6;
+            --form-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #cccccc;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--form-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            background-color: #fafafa;
+        }
+        legend {
+            font-weight: bold;
+            color: var(--primary-color);
+            background: var(--form-bg);
+            padding: 0 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group.full-width {
+            flex: 100%;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        input[type="text"], input[type="date"], input[type="number"], select, textarea {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 91, 159, 0.2);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .help-text {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 3px;
+        }
+        button[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #00467a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>客訴與派工異常通報單</h2>
+    <p style="text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px;">
+        請落實「一案一單」原則，以利系統準確追蹤客戶異常狀況與財損。
+    </p>
+
+    <form id="anomalyReportForm">
+        
+        <fieldset>
+            <legend>1. 填單資訊</legend>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="reporterName" class="required">回報人姓名 / 員工編號</label>
+                    <input type="text" id="reporterName" name="reporterName" placeholder="例如：CSC03-游芷瑜" required>
+                </div>
+                <div class="form-group">
+                    <label for="branchName" class="required">所屬門市</label>
+                    <select id="branchName" name="branchName" required>
+                        <option value="">請選擇門市...</option>
+                        <option value="台北總公司">台北總公司</option>
+                        <option value="板橋門市">板橋門市</option>
+                        <option value="新竹門市">新竹門市</option>
+                        <option value="台中門市">台中門市</option>
+                        <option value="高雄門市">高雄門市</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>2. 客戶與派工資訊</legend>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customerId" class="required">客戶代號</label>
+                    <input type="text" id="customerId" name="customerId" pattern="[A-Za-z0-9]+" placeholder="例如：A030013093" required>
+                    <span class="help-text">請輸入純英數字，勿包含符號</span>
+                </div>
+                <div class="form-group">
+                    <label for="customerName" class="required">客戶姓名</label>
+                    <input type="text" id="customerName" name="customerName" placeholder="例如：王小明" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="apptDate" class="required">原預約日期</label>
+                    <input type="date" id="apptDate" name="apptDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="technicianName">相關技師 (如有)</label>
+                    <input type="text" id="technicianName" name="technicianName" placeholder="例如：林技師">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>3. 異常狀況與處理細節</legend>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="anomalyType" class="required">異常分類</label>
+                    <select id="anomalyType" name="anomalyType" required>
+                        <option value="">請選擇異常主因...</option>
+                        <option value="技師未到(放鴿子)">技師未到 (放鴿子)</option>
+                        <option value="技師嚴重遲到">技師嚴重遲到</option>
+                        <option value="服務態度不佳">服務態度不佳</option>
+                        <option value="施工/維修瑕疵">施工 / 維修瑕疵</option>
+                        <option value="商品/零件缺漏">商品 / 零件缺漏</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="complaintDetails" class="required">客怨與處理說明</label>
+                    <textarea id="complaintDetails" name="complaintDetails" placeholder="請詳細描述發生經過，以及目前與客戶溝通的處理進度..." required></textarea>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>4. 結案與後續處置</legend>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="compensationItem" class="required">賠償項目</label>
+                    <select id="compensationItem" name="compensationItem" required>
+                        <option value="無">無</option>
+                        <option value="濾心折抵券">濾心折抵券</option>
+                        <option value="紅利點數">紅利點數</option>
+                        <option value="實體商品">實體商品 (贈品)</option>
+                        <option value="現金折抵">現金折抵</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="compensationAmount">賠償金額 / 點數 / 價值</label>
+                    <input type="number" id="compensationAmount" name="compensationAmount" min="0" placeholder="例如：300" value="0">
+                    <span class="help-text">若無賠償請填 0</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="responsibility">責任歸屬與懲處建議 (選填)</label>
+                    <input type="text" id="responsibility" name="responsibility" placeholder="例如：記大過乙支 / 技師已離職 / 內部流程優化">
+                </div>
+            </div>
+        </fieldset>
+
+        <button type="submit">送出通報單</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('anomalyReportForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // 阻止表單預設的重整跳轉
+
+        // 收集表單資料
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // 這裡未來會串接 Google Apps Script (GAS) 的 Web App URL
+        console.log('準備拋轉至 Google Sheets 的資料：', data);
+
+        // 模擬發送成功的視覺回饋
+        alert(`通報成功！\n客戶代號 ${data.customerId} 的案件已記錄。`);
+        
+        // 清空表單，準備下一筆填寫
+        this.reset();
+        
+        /* 未來 GAS 串接的參考語法：
+        fetch('你的_GAS_Web_App_URL', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(result => {
+            alert("資料已成功寫入 Google Sheets！");
+            document.getElementById('anomalyReportForm').reset();
+        })
+        .catch(error => console.error('Error:', error));
+        */
+    });
+</script>
+
+</body>
+</html>

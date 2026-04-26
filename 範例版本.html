@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPA 需求規格書 - 改良上傳版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            textarea { border: none !important; resize: none; }
+            /* 列印時，如果沒有圖片，隱藏上傳框 */
+            .image-upload-box:not(.has-image) { display: none; }
+        }
+        .image-upload-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .image-upload-box:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .image-upload-box img {
+            max-width: 100%;
+            max-height: 300px;
+            display: none; /* 預設隱藏 */
+            object-fit: contain;
+        }
+        .image-upload-box.has-image img {
+            display: block;
+        }
+        .image-upload-box.has-image .placeholder {
+            display: none;
+        }
+        .btn-upload {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+            pointer-events: none; /* 讓點擊穿透到 parent div */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 py-8 text-gray-800 font-sans">
+
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        
+        <div class="flex justify-between items-center mb-8 border-b pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">RPA 需求規格書 (改良版)</h1>
+                <p class="text-sm text-gray-500 mt-1">如果貼不上去，請點擊框框「選擇檔案」上傳。</p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
+                轉存 PDF
+            </button>
+        </div>
+
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border rounded shadow-sm bg-white">
+            <div class="space-y-3">
+                <div class="font-bold text-lg text-blue-800">步驟 1：MISUMI 登入</div>
+                <textarea class="w-full bg-gray-50 border rounded p-2 text-sm" rows="5">登入 MISUMI Download Site
+帳號：TI2079 / 密碼：P@ssw0rd
+
+例外處理：
+若網頁卡住，重整 2 次。</textarea>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1">畫面截圖</label>
+                <div class="image-upload-box" onclick="triggerFile(this)" onpaste="handlePaste(event, this)" tabindex="0">
+                    <div class="placeholder text-center p-4">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-300 mb-2"></i>
+                        <p class="text-sm text-gray-500 font-bold">點擊這裡選擇圖片</p>
+                        <p class="text-xs text-gray-400 mt-1">或者按 Ctrl+V 貼上截圖</p>
+                        <div class="btn-upload">選擇檔案</div>
+                    </div>
+                    <img src="" alt="Screenshot">
+                    <input type="file" accept="image/*" class="hidden" onchange="handleFileSelect(this)">
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border rounded shadow-sm bg-white">
+            <div class="space-y-3">
+                <div class="font-bold text-lg text-blue-800">步驟 2：Excel 篩選</div>
+                <textarea class="w-full bg-gray-50 border rounded p-2 text-sm" rows="5">打開 CRM 下載的 CSV。
+篩選 AN 欄 = TRUE。
+篩選 D 欄 = TP。</textarea>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1">畫面截圖</label>
+                <div class="image-upload-box" onclick="triggerFile(this)" onpaste="handlePaste(event, this)" tabindex="0">
+                    <div class="placeholder text-center p-4">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-300 mb-2"></i>
+                        <p class="text-sm text-gray-500 font-bold">點擊這裡選擇圖片</p>
+                        <p class="text-xs text-gray-400 mt-1">或者按 Ctrl+V 貼上截圖</p>
+                        <div class="btn-upload">選擇檔案</div>
+                    </div>
+                    <img src="" alt="Screenshot">
+                    <input type="file" accept="image/*" class="hidden" onchange="handleFileSelect(this)">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 觸發隱藏的 input file
+        function triggerFile(div) {
+            const input = div.querySelector('input[type="file"]');
+            input.click();
+        }
+
+        // 處理檔案選擇
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                showImage(input.closest('.image-upload-box'), input.files[0]);
+            }
+        }
+
+        // 處理貼上
+        function handlePaste(e, div) {
+            e.stopPropagation(); // 防止冒泡
+            e.preventDefault();
+            
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image") === 0) {
+                    const blob = items[i].getAsFile();
+                    showImage(div, blob);
+                    return;
+                }
+            }
+            alert("貼上的不是圖片喔！建議使用 Win+Shift+S 截圖後再貼上。");
+        }
+
+        // 顯示圖片邏輯
+        function showImage(div, blob) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = div.querySelector('img');
+                img.src = e.target.result;
+                div.classList.add('has-image');
+            };
+            reader.readAsDataURL(blob);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>維修現場打卡 V3.0</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
+    .card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; text-align: center; }
+    h2 { color: #00B900; margin-bottom: 5px; }
+    #userName { font-size: 16px; color: #666; margin-bottom: 25px; font-weight: bold; }
+    .upload-box { border: 2px dashed #ddd; padding: 20px; border-radius: 10px; margin-bottom: 20px; cursor: pointer; background: #fafafa; }
+    button { padding: 16px; font-size: 18px; background-color: #00B900; color: white; border: none; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px;}
+    button:disabled { background-color: #ccc; }
+    #status { margin-top: 15px; font-size: 14px; color: #555; }
+    .preview { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; }
+    .file-info { margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 8px; font-size: 14px; word-break: break-all; display: none; }
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>維修現場打卡</h2>
+    <div id="userName">確認技師身分中...</div>
+    
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+      <p style="margin:0; color:#888;">📁 點擊選取照片、影片或文件</p>
+      <p style="margin-top:5px; font-size:12px; color:#aaa;">(照片自動壓縮，其他檔案限制 5MB 內)</p>
+      <input type="file" id="fileInput" onchange="handleFile(event)">
+      
+      <img id="imagePreview" class="preview">
+      <div id="fileInfo" class="file-info"></div>
+    </div>
+
+    <button id="submitBtn" onclick="uploadData()" disabled>確認送出</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const myLiffId = "2009667627-4eOl5qm8"; 
+    // ⚠️ 記得替換成你最新部署的網址！
+    const gasApiUrl = "https://script.google.com/macros/s/AKfycbxSgaozY02_CBmtEvlf19tfIDzSeu6w4zw78nmu91qIgO_BUnxXaWJfS4KwLfgrA5dp/exec";
+    
+    let displayName = "";
+    let base64Data = null;
+    let uploadFileName = "";
+    let uploadMimeType = "";
+
+    liff.init({ liffId: myLiffId }).then(() => {
+      if (!liff.isLoggedIn()) liff.login();
+      else {
+        liff.getProfile().then(profile => {
+          displayName = profile.displayName;
+          document.getElementById("userName").innerText = "技師：" + displayName;
+          document.getElementById("submitBtn").disabled = false;
+        });
+      }
+    }).catch(err => console.error("LIFF Error", err));
+
+    function handleFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById("status");
+      const previewImg = document.getElementById("imagePreview");
+      const fileInfo = document.getElementById("fileInfo");
+      
+      // 重置顯示
+      previewImg.style.display = "none";
+      fileInfo.style.display = "none";
+      statusEl.innerHTML = "正在處理檔案...";
+
+      // 如果不是照片，檢查檔案大小 (限制 20 MB)
+      const maxSize = 20 * 1024 * 1024; 
+      if (!file.type.startsWith("image/") && file.size > maxSize) {
+        statusEl.innerHTML = "<b style='color:red;'>❌ 檔案太大！影片或文件請限制在 5MB 以內。</b>";
+        event.target.value = ""; // 清除選取
+        return;
+      }
+
+      uploadFileName = file.name;
+      uploadMimeType = file.type || "application/octet-stream";
+
+      if (file.type.startsWith("image/")) {
+        // --- 處理照片 (進行壓縮) ---
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width, height = img.height;
+            const max = 1024;
+            if (width > height) {
+              if (width > max) { height *= max / width; width = max; }
+            } else {
+              if (height > max) { width *= max / height; height = max; }
+            }
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            base64Data = canvas.toDataURL('image/jpeg', 0.8);
+            uploadFileName = "photo.jpg"; // 強制改檔名
+            uploadMimeType = "image/jpeg";
+            
+            previewImg.src = base64Data;
+            previewImg.style.display = "block";
+            statusEl.innerText = "照片已準備就緒";
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // --- 處理影片或文件 (不壓縮，直接轉 Base64) ---
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          base64Data = e.target.result;
+          fileInfo.innerText = "📁 已準備上傳：\n" + uploadFileName;
+          fileInfo.style.display = "block";
+          statusEl.innerText = "檔案已準備就緒";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function uploadData() {
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.innerText = "上傳中，請勿關閉視窗...";
+      document.getElementById("status").innerText = "正在儲存紀錄，這可能需要幾秒鐘...";
+
+      const payload = {
+        name: displayName,
+        fileB64: base64Data,
+        fileName: uploadFileName,
+        mimeType: uploadMimeType
+      };
+
+      fetch(gasApiUrl, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(result => {
+        if(result.status === "success") {
+          document.getElementById("status").innerHTML = "<b style='color:green;'>✅ " + result.message + "</b>";
+          setTimeout(() => { liff.closeWindow(); }, 2000);
+        } else {
+          throw new Error(result.message);
+        }
+      })
+      .catch(error => {
+        document.getElementById("status").innerHTML = "<b style='color:red;'>❌ " + error.message + "</b>";
+        btn.disabled = false;
+        btn.innerText = "重新送出";
+      });
+    }
+  </script>
+</body>
+</html>

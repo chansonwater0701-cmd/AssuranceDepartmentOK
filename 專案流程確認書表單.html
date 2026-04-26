@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案流程確認書</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4472C4 0%, #5b86d4 100%);
+            color: white;
+            padding: 25px;
+            margin: -30px -30px 30px -30px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            background-color: #E7E6E6;
+            padding: 12px 15px;
+            font-weight: bold;
+            border-left: 5px solid #4472C4;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        .steps-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .steps-table th {
+            background-color: #4472C4;
+            color: white;
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 13px;
+            border: 1px solid #3a5ba0;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .steps-table td {
+            padding: 12px 10px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+            background-color: white;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .screenshot-cell {
+            min-width: 250px;
+        }
+        
+        .steps-table input[type="text"],
+        .steps-table textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .steps-table input[type="text"]:focus,
+        .steps-table textarea:focus {
+            outline: none;
+            border-color: #4472C4;
+            box-shadow: 0 0 0 3px rgba(68, 114, 196, 0.1);
+        }
+        
+        .steps-table textarea {
+            min-height: 80px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        
+        .steps-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .steps-table tr:hover {
+            background-color: #f0f4ff;
+        }
+        
+        .screenshot-input {
+            font-size: 12px;
+            padding: 6px;
+            margin-top: 8px;
+            width: 100%;
+            border: 2px dashed #70AD47;
+            border-radius: 4px;
+            background-color: #f8fff8;
+        }
+        
+        .image-preview {
+            margin-top: 10px;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 250px;
+            border: 2px solid #70AD47;
+            border-radius: 6px;
+            display: block;
+            margin: 10px auto;
+            box-shadow: 0 3px 10px rgba(112, 173, 71, 0.3);
+        }
+        
+        .add-step-btn {
+            background: linear-gradient(135deg, #70AD47 0%, #5a9038 100%);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(112, 173, 71, 0.3);
+        }
+        
+        .add-step-btn:hover {
+            background: linear-gradient(135deg, #5a9038 0%, #4a7a2e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(112, 173, 71, 0.4);
+        }
+        
+        .remove-step-btn {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 7px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .remove-step-btn:hover {
+            background-color: #ff5252;
+            transform: scale(1.05);
+            box-shadow: 0 3px 8px rgba(255, 82, 82, 0.3);
+        }
+        
+        .submit-section {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #4472C4 0%, #365a9c 100%);
+            color: white;
+            padding: 16px 45px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(68, 114, 196, 0.3);
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #365a9c 0%, #2a4a7c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(68, 114, 196, 0.4);
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #70AD47 0%, #5a9038 100%);
+            color: white;
+            padding: 16px 45px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(112, 173, 71, 0.3);
+        }
+        
+        .export-btn:hover {
+            background: linear-gradient(135deg, #5a9038 0%, #4a7a2e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(112, 173, 71, 0.4);
+        }
+        
+        .info-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFC000 0%, #FFD54F 100%);
+            color: #333;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(255, 192, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗂️ 專案流程確認書</h1>
+            <div class="header-info">
+                <span>📅 建立日期：<span id="displayDate">2026-02-12</span></span>
+                <span>📋 版本：<input type="text" id="versionDisplay" value="VER1.0" style="border: none; background: transparent; color: white; width: 80px; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <form id="projectForm">
+            <!-- 基本資訊 -->
+            <div class="section">
+                <div class="section-title">📝 基本資訊</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>建立日期 *</label>
+                        <input type="date" id="createDate" value="2026-02-12" required>
+                    </div>
+                    <div class="form-group">
+                        <label>文件版本 *</label>
+                        <input type="text" id="version" value="VER1.0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>專案名稱 *</label>
+                    <input type="text" id="projectName" placeholder="請輸入專案名稱" required>
+                </div>
+
+                <div class="form-group">
+                    <label>專案目的 *</label>
+                    <textarea id="projectPurpose" placeholder="請描述專案目的與預期效益" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>登入系統 *</label>
+                    <input type="text" id="loginSystems" placeholder="例如：CRM、ERP、Smart 系統等" required>
+                </div>
+
+                <div class="form-group">
+                    <label>系統權限需求 *</label>
+                    <textarea id="systemPermissions" placeholder="請說明所需的系統權限" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>檔案命名規則</label>
+                    <input type="text" id="fileNaming" placeholder="例如：{SO_ID}_{日期}_{文件類型}.pdf">
+                </div>
+
+                <div class="form-group">
+                    <label>作業排程</label>
+                    <input type="text" id="schedule" placeholder="例如：每日 8:00 AM 執行">
+                </div>
+
+                <div class="form-group">
+                    <label>輸出格式</label>
+                    <input type="text" id="outputFormat" placeholder="例如：PDF、Excel、CSV">
+                </div>
+            </div>
+
+            <!-- 流程步驟 -->
+            <div class="section">
+                <div class="section-title">🔄 流程步驟詳細說明</div>
+                
+                <div class="table-container">
+                    <table class="steps-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 3%;">No.</th>
+                                <th style="width: 8%;">系統名稱</th>
+                                <th style="width: 10%;">手順名稱</th>
+                                <th style="width: 18%;">手順詳細</th>
+                                <th style="width: 22%;">截圖</th>
+                                <th style="width: 12%;">輸入(URL)</th>
+                                <th style="width: 15%;">例外處理</th>
+                                <th style="width: 7%;">備註</th>
+                                <th style="width: 5%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stepsBody">
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" placeholder="系統名稱"></td>
+                                <td><input type="text" placeholder="手順名稱"></td>
+                                <td><textarea placeholder="詳細說明步驟內容"></textarea></td>
+                                <td class="screenshot-cell">
+                                    <input type="file" accept="image/*" class="screenshot-input" onchange="previewImage(this)">
+                                    <div class="image-preview"></div>
+                                </td>
+                                <td><input type="text" placeholder="URL或路徑"></td>
+                                <td><textarea placeholder="異常時處理方式"></textarea></td>
+                                <td><input type="text" placeholder="備註"></td>
+                                <td><button type="button" class="remove-step-btn" onclick="removeStep(this)">刪除</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button type="button" class="add-step-btn" onclick="addStep()">➕ 新增步驟</button>
+            </div>
+
+            <!-- 簽核區 -->
+            <div class="section">
+                <div class="section-title">✍️ 簽核資訊</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>申請人 *</label>
+                        <input type="text" id="applicant" placeholder="請輸入申請人姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label>部門 *</label>
+                        <input type="text" id="department" placeholder="請輸入部門名稱" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>申請日期</label>
+                        <input type="date" id="applicationDate" value="2026-02-12">
+                    </div>
+                    <div class="form-group">
+                        <label>聯絡方式</label>
+                        <input type="text" id="contact" placeholder="分機或 Email">
+                    </div>
+                </div>
+
+                <div style="border-top: 2px solid #e0e0e0; margin: 25px 0; padding-top: 25px;">
+                    <h3 style="color: #4472C4; margin-bottom: 15px;">📋 審核流程</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>直屬主管簽名</label>
+                        <input type="text" id="managerSignature" placeholder="主管簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>簽核日期</label>
+                        <input type="date" id="managerDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>部門主管簽名</label>
+                        <input type="text" id="deptManagerSignature" placeholder="部門主管簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>簽核日期</label>
+                        <input type="date" id="deptManagerDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>IT 部門確認簽名</label>
+                        <input type="text" id="itSignature" placeholder="IT 確認簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>確認日期</label>
+                        <input type="date" id="itDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>IT 主管核准</label>
+                        <input type="text" id="itManagerSignature" placeholder="IT 主管簽名">
+                    </div>
+                    <div class="form-group">
+                        <label>核准日期</label>
+                        <input type="date" id="itManagerDate">
+                    </div>
+                </div>
+
+                <div style="border-top: 2px dashed #FFC000; margin: 25px 0; padding-top: 25px;">
+                    <h3 style="color: #FFC000; margin-bottom: 15px;">👔 最高決策層核准</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label style="color: #D35400; font-size: 15px;">💼 老闆 / CEO 最終核准</label>
+                        <input type="text" id="ceoSignature" placeholder="老闆簽名" style="border: 2px solid #FFC000; background-color: #FFFEF5;">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #D35400;">最終核准日期</label>
+                        <input type="date" id="ceoDate" style="border: 2px solid #FFC000; background-color: #FFFEF5;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="color: #D35400;">老闆指示 / 特別交辦事項</label>
+                    <textarea id="ceoNotes" rows="2" placeholder="請填寫老闆的特別指示" style="border: 2px solid #FFC000; background-color: #FFFEF5;"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>審核意見 / 備註</label>
+                    <textarea id="approvalNotes" rows="3" placeholder="請填寫審核意見或特別注意事項"></textarea>
+                </div>
+            </div>
+
+            <!-- 提交按鈕 -->
+            <div class="submit-section">
+                <button type="button" class="submit-btn" onclick="previewForm()">👁️ 預覽表單</button>
+                <button type="button" class="export-btn" onclick="exportToExcel()">📊 匯出資料</button>
+                <button type="submit" class="submit-btn">📤 提交表單</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let stepCounter = 1;
+
+        // 新增步驟
+        function addStep() {
+            stepCounter++;
+            const tbody = document.getElementById('stepsBody');
+            const newRow = tbody.insertRow();
+            
+            newRow.innerHTML = `
+                <td>${stepCounter}</td>
+                <td><input type="text" placeholder="系統名稱"></td>
+                <td><input type="text" placeholder="手順名稱"></td>
+                <td><textarea placeholder="詳細說明步驟內容"></textarea></td>
+                <td class="screenshot-cell">
+                    <input type="file" accept="image/*" class="screenshot-input" onchange="previewImage(this)">
+                    <div class="image-preview"></div>
+                </td>
+                <td><input type="text" placeholder="URL或路徑"></td>
+                <td><textarea placeholder="異常時處理方式"></textarea></td>
+                <td><input type="text" placeholder="備註"></td>
+                <td><button type="button" class="remove-step-btn" onclick="removeStep(this)">刪除</button></td>
+            `;
+            
+            updateStepNumbers();
+        }
+
+        // 刪除步驟
+        function removeStep(btn) {
+            if (confirm('確定要刪除此步驟嗎？')) {
+                const row = btn.closest('tr');
+                row.remove();
+                updateStepNumbers();
+            }
+        }
+
+        // 更新步驟編號
+        function updateStepNumbers() {
+            const rows = document.querySelectorAll('#stepsBody tr');
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+            stepCounter = rows.length;
+        }
+
+        // 圖片預覽
+        function previewImage(input) {
+            const preview = input.parentElement.querySelector('.image-preview');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="新增截圖" onclick="this.parentElement.innerHTML=''">
+                        <div style="text-align: center; margin-top: 8px; font-size: 11px; color: #70AD47; font-weight: bold;">
+                            ✓ ${file.name}
+                        </div>
+                    `;
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 預覽表單
+        function previewForm() {
+            const formData = collectFormData();
+            let preview = `📋 專案流程確認書\n$============================================================\n\n`;
+            preview += `專案名稱：${formData.projectName || '(未填寫)'}\n`;
+            preview += `建立日期：${formData.createDate}\n`;
+            preview += `文件版本：${formData.version}\n\n`;
+            preview += `申請人：${formData.applicant || '(未填寫)'}\n`;
+            preview += `部門：${formData.department || '(未填寫)'}\n\n`;
+            preview += `流程步驟：${formData.steps.length} 個\n`;
+            
+            alert(preview);
+        }
+
+        // 收集表單資料
+        function collectFormData() {
+            return {
+                createDate: document.getElementById('createDate').value,
+                version: document.getElementById('version').value,
+                projectName: document.getElementById('projectName').value,
+                projectPurpose: document.getElementById('projectPurpose').value,
+                applicant: document.getElementById('applicant').value,
+                department: document.getElementById('department').value,
+                steps: Array.from(document.querySelectorAll('#stepsBody tr')).map((row, index) => ({
+                    no: index + 1,
+                    system: row.cells[1].querySelector('input').value,
+                    name: row.cells[2].querySelector('input').value,
+                    detail: row.cells[3].querySelector('textarea').value
+                }))
+            };
+        }
+
+        // 匯出資料
+        function exportToExcel() {
+            const formData = collectFormData();
+            
+            if (!formData.projectName) {
+                alert('請先填寫專案名稱！');
+                return;
+            }
+            
+            let csv = '\ufeff專案流程確認書\n\n';
+            csv += `建立日期,${formData.createDate}\n`;
+            csv += `專案名稱,${formData.projectName}\n`;
+            csv += `文件版本,${formData.version}\n`;
+            csv += `申請人,${formData.applicant}\n`;
+            csv += `部門,${formData.department}\n\n`;
+            csv += 'No.,系統名稱,手順名稱,手順詳細\n';
+            
+            formData.steps.forEach(step => {
+                const detail = (step.detail || '').replace(/"/g, '""');
+                csv += `${step.no},"${step.system}","${step.name}","${detail}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `專案流程確認書_${formData.projectName || '未命名'}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // 表單提交
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = collectFormData();
+            
+            if (!formData.projectName || !formData.applicant || !formData.department) {
+                alert('⚠️ 請填寫必填欄位！\n\n必填項目：\n- 專案名稱\n- 申請人\n- 部門');
+                return;
+            }
+            
+            alert(`✅ 表單已提交！\n\n專案：${formData.projectName}\n申請人：${formData.applicant}\n步驟數：${formData.steps.length}`);
+        });
+
+        // 同步更新版本號
+        document.getElementById('version').addEventListener('input', function() {
+            document.getElementById('versionDisplay').value = this.value;
+        });
+    </script>
+</body>
+</html>
