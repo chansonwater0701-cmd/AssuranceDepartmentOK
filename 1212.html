@@ -1312,7 +1312,7 @@ async function uploadToCloud() {
                 const processed = await processOneFile(file, i);
                 const res = await uploadSingle(processed, data);
                 if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
-            } else if (file.size > 3 * 1024 * 1024) {
+            } else if (file.size > 10 * 1024 * 1024) {
                 // 非圖片且大於 3MB -> 執行分塊上傳
                 const fileUrl = await uploadInChunks(file, data, btn, i);
                 if (fileUrl) uploadedUrls.push(fileUrl);
@@ -1374,7 +1374,7 @@ async function uploadSingle(processedFile, data) {
 // 3. 大檔分塊上傳 API (20MB)
 // ============================================
 async function uploadInChunks(file, data, btn, fileIndex) {
-    const chunkSize = 3 * 1024 * 1024; // 每塊 20MB
+    const chunkSize = 10 * 1024 * 1024; // 每塊 20MB
     const totalChunks = Math.ceil(file.size / chunkSize);
     const fileId = Date.now() + "_" + fileIndex; // 產生唯一識別碼避免衝突
 
@@ -3514,7 +3514,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             function processFileWithV3Logic(file, index) {
                 return new Promise((resolve, reject) => {
                     // 【修改點 1】單一非圖片檔案限制為 20MB
-                    const maxSingleSize = 3 * 1024 * 1024;
+                    const maxSingleSize = 10 * 1024 * 1024;
 
                     if (!file.type.startsWith("image/") && file.size > maxSingleSize) {
                         reject(new Error(`❌ 檔案 ${file.name} 太大！單一非圖片檔案請限制在 20MB 以內。`));
@@ -3709,7 +3709,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     const processed = await processOneFile(file, i);
                     const res = await uploadSingle(processed, data);
                     if (res && res.fileUrl) uploadedUrls.push(res.fileUrl);
-                } else if (file.size > 3 * 1024 * 1024) {
+                } else if (file.size > 10 * 1024 * 1024) {
                     const fileUrl = await uploadInChunks(file, data, btn, i, files.length);
                     if (fileUrl) uploadedUrls.push(fileUrl);
                 } else {
@@ -3771,7 +3771,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     // 3. 大檔分塊上傳 API (純二進制)
     // ============================================
     async function uploadInChunks(file, data, btn, fileIndex, totalFiles) {
-        const chunkSize = 3 * 1024 * 1024;
+        const chunkSize = 10 * 1024 * 1024;
         const totalChunks = Math.ceil(file.size / chunkSize);
         const fileId = Date.now() + "_" + fileIndex;
 
