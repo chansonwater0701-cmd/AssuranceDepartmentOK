@@ -3744,12 +3744,16 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     }
 
     // ============================================
-    // 2. 單一檔案上傳 API (純二進制上傳 + CORS 繞過)
+    // 2. 單一檔案上傳 API (二進制上傳 + 日期格式化)
     // ============================================
     async function uploadSingle(processedFile, data) {
+        // 💡 將日期 2026-04-18 轉換為 20260418 (如果沒填則為空字串，避免報錯)
+        const formattedDate = (data.service_date || '').replace(/-/g, '');
+
         // 利用 URL params 傳遞 metadata
         const params = new URLSearchParams({
             _type: 'file_only',
+            service_date: formattedDate,           // 👈 新增：服務日期 (YYYYMMDD)
             brand: data.brand || '',
             engineer_name: data.engineer_name || '',
             customer_code: data.customer_code || '',
@@ -3768,12 +3772,15 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     }
 
     // ============================================
-    // 3. 大檔分塊上傳 API (純二進制)
+    // 3. 大檔分塊上傳 API (二進制 + 日期格式化)
     // ============================================
     async function uploadInChunks(file, data, btn, fileIndex, totalFiles) {
         const chunkSize = 10 * 1024 * 1024;
         const totalChunks = Math.ceil(file.size / chunkSize);
         const fileId = Date.now() + "_" + fileIndex;
+
+        // 💡 將日期 2026-04-18 轉換為 20260418
+        const formattedDate = (data.service_date || '').replace(/-/g, '');
 
         for (let i = 0; i < totalChunks; i++) {
             btn.innerHTML = `⏳ 傳輸中 (${fileIndex + 1}/${totalFiles}) - 分塊 ${i + 1}/${totalChunks}...`;
@@ -3788,6 +3795,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 mimeType: file.type || "application/octet-stream",
                 chunkIndex: i,
                 totalChunks: totalChunks,
+                service_date: formattedDate,           // 👈 新增：服務日期 (YYYYMMDD)
                 brand: data.brand || '',
                 engineer_name: data.engineer_name || '',
                 customer_code: data.customer_code || ''
