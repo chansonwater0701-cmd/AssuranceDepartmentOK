@@ -3690,7 +3690,12 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         const btn = document.getElementById('btn-upload');
         const originalText = btn.innerHTML;
         btn.disabled = true;
+        // 🌟 【新增防呆】設定離開頁面警告
+        window.onbeforeunload = function() {
+            return "檔案正在上傳中，離開此頁面將導致上傳失敗！";
+        };
 
+        // 請求螢幕保持喚醒
         await requestWakeLock();
 
         try {
