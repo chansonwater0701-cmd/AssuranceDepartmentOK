@@ -1374,7 +1374,7 @@ async function uploadSingle(processedFile, data) {
 // 3. 大檔分塊上傳 API (20MB)
 // ============================================
 async function uploadInChunks(file, data, btn, fileIndex) {
-    const chunkSize = 5 * 1024 * 1024; // 每塊 20MB
+    const chunkSize = 2 * 1024 * 1024; // 每塊 2MB
     const totalChunks = Math.ceil(file.size / chunkSize);
     const fileId = Date.now() + "_" + fileIndex; // 產生唯一識別碼避免衝突
 
@@ -3666,7 +3666,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     // ⭐ 新增：具備「自動重試」功能的超強 Fetch
     // 如果網路斷掉或 Google 拒絕連線，它會自動重試 3 次！
     // ============================================
-    async function fetchWithRetry(url, options, retries = 3, timeoutMs = 30000) {
+    async function fetchWithRetry(url, options, retries = 3, timeoutMs = 120000) {
         for (let i = 0; i < retries; i++) {
             // 每次請求加 timeout（山區訊號差時避免永久掛住）
             const ctrl  = new AbortController();
@@ -3715,6 +3715,11 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             const bgDone = await tryBackgroundUpload(data, files, btn);
             if (bgDone) return; // finally 會跑，但 bgUploadActive=true 所以按鈕不重設
             // ────────────────────────────────────────────────────────────────
+
+            // 偵測到有大於 20MB 檔案退回前景上傳，給予防呆提示
+            if (files.some(f => !f.type.startsWith('image/') && f.size > 20 * 1024 * 1024)) {
+                alert('⚠️ 偵測到大型檔案！\n正在進行「前景高畫質上傳」，請勿切換 App 或關閉螢幕，以免上傳中斷！');
+            }
 
             let uploadedUrls = [];
 
@@ -3931,7 +3936,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     // 3. 大檔分塊上傳 API (二進制 + 日期格式化)
     // ============================================
     async function uploadInChunks(file, data, btn, fileIndex, totalFiles) {
-        const chunkSize = 5 * 1024 * 1024;
+        const chunkSize = 2 * 1024 * 1024; // 每塊 2MB
         const totalChunks = Math.ceil(file.size / chunkSize);
         const fileId = Date.now() + "_" + fileIndex;
 
@@ -3963,7 +3968,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain' },
                 body: chunkBlob
-            }, 3, 90000); // 每塊 90 秒 timeout（5MB 在弱訊號下可能需要 60+ 秒）
+            }, 3, 120000); // 每塊 120 秒 timeout（2MB 在弱訊號下可能需要 60+ 秒）
             
             if (i === totalChunks - 1 && result && result.status === 'success') {
                 return result.fileUrl;

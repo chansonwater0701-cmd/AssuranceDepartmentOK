@@ -6,7 +6,7 @@
 
 const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbysTHCGm62yhuMABCz8a6iyKbFHsn59_BhEpUX87VNgFjoDqt7sURMMlHC5fddAh46jAA/exec';
 const DB_NAME   = 'bg-upload-db';
-const CHUNK_SZ  = 6 * 1024 * 1024; // 6 MB，與前端一致
+const CHUNK_SZ  = 2 * 1024 * 1024; // 2 MB，與前端一致
 
 // ── IndexedDB ─────────────────────────────────────────────────────────────────
 
@@ -209,6 +209,6 @@ self.addEventListener('sync', event => {
 // 頁面在前景時可直接通知 SW 立即開始
 self.addEventListener('message', event => {
   if (event.data === 'PROCESS_NOW') {
-    processQueue();
+    event.waitUntil(processQueue());
   }
 });
