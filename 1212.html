@@ -4270,7 +4270,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             if (['升級裝機'].includes(detailValue)) {
                 modelSelect.innerHTML += '<option value="WD1→WD2">WD1→WD2</option><option value="WD1→WS2-C">WD1→WS2-C</option><option value="WD1→WS2-H">WD1→WS2-H</option><option value="WS1→WD2">WS1→WD2</option><option value="WS1→WS2-C">WS1→WS2-C</option><option value="WS1→WS2-H">WS1→WS2-H</option>';
                 modelCard.classList.remove('hidden-field');
-            } else if (['裝機', '新機異常', '取消', '換機', '更換面板'].includes(detailValue)) {
+            } else if (['裝機', '新機異常', '換機', '更換面板'].includes(detailValue)) {
                 modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option><option value="WS2-H">WS2-H</option><option value="WD2-C">WD2-C</option>';
                 modelCard.classList.remove('hidden-field');
             } else {
