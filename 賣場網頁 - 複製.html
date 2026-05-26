@@ -424,6 +424,106 @@ const serviceResponsibility = {
     "台南": ["台南市", "湖內區", "茄萣區", "茄定區"],
     "高雄": ["高雄市", "高雄縣", "屏東縣", "屏東市"]
 };
+
+const REGION_TO_BRANCH_GROUP = {
+    "台北區": "📍 北區",
+    "桃竹區": "📍 桃竹區",
+    "中嘉區": "📍 中區",
+    "南高區": "📍 南區"
+};
+
+let ALL_BRANCH_GROUPS = [];
+
+function getBranchAreaLabel(storeCityValue) {
+    if (!storeCityValue) return "";
+    const region = storeCityValue.split(/(?=DS)/)[0] || storeCityValue;
+    return REGION_TO_BRANCH_GROUP[region] || "";
+}
+
+function getChainMatcher(chain) {
+    if (chain === '家樂福') {
+        return (name) => name.startsWith('家樂福') || name.startsWith('家福');
+    }
+    if (chain === '大全聯') {
+        return (name) => name.startsWith('大全聯');
+    }
+    if (chain === '大遠百') {
+        return (name) => name.includes('大遠百');
+    }
+    return () => true;
+}
+
+function updateStoreBranches(resetInvalidSelection = true) {
+    const chain = document.getElementById('store_chain').value;
+    const storeCityValue = document.getElementById('store_city').value;
+    const branchSelect = document.getElementById('store_branch_select');
+    const customInput = document.getElementById('store_branch_custom');
+
+    const previousValue = branchSelect.value;
+    const chainMatcher = getChainMatcher(chain);
+    const areaLabel = getBranchAreaLabel(storeCityValue);
+
+    if (ALL_BRANCH_GROUPS.length === 0) {
+        ALL_BRANCH_GROUPS = Array.from(branchSelect.querySelectorAll('optgroup')).map(group => ({
+            label: group.label,
+            options: Array.from(group.querySelectorAll('option')).map(opt => ({
+                value: opt.value,
+                text: opt.textContent || opt.value
+            }))
+        }));
+    }
+
+    branchSelect.innerHTML = '<option value="">請選擇分店門市...</option>';
+
+    ALL_BRANCH_GROUPS.forEach(group => {
+        if (areaLabel && group.label !== areaLabel) return;
+        const filteredOptions = group.options.filter(option => chainMatcher(option.value));
+        if (filteredOptions.length === 0) return;
+
+        const optGroup = document.createElement('optgroup');
+        optGroup.label = group.label;
+        filteredOptions.forEach(option => {
+            const optionEl = document.createElement('option');
+            optionEl.value = option.value;
+            optionEl.text = option.text;
+            optGroup.appendChild(optionEl);
+        });
+        branchSelect.appendChild(optGroup);
+    });
+
+    const customOption = document.createElement('option');
+    customOption.value = '自己填寫';
+    customOption.text = '✏️ 自己填寫...';
+    branchSelect.appendChild(customOption);
+
+    const stillExists = Array.from(branchSelect.options).some(opt => opt.value === previousValue);
+    if (!resetInvalidSelection && stillExists) {
+        branchSelect.value = previousValue;
+    } else if (stillExists) {
+        branchSelect.value = previousValue;
+    } else {
+        branchSelect.value = '';
+        customInput.value = '';
+        customInput.style.display = 'none';
+    }
+}
+
+function updateResponsibleHint() {
+    const city = document.getElementById('addr_city').value;
+    const dist = document.getElementById('addr_dist').value;
+    const hintSpan = document.getElementById('store_hint');
+    if (!hintSpan) return;
+
+    if (!city) {
+        hintSpan.innerHTML = '';
+        return;
+    }
+
+    const responsible = getResponsibleStore(city, dist || '');
+    hintSpan.innerHTML = responsible
+        ? `👉 由【${responsible}】負責`
+        : '👉 查無負責門市';
+}
 // 1. 處理市內電話格式：(XX) XXXX-XXXX
     document.getElementById('landline_phone').addEventListener('input', function (e) {
         // 將非數字的字元清空
@@ -475,22 +575,11 @@ function getResponsibleStore(city, dist) {
 // 監聽縣市與區域變動，將結果安靜地顯示在文字旁邊
 document.addEventListener('change', function(e) {
     if (e.target && (e.target.id === 'addr_dist' || e.target.id === 'addr_city')) {
-        const city = document.getElementById('addr_city').value;
-        const dist = document.getElementById('addr_dist').value;
-        const hintSpan = document.getElementById('store_hint');
-        
-        if (!hintSpan) return;
-        if (!dist || !city) {
-            hintSpan.innerHTML = "";
-            return;
-        }
+        updateResponsibleHint();
+    }
 
-        const responsible = getResponsibleStore(city, dist);
-        if (responsible) {
-            hintSpan.innerHTML = `👉 由【${responsible}】負責`;
-        } else {
-            hintSpan.innerHTML = `👉 查無負責門市`;
-        }
+    if (e.target && (e.target.id === 'store_chain' || e.target.id === 'store_city')) {
+        updateStoreBranches(true);
     }
 });
 
@@ -513,6 +602,7 @@ document.addEventListener('change', function(e) {
                 option.value = dist; option.text = dist; distSelect.add(option);
             });
         }
+        updateResponsibleHint();
     }
 
     // --- 控制「分店」下拉選單 ---
@@ -789,11 +879,6 @@ function validateForm(data) {
             return false;
         }
         
-        if (!data.filter_model) {
-            alert("⚠️ 請選擇或輸入【濾芯】！(若無更換濾芯請選擇「🚫 無濾芯」)");
-            return false;
-        }
-        
         const checkCategoryConfirmation = (categoryData, categoryName) => {
             let unconfirmed = categoryData.filter(item => !item.isNone && !item.checked);
             if (unconfirmed.length > 0) {
@@ -912,6 +997,8 @@ function validateForm(data) {
         });
         
         initAddressSelectors();
+        updateStoreBranches(false);
+        updateResponsibleHint();
     };
     // --- 🧑‍💼 員工資料庫 (請在此處設定你們的編號與姓名對應) ---
     const employeeDB = {
