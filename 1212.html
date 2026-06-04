@@ -4217,7 +4217,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 detailSelect.innerHTML += '<option value="一般裝機">一般裝機</option><option value="全戶裝機">全戶裝機</option><option value="取消">取消</option>';
                 detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
             } else if (item === '維修') {
-                detailSelect.innerHTML += '<option value="一般維修">一般維修</option><option value="全戶維修">全戶維修</option><option value="取消">取消</option>';
+                detailSelect.innerHTML += '<option value="一般維修">一般維修</option><option value="全戶維修">全戶維修</option><option value="托修">托修</option><option value="取消">取消</option>';
                 detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
             } else if (item === '售服') {
                 detailSelect.innerHTML += '<option value="一般場勘">一般場勘</option><option value="全戶場勘">全戶場勘</option><option value="空值">空值(手動輸入)</option><option value="取消">取消</option>';
@@ -4344,6 +4344,16 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-inspection-result','card-is-payment','card-machine-type',
                 ]);
             } else if (detail === '全戶維修') {
+                currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
+                showCards([
+                    'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',' card-machine-serial' , 'card-photo-upload',                       
+                     'card-customer-code',  'card-wp-customer','card-app',                    
+                    'card-repair-reason','card-actual-reason',
+                    'card-leak-reason','card-parts-payment',
+                    'card-pressure-pump','card-wp-note','card-handling',
+                    'card-inspection-result','card-is-payment','card-machine-serial','card-machine-type',
+                ]);
+                } else if (detail === '托修') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
                 showCards([
                     'card-name', 'card-invoice-number', 'card-service-date', 'card-customer',' card-machine-serial' , 'card-photo-upload',                       
