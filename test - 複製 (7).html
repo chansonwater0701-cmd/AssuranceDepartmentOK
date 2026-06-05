@@ -2072,7 +2072,7 @@ const repairData = {
     "parts": "落實檢查水路是否安裝正確"
   }
 ],
-  "全戶軟水-顯示問題": [
+  "顯示問題": [
     {
       "category": "顯示問題",
       "code": "1",
@@ -2139,6 +2139,68 @@ const repairData = {
     {
       "category": "顯示問題",
       "code": "10",
+      "symptom": "螢幕顯示 signal error（訊號錯誤）",
+      "checks": "A. 顯示與控制板連接線損壞\nB. 主控板損壞",
+      "parts": "A. 請客戶重新拔掉電源重新上電，一樣無訊號先更換顯示面板連接線，沒用再更換顯示面板\nB. 更換主控板"
+    }
+  ],
+  "顯示問題": [
+    {
+      "category": "顯示問題",
+      "symptom": "顯示幕亂碼",
+      "checks": "A. 顯示板與控制板連接線故障\nB. 主控板損壞\nC. 變壓器受潮或損壞\nD. 電壓不穩",
+      "parts": "A. 更換連接線\nB. 更換主控板\nC. 檢查或更換變壓器\nD. 檢查電源並調整"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "顯示幕無顯示",
+      "checks": "A. 顯示與控制板連接線損壞\nB. 顯示板損壞或有底燈沒字幕\nC. 主控板損壞\nD. 供電中斷",
+      "parts": "A. 更換連接線\nB. 先更換供電(變壓器)一樣再更換顯示板\nC. 更換主控板\nD. 檢查線路及供電(變壓器)"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "顯示幕顯示 E1 並閃爍（E1 表示定位點丟失的故障）\n先執行手動再生，確認順序是否正確：反洗 > 再生逆洗 > 補水 > 正洗",
+      "checks": "A. 定位板與主控板連接線故障\nB. 定位板損壞\nC. 機械傳動裝置損壞\nD. 主控板損壞\nE. 電機與主控板連線故障\nF. 電機損壞",
+      "parts": "A. 更換控制(軟化)閥與主控版間排線與連接線\nB. 更換控制(軟化)閥\nC. 更換控制(軟化)閥\nD. 更換主控板\nE. 更換控制(軟化)閥、主控版\nF. 更換控制(軟化)閥"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "顯示幕顯示 E2 並閃爍（E2 表示檢測到複數個定位點的故障）",
+      "checks": "A. 定位板上霍爾元件故障\nB. 定位板與主控板連線損壞\nC. 主控板損壞",
+      "parts": "A. 更換控制(軟化)閥\nB. 更換控制(軟化)閥與主控版間排線與連接線\nC. 更換主控板"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "顯示 E3 或 E4 並閃爍（E3 表示記憶晶片故障，E4 表示時鐘晶片故障）",
+      "checks": "A. 主控板損壞",
+      "parts": "A. 更換主控板"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "缺鹽警報沒有聲音",
+      "checks": "A. 主控板損壞",
+      "parts": "A. 更換主控板"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "鹽桶沒有鹽錠但無缺鹽警報（WST-1400）",
+      "checks": "A. 確認吸鹽警報有功能的方式如下（鹽錠沒有超過紅外線盒最底部的情況之下）：\n技師可手動再生\n再生開始\n逆洗（可以直接跳過）\n吸鹽慢洗（必須執行超過3分鐘以上，才可以跳過）\n補水（可以直接跳過）\n正洗（可以直接跳過）\n重複上述執行任務最多6次就可以看到跟聽到低鹽警示了",
+      "parts": "A. 更換WST-1400 紅外線缺鹽警報接線"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "鹽桶沒有鹽錠但無缺鹽警報，或有鹽錠也有水也持續叫缺鹽警報且吸鹽功能正常（WST-1400Pro系列 / WST-2000/WST-2000Pro系列 / WST-3000Pro系列）",
+      "checks": "A. TDS偵測線異常\nTDS小於5000進入缺鹽警示，TDS大於5500不會有缺鹽警示\n使用濃鹽水TDS大於5500確認TDS偵測線，無缺鹽警示\n不管使用濃鹽水或是自來水確認TDS偵測線，均會有缺鹽警示\nB. 主控板損壞",
+      "parts": "A. 更換TDS偵測線\nB. 更換主控板"
+    },
+    {
+      "category": "顯示問題",
+      "symptom": "機器一直重複啟動（WST-1400Pro 4G系列 / WST-2000/WST-2000Pro 4G系列 / WST-3000Pro 4G系列）",
+      "checks": "A. 變壓器受潮或損壞\nB. 將4G模組拔掉後機器不會一直重複啟動：先確認4G模組天線是否脫落，再依序更換料件進行確認\nC. 將4G模組拔掉後機器會一直重複啟動",
+      "parts": "A. 檢查或更換變壓器\nB. 更換4G模組天線；更換IoT模組+天線4G模沿用(ASMMTN0151-0)；更換ESP32藍牙模組(ASMMTN0150-1)\nC. 更換主控板"
+    },
+    {
+      "category": "顯示問題",
       "symptom": "螢幕顯示 signal error（訊號錯誤）",
       "checks": "A. 顯示與控制板連接線損壞\nB. 主控板損壞",
       "parts": "A. 請客戶重新拔掉電源重新上電，一樣無訊號先更換顯示面板連接線，沒用再更換顯示面板\nB. 更換主控板"
@@ -2625,7 +2687,7 @@ const wpPills = document.getElementById('wp-pills');
     let brand = 'qs';
     // 把 WD2 和 WD1/WS1 也加入惟品(wp)的判斷
     if (name === 'WS2' || name === 'WD2' || name === 'WD1/WS1' || name === 'WD-583' || name === 'WS-1153' || name === 'CR-9833') brand = 'wp'; 
-    else if (name === '全戶軟水' || name === '全戶軟水-顯示問題' || name === '顯示問題') brand = 'qh';
+    else if (name === '全戶軟水') brand = 'qh';
 
     // 只有千山跟惟品需要產生物理按鈕，全戶軟水不在此列
     if (brand === 'qs' || brand === 'wp') {
@@ -2680,7 +2742,7 @@ function doSearch(kw) {
         let brand = 'qs';
         // 一樣把 WD2 和 WD1/WS1 加入
         if (r.machine === 'WS2' || r.machine === 'WD2' || r.machine === 'WD1/WS1' || r.machine === 'WD-583' || r.machine === 'WS-1153' || r.machine === 'CR-9833') brand = 'wp';
-        else if (r.machine === '全戶軟水' || r.machine === '全戶軟水-顯示問題' || r.machine === '顯示問題') brand = 'qh';
+        else if (r.machine === '全戶軟水') brand = 'qh';
 
         // 判定是否符合機台篩選條件
         if (brand === 'qs' && currentQsMachine !== 'all' && r.machine !== currentQsMachine) return;
@@ -2770,9 +2832,7 @@ function renderRepairList(containerId, items, kw, brand) {
             if (brand === 'wp' && currentWpMachine === 'all') showMachinePrefix = true;
             if (brand === 'qh') showMachinePrefix = true;
 
-            const barMachineLabel = (item.machine === '全戶軟水-顯示問題' || item.machine === '顯示問題') ? '顯示問題' : item.machine;
-            const barCategory = (barMachineLabel === (item.category || '')) ? '' : (item.category || '未分類');
-            bar.textContent = (showMachinePrefix ? barMachineLabel + (barCategory ? ' ▸ ' : '') : '') + barCategory;
+            bar.textContent = (showMachinePrefix ? item.machine + ' ▸ ' : '') + (item.category || '未分類');
             list.appendChild(bar);
         }
 
@@ -2796,7 +2856,7 @@ function renderRepairList(containerId, items, kw, brand) {
         }
 
         const symptomDisplay = kw ? highlight(item.symptom.replace(/\\n|\n/g,' '), kw) : esc(item.symptom.replace(/\\n|\n/g,' '));
-        const codeLabel = (item.machine === '全戶軟水-顯示問題' || item.machine === '顯示問題') ? '顯示問題' : (item.code ? item.code : (item.category && item.category !== item.symptom ? item.category.replace(/\\n|\n/g,' ') : '—'));
+        const codeLabel = item.code ? item.code : (item.category && item.category !== item.symptom ? item.category.replace(/\\n|\n/g,' ') : '—');
 
         // checks 處理
         let checksDisplay;
@@ -2813,8 +2873,7 @@ function renderRepairList(containerId, items, kw, brand) {
         }
 
         let showBadge = kw || (brand === 'qs' && currentQsMachine === 'all') || (brand === 'wp' && currentWpMachine === 'all') || brand === 'qh';
-        const machineLabel = (item.machine === '全戶軟水-顯示問題' || item.machine === '顯示問題') ? '顯示問題' : item.machine;
-        const machineBadge = showBadge ? `<span class="repair-machine-badge">${esc(machineLabel)}</span>` : '';
+        const machineBadge = showBadge ? `<span class="repair-machine-badge">${esc(item.machine)}</span>` : '';
 
         const el = document.createElement('div');
         // 動態加上你寫好的 wp-list-item, qs-list-item 來套用左邊的藍綠色條
