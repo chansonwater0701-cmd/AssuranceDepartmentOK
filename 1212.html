@@ -3822,7 +3822,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 alert('✅ 全部上傳完成！');
             }
             document.getElementById('btn-reset').style.display = 'flex';
-            document.getElementById('btn-upload').style.display = 'none'; // 👉 必須剛好在這裡！
+            
         } catch (e) {
             bgUploadActive = false;
             alert('❌ ' + (e.message || '上傳失敗，請檢查網路後重試'));
