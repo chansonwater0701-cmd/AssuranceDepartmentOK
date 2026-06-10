@@ -1218,6 +1218,14 @@
                 <option value="無">無</option>
             </select>
         </div>
+        <div class="question-card hidden-field" id="card-wd2-tray">
+            <div class="question-title">安裝盛水盤<span class="required">*</span></div>
+            <select name="wd2_water_tray" id="wd2_water_tray" required>
+                <option value="" disabled selected>請選擇...</option>
+                <option value="是">是</option>
+                <option value="否">否</option>
+            </select>
+        </div>
         <!-- 其他說明事項 (惟品) -->
         <div class="question-card hidden-field" id="card-wp-note">
             <div class="question-title">其他說明事項 </div>
@@ -1235,9 +1243,7 @@
         <!-- ========== 底部操作按鈕 ========== -->
         <div class="button-bar">
             <button class="btn-danger" id="btn-reset" onclick="resetToInitial()" style="display: none;">🔄 重新填寫</button>
-
-            <button class="btn-primary" onclick="copyForLine()">📋 複製LINE格式</button>
-            <button class="btn-secondary" id="btn-upload" onclick="uploadToCloud()">☁️ 上傳資料</button>
+            <button class="btn-primary" id="btn-upload" onclick="uploadToCloud()">☁️ 上傳並複製 LINE 格式</button>
         </div>
 
 
@@ -3692,9 +3698,17 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     async function uploadToCloud() {
         if (!validateForm()) return;
 
+        // ── 複製 LINE 格式到剪貼簿 (必須在此同步執行，否則非同步後會被瀏覽器阻擋) ──
+        const lineText = getLineFormatText();
+        const copySuccess = copyTextToClipboard(lineText);
+
         // ★ 離線早期偵測：不要等 3×timeout 才報錯
         if (!navigator.onLine) {
-            alert('⚠️ 目前無網路連線，請開啟行動數據後再上傳。');
+            if (copySuccess) {
+                alert('✅ 已複製 LINE 格式內容！\n⚠️ 目前無網路連線，請開啟行動數據後再上傳。');
+            } else {
+                alert('⚠️ 目前無網路連線，請開啟行動數據後再上傳。');
+            }
             return;
         }
         const data = getFormData();
@@ -3713,7 +3727,14 @@ async function uploadInChunks(file, data, btn, fileIndex) {
 
             // ── 嘗試背景上傳 (Android Chrome + SyncManager) ─────────────────
             const bgDone = await tryBackgroundUpload(data, files, btn);
-            if (bgDone) return; // finally 會跑，但 bgUploadActive=true 所以按鈕不重設
+            if (bgDone) {
+                if (copySuccess) {
+                    alert('✅ LINE 格式已複製！\n📲 已排程背景上傳，請保持網頁開啟或切換至其他應用。');
+                } else {
+                    alert('📲 已排程背景上傳，請保持網頁開啟或切換至其他應用。');
+                }
+                return; // finally 會跑，但 bgUploadActive=true 所以按鈕不重設
+            }
             // ────────────────────────────────────────────────────────────────
 
             // 偵測到有大於 20MB 檔案退回前景上傳，給予防呆提示
@@ -3751,7 +3772,11 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 body: JSON.stringify({ ...data, _type: 'form_submit' })
             });
 
-            alert('✅ 全部上傳完成！');
+            if (copySuccess) {
+                alert('✅ LINE 格式已複製，且全部上傳完成！');
+            } else {
+                alert('✅ 全部上傳完成！');
+            }
             document.getElementById('btn-reset').style.display = 'block';
 
         } catch (e) {
@@ -4497,7 +4522,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-raw-flow', 'card-raw-temp',
                     'card-principle', 'card-taste', 'card-calibration', 'card-battery',
                     'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-app',
+                    'card-handling', 'card-inspection-result', 'card-app','card-wd2-tray',
                     'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -4544,7 +4569,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage',
                     'card-adjust-power', 'card-power', 'card-raw-flow',
-                    'card-raw-temp', 'card-principle', 'card-taste',
+                    'card-raw-temp', 'card-principle', 'card-taste','card-wd2-tray',
                     'card-calibration', 'card-wp-note','card-original-pressure','card-app',
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -4720,7 +4745,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-是否加裝Filter-C','card-wp-customer', 'card-site-voltage', 'card-adjust-power', 'card-power',
                     'card-principle', 'card-taste', 'card-calibration','card-temp-group',
                     'card-app', 'card-repair-reason', 'card-actual-reason','card-app',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts','card-wd2-tray',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -4806,7 +4831,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-raw-flow', 'card-raw-temp',
                     'card-principle', 'card-taste', 'card-calibration', 'card-battery',
                     'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 
+                    'card-handling', 'card-inspection-result', 'card-wd2-tray',
                      'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -4835,7 +4860,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-temp-group', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts','card-wd2-tray',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -4934,7 +4959,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 currentRequiredIds = [];
                 showCards([
                     'card-name','card-service-date', 'card-invoice-number', 'card-wp-customer','card-customer-code', 'card-photo-upload',
-                    'card-repair-reason', 'card-actual-reason',
+                    'card-repair-reason', 'card-actual-reason','card-wd2-tray',
                     'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
@@ -5006,7 +5031,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-adjust-power', 'card-power', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
                     'card-calibration', 'card-app', 'card-repair-reason',
-                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result','card-wd2-tray',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -5098,7 +5123,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-adjust-power', 'card-power', 'card-raw-flow',
                     'card-raw-temp', 'card-principle', 'card-taste',
                     'card-calibration', 'card-app', 'card-repair-reason',
-                    'card-actual-reason', 'card-handling', 'card-inspection-result',
+                    'card-actual-reason', 'card-handling', 'card-inspection-result','card-wd2-tray',
                     'card-parts-payment', 'card-payment-detail', 'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -5191,7 +5216,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-adjust-power', 'card-power-hot',
                     'card-principle', 'card-taste', 'card-calibration',
                     'card-app', 'card-repair-reason', 'card-actual-reason',
-                    'card-handling', 'card-inspection-result', 'card-replaced-parts',
+                    'card-handling', 'card-inspection-result', 'card-replaced-parts','card-wd2-tray',
                     'card-wp-note'
                 ]);
                 document.getElementById('temp-100').style.display = 'flex';
@@ -5255,7 +5280,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number',
                     'card-machine-serial', 'card-machine-type-repair', 'card-customer-code','card-photo-upload',
-                    'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason', 'card-wp-note','card-machine-type','card-wd2-tray',
                 ]);
             } else if (currentServiceDetail === '拆機' && currentModel === 'WD1') {
                 currentRequiredIds = [];
@@ -5313,7 +5338,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-model','card-photo-upload',
                     'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C','card-machine-type',
-                    'card-customer-code', 'card-wp-customer', 'card-firmware-version',
+                    'card-customer-code', 'card-wp-customer', 'card-firmware-version','card-wd2-tray',
                     'card-raw-tds',  'card-env-temp',
                     'card-temp-group', 'card-site-voltage', 'card-adjust-power',
                     'card-power', 'card-raw-flow', 'card-raw-temp',
@@ -5374,7 +5399,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 currentRequiredIds = [];
                 showCards([
                 'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
-                'card-wp-customer', 'card-repair-reason', 'card-actual-reason',
+                'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-wd2-tray',
                 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '手動輸入' && currentModel === 'WD1') {
@@ -5410,7 +5435,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-photo-upload',
-                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type',
+                    'card-wp-customer', 'card-repair-reason', 'card-actual-reason','card-machine-type','card-wd2-tray',
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '取消' && currentModel === 'WD1') {
@@ -5449,7 +5474,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-customer-code','card-machine-type','card-photo-upload',
                     'card-wp-customer', 
-                    'card-raw-tds','card-site-voltage', 'card-countertop',                    
+                    'card-raw-tds','card-site-voltage', 'card-countertop','card-wd2-tray',                    
                     'card-wp-note'
                 ]);
             }else if (currentServiceDetail === '場勘' && currentModel === 'WD1') {
@@ -5649,8 +5674,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         }
     }
 
-    function copyForLine() {
-        if (!validateForm()) return;
+    function getLineFormatText() {
         let header = currentBrand === '千山' ? `【${currentBrand} ${document.getElementById('service_item').value}回報】` + (document.getElementById('service_detail').value ? ` - ${document.getElementById('service_detail').value}` : '') : `【${currentBrand} ${currentServiceItem}回報】 - ${currentServiceDetail} - ${currentModel}`;
         let text = header + "\n";
         
@@ -5687,13 +5711,32 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             }
             if (value) text += `${label}：${value}\n`;
         });
+        return text;
+    }
 
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
+    function copyTextToClipboard(text) {
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.top = '0';
+            textarea.style.left = '0';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            return true;
+        } catch (err) {
+            console.error('複製失敗:', err);
+            return false;
+        }
+    }
+
+    function copyForLine() {
+        if (!validateForm()) return;
+        const text = getLineFormatText();
+        copyTextToClipboard(text);
         alert('✅ 已複製 LINE 格式內容！');
     }
 
