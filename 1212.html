@@ -424,6 +424,51 @@
             background: linear-gradient(135deg, #c82333, #bd2130);
         }
 
+        /* NEXT 按鈕樣式 */
+        .btn-next {
+            background: #5BC8F5;
+            color: #111;
+            border: 3px solid #111;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 10px 10px 20px;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            box-shadow: 3px 3px 0 #111;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-next::after {
+            content: '→';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #111;
+            color: #5BC8F5;
+            font-size: 19px;
+            font-weight: 900;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .btn-next:hover {
+            background: #3ab8f0;
+            box-shadow: 2px 2px 0 #111;
+            transform: translateY(1px);
+        }
+
+        .btn-next:active {
+            transform: scale(0.97);
+        }
+
         /* =========================================
            7. RWD 手機直向優化
            ========================================= */
@@ -1242,7 +1287,7 @@
         </div>
         <!-- ========== 底部操作按鈕 ========== -->
         <div class="button-bar">
-            <button class="btn-danger" id="btn-reset" onclick="resetToInitial()" style="display: none;">🔄 重新填寫</button>
+            <button class="btn-next" id="btn-reset" onclick="resetToInitial()" style="display: none;">🔄 NEXT</button>
             <button class="btn-primary" id="btn-upload" onclick="uploadToCloud()">☁️ 上傳並複製 LINE 格式</button>
         </div>
 
@@ -1342,12 +1387,11 @@ async function uploadToCloud() {
         });
 
         alert('✅ 全部上傳完成！');
-        document.getElementById('btn-reset').style.display = 'block';
+        document.getElementById('btn-reset').style.display = 'flex';
 
     } catch (e) {
         alert(e.message || '❌ 上傳失敗，請檢查網路後重試');
         console.error(e);
-        document.getElementById('btn-reset').style.display = 'block';
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -3777,14 +3821,13 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             } else {
                 alert('✅ 全部上傳完成！');
             }
-            document.getElementById('btn-reset').style.display = 'block';
-
+            document.getElementById('btn-reset').style.display = 'flex';
+            document.getElementById('btn-upload').style.display = 'none'; // 👉 必須剛好在這裡！
         } catch (e) {
             bgUploadActive = false;
             alert('❌ ' + (e.message || '上傳失敗，請檢查網路後重試'));
             console.error(e);
             // ⚠️ 失敗時不顯示「重新填寫」，讓技師可以直接重按上傳鍵重試
-            // document.getElementById('btn-reset').style.display = 'block';
         } finally {
             releaseWakeLock();
             // bgUploadActive=true 代表 SW 正在背景跑，按鈕由 bgHandler 負責還原
@@ -3861,7 +3904,8 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     btn.innerHTML = btn.dataset.originalText || '上傳';
                     releaseWakeLock();
                     alert('✅ 全部上傳完成！');
-                    document.getElementById('btn-reset').style.display = 'block';
+                    document.getElementById('btn-reset').style.display = 'flex';
+                    document.getElementById('btn-upload').style.display = 'none';
                 } else if (msg.type === 'bg-error') {
                     navigator.serviceWorker.removeEventListener('message', bgHandler);
                     bgUploadActive = false;
@@ -3870,7 +3914,6 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     btn.innerHTML = btn.dataset.originalText || '上傳';
                     releaseWakeLock();
                     alert('❌ 背景上傳失敗，請重新上傳：\n' + msg.error);
-                    document.getElementById('btn-reset').style.display = 'block';
                 }
             });
             // 若頁面仍在前景，通知 SW 立即開始
@@ -4092,7 +4135,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 clearTx.objectStore('results').delete('last');
                 if (result.ok) {
                     alert('✅ 上次的後台上傳已完成！\n（您切換應用程式期間傳送完成）');
-                    document.getElementById('btn-reset').style.display = 'block';
+                    document.getElementById('btn-reset').style.display = 'flex';
                 } else {
                     alert('⚠️ 上次的後台上傳失敗：\n' + result.error + '\n\n請重新填寫並上傳。');
                 }
@@ -4126,7 +4169,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 releaseWakeLock();
                 if (result.ok) {
                     alert('✅ 後台上傳完成！');
-                    document.getElementById('btn-reset').style.display = 'block';
+                    document.getElementById('btn-reset').style.display = 'flex';
                 } else {
                     alert('❌ 後台上傳失敗：\n' + result.error + '\n\n請重新按上傳鍵重試。');
                 }
@@ -5750,7 +5793,18 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         hideAllCards(false);
         document.getElementById('card-brand').classList.remove('hidden-field');
         document.getElementById('btn-reset').style.display = 'none';
+        document.getElementById('btn-upload').style.display = 'block'; // 👉 請在這裡補上這行
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function copyLineFormat() {
+        const text = getLineFormatText();
+        const ok = copyTextToClipboard(text);
+        if (ok) {
+            alert('✅ 已複製 LINE 格式內容！');
+        } else {
+            alert('⚠️ 複製失敗，請手動選取內容複製。');
+        }
     }
 
     function generateMachineInputs() {
