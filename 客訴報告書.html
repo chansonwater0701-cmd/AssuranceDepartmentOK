@@ -28,6 +28,7 @@
     .section td{height:20px;text-align:center;font-weight:700}
     .feedback td{height:222px}
     .fix td{height:64px}
+    .compensation td{height:64px} /* 新增補償內容的高度設定 */
     .decision td{height:80px}
     .review td{height:50px}
     .signature td{height:40px}
@@ -84,7 +85,7 @@
             <td colspan="2" class="field">
               <div class="choices">
                 <label>退機 <input type="checkbox" data-choice="退機"></label>
-                <label>門相 <input type="checkbox" data-choice="門相"></label>
+                <label>維修 <input type="checkbox" data-choice="維修"></label>
                 <label>料件 <input type="checkbox" data-choice="料件"></label>
                 <label>其他 <input type="checkbox" data-choice="其他"></label>
               </div>
@@ -110,6 +111,10 @@
           <tr class="feedback">
             <td class="vlabel">報告書內容<span class="hint">(依照時間順序登至客戶收資料區)</span></td>
             <td colspan="8" class="field"><div class="edit" contenteditable="true" data-field="報告書內容"></div></td>
+          </tr>
+          <tr class="compensation">
+            <td class="vlabel">補償內容</td>
+            <td colspan="8" class="field"><div class="edit" contenteditable="true" data-field="補償內容"></div></td>
           </tr>
           <tr class="fix">
             <td class="vlabel">客戶訴求</td>
