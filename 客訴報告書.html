@@ -28,7 +28,7 @@
     .section td{height:20px;text-align:center;font-weight:700}
     .feedback td{height:222px}
     .fix td{height:64px}
-    .compensation td{height:64px} /* 新增補償內容的高度設定 */
+    .compensation td{height:64px}
     .decision td{height:80px}
     .review td{height:50px}
     .signature td{height:40px}
@@ -58,6 +58,11 @@
 <body>
   <div class="toolbar">
     <button class="primary" id="saveReport" type="button">儲存報告</button>
+    
+    <input type="file" id="uploadFile" style="display: none;">
+    <button type="button" id="triggerUpload">📎 選擇附件</button>
+    <span id="fileLabel" style="font-size:12px; color:#555; max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></span>
+    
     <button type="button" onclick="window.print()">列印</button>
     <button type="button" id="clearForm">清空</button>
     <span id="status" class="status"></span>
@@ -73,7 +78,7 @@
         </colgroup>
         <tbody>
           <tr class="top">
-            <td colspan="3" class="left">填呈日期：<input type="date" id="reportDate" class="inline-date" data-field="填呈日期"></td>
+            <td colspan="3" class="left">填呈日期：<input type="text" id="reportDate" class="inline-date" data-field="填呈日期" style="width: 140px;" readonly></td>
             <td colspan="6" class="left">門市客訴案件：<span id="store" class="inline" contenteditable="true" data-field="門市"></span></td>
           </tr>
           <tr class="tall">
@@ -155,6 +160,49 @@
     const $ = id => document.getElementById(id);
     const statusEl = $('status');
     
+    // ==========================================
+    // 新增：自動填入 YYYYMMDD HHMMSS 時間格式
+    // ==========================================
+    function autoFillDate() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const y = now.getFullYear();
+      const m = pad(now.getMonth() + 1);
+      const d = pad(now.getDate());
+      const h = pad(now.getHours());
+      const min = pad(now.getMinutes());
+      const s = pad(now.getSeconds());
+      $('reportDate').value = `${y}${m}${d} ${h}${min}${s}`;
+    }
+    autoFillDate(); // 網頁一載入就執行
+
+    // ==========================================
+    // 新增：檔案選取與 Base64 轉換處理
+    // ==========================================
+    let fileData = null;
+    let fileName = '';
+    let mimeType = '';
+
+    $('triggerUpload').onclick = () => $('uploadFile').click();
+
+    $('uploadFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        $('fileLabel').textContent = '';
+        fileData = null;
+        return;
+      }
+      $('fileLabel').textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        // 取得檔案的 Base64 編碼，準備傳送給 GAS
+        fileData = ev.target.result.split(',')[1];
+        fileName = file.name;
+        mimeType = file.type;
+      };
+      reader.readAsDataURL(file);
+    });
+
     // 取得欄位值，判斷是 input 還是 div (contenteditable)
     function val(id) {
       const e = $(id);
@@ -179,19 +227,29 @@
       document.querySelectorAll('[contenteditable=true]').forEach(e => e.textContent = '');
       document.querySelectorAll('input[type=checkbox]').forEach(e => e.checked = false);
       document.querySelectorAll('input[type=date]').forEach(e => e.value = '');
+      
+      // 清空時重新抓取當下時間，並清空檔案選擇
+      autoFillDate();
+      $('uploadFile').value = '';
+      $('fileLabel').textContent = '';
+      fileData = null;
       statusEl.textContent = '';
     };
     
-    // 儲存報告至 Google Sheet
+    // 儲存報告至 Google Sheet (包含檔案上傳)
     $('saveReport').onclick = async () => {
-      statusEl.textContent = '儲存中...';
+      statusEl.textContent = '儲存與上傳中，請稍候...';
       
       const payload = {
         date: val('reportDate'),
         store: val('store'),
         customerCode: val('customerCode'),
         customerName: val('customerName'),
-        fields: fields()
+        fields: fields(),
+        // 將檔案資訊加入傳送資料中
+        fileName: fileName,
+        mimeType: mimeType,
+        fileData: fileData
       };
       
       // 必填檢查
@@ -207,19 +265,19 @@
       }
       
       try {
-        // 對應最新版 (第4版) 的 GAS 網址
+        // ※ 記得替換成你最新部署的 GAS Web App 網址
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxX4U94ocZxtp4XXXOlerWcaGrirndERh8KH91O9_UhGbCx5XgjLnl4qCWptd1gST7GlQ/exec';
         
         await fetch(scriptURL, {
           method: 'POST',
-          mode: 'no-cors', // 避免跨網域擋住
+          mode: 'no-cors', 
           headers: {
             'Content-Type': 'text/plain;charset=utf-8' 
           },
           body: JSON.stringify(payload)
         });
         
-        statusEl.textContent = '儲存成功！請檢查總表';
+        statusEl.textContent = '儲存成功！(如有附件已同步上傳)';
       } catch (e) {
         statusEl.textContent = '發生錯誤，請檢查網路狀態';
         console.error(e);
