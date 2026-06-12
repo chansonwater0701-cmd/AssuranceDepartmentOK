@@ -161,7 +161,7 @@
     const statusEl = $('status');
     
     // ==========================================
-    // 新增：自動填入 YYYYMMDD HHMMSS 時間格式
+    // 自動填入 YYYYMMDD HHMMSS 時間格式
     // ==========================================
     function autoFillDate() {
       const now = new Date();
@@ -174,10 +174,10 @@
       const s = pad(now.getSeconds());
       $('reportDate').value = `${y}${m}${d} ${h}${min}${s}`;
     }
-    autoFillDate(); // 網頁一載入就執行
+    autoFillDate(); 
 
     // ==========================================
-    // 新增：檔案選取與 Base64 轉換處理
+    // 檔案選取與 Base64 轉換處理
     // ==========================================
     let fileData = null;
     let fileName = '';
@@ -195,7 +195,6 @@
       $('fileLabel').textContent = file.name;
       const reader = new FileReader();
       reader.onload = function(ev) {
-        // 取得檔案的 Base64 編碼，準備傳送給 GAS
         fileData = ev.target.result.split(',')[1];
         fileName = file.name;
         mimeType = file.type;
@@ -203,32 +202,27 @@
       reader.readAsDataURL(file);
     });
 
-    // 取得欄位值，判斷是 input 還是 div (contenteditable)
     function val(id) {
       const e = $(id);
       return e.tagName === 'INPUT' ? e.value : e.textContent.trim();
     }
     
-    // 收集所有標有 data-field 的資料
     function fields() {
       const o = {};
       document.querySelectorAll('[data-field]').forEach(e => {
         o[e.dataset.field] = e.tagName === 'INPUT' ? e.value : e.textContent.trim();
       });
-      // 收集核取方塊的「原因」
       o['原因'] = Array.from(document.querySelectorAll('[data-choice]:checked'))
         .map(x => x.dataset.choice)
         .join('、');
       return o;
     }
     
-    // 清空表單
     $('clearForm').onclick = () => {
       document.querySelectorAll('[contenteditable=true]').forEach(e => e.textContent = '');
       document.querySelectorAll('input[type=checkbox]').forEach(e => e.checked = false);
       document.querySelectorAll('input[type=date]').forEach(e => e.value = '');
       
-      // 清空時重新抓取當下時間，並清空檔案選擇
       autoFillDate();
       $('uploadFile').value = '';
       $('fileLabel').textContent = '';
@@ -236,7 +230,6 @@
       statusEl.textContent = '';
     };
     
-    // 儲存報告至 Google Sheet (包含檔案上傳)
     $('saveReport').onclick = async () => {
       statusEl.textContent = '儲存與上傳中，請稍候...';
       
@@ -246,13 +239,11 @@
         customerCode: val('customerCode'),
         customerName: val('customerName'),
         fields: fields(),
-        // 將檔案資訊加入傳送資料中
         fileName: fileName,
         mimeType: mimeType,
         fileData: fileData
       };
       
-      // 必填檢查
       const miss = [];
       if (!payload.date) miss.push('填呈日期');
       if (!payload.store) miss.push('門市');
@@ -265,8 +256,8 @@
       }
       
       try {
-        // ※ 記得替換成你最新部署的 GAS Web App 網址
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxX4U94ocZxtp4XXXOlerWcaGrirndERh8KH91O9_UhGbCx5XgjLnl4qCWptd1gST7GlQ/exec';
+        // ★★★ 請替換成你重新部署後取得的最新 GAS Web App 網址 ★★★
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwcQIn7hf81ySm2MrQZYOJmr6wCEU6T9r44kCl9j0LHNPcARCB-XiYoull8RJ5NXNBgmw/exec';
         
         await fetch(scriptURL, {
           method: 'POST',
@@ -277,7 +268,11 @@
           body: JSON.stringify(payload)
         });
         
-        statusEl.textContent = '儲存成功！(如有附件已同步上傳)';
+        statusEl.textContent = '送出成功！請至試算表確認資料是否寫入。';
+        
+        // 可選：成功後清空表單
+        // $('clearForm').click();
+        
       } catch (e) {
         statusEl.textContent = '發生錯誤，請檢查網路狀態';
         console.error(e);
