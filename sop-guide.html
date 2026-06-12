@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統標準作業流程 (SOP) 操作指南</title>
+    <!-- 引入 Mermaid 渲染流程圖 -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        :root {
+            /* 顏色配置設定 */
+            --primary-color: #0066cc; /* 主色調：藍色 */
+            --bg-color: #f5f7fa;
+            --sidebar-width: 280px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', "Microsoft JhengHei", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+        }
+        
+        /* 左側導覽列 Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            border-right: 1px solid #e1e4e8;
+            padding: 30px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+        .sidebar h2 {
+            padding: 0 20px 20px;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid #f0f4f8;
+            margin-bottom: 15px;
+        }
+        .sidebar ul { list-style: none; }
+        .sidebar li a {
+            display: block;
+            padding: 12px 25px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 1.05rem;
+        }
+        .sidebar li a:hover {
+            background: #f0f4f8;
+            color: var(--primary-color);
+            font-weight: bold;
+            border-left: 5px solid var(--primary-color);
+            padding-left: 20px;
+        }
+
+        /* 主內容區 Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 50px;
+            width: calc(100% - var(--sidebar-width));
+            max-width: 1100px;
+        }
+        .page-title {
+            color: #222;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* 區塊樣式 */
+        .section {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 40px;
+            scroll-margin-top: 40px; /* 讓導航跳轉時不會被切到 */
+        }
+        h2 { 
+            color: var(--primary-color); 
+            margin-top: 10px; 
+            margin-bottom: 25px; 
+            border-bottom: 3px solid #f0f4f8; 
+            padding-bottom: 15px; 
+            font-size: 1.8rem;
+        }
+        h3 { 
+            color: #333; 
+            margin-top: 30px; 
+            margin-bottom: 15px; 
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        p, ul, ol { margin-bottom: 15px; font-size: 1.05rem; }
+        ul, ol { padding-left: 25px; }
+        li { margin-bottom: 10px; }
+        
+        /* 圖片/GIF 預留空間 */
+        .img-placeholder {
+            background: #eef2f5;
+            border: 2px dashed #b0c4de;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #555;
+            margin: 25px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+            transition: background 0.3s;
+        }
+        .img-placeholder:hover { background: #e5ebf0; }
+        .img-placeholder span { 
+            font-size: 0.95rem; 
+            color: #777; 
+            font-weight: normal; 
+            margin-top: 10px; 
+        }
+        
+        /* Mermaid 流程圖容器 */
+        .mermaid-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e1e4e8;
+            overflow-x: auto;
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 提示框 */
+        .alert {
+            background: #fff3cd;
+            color: #856404;
+            padding: 18px 20px;
+            border-radius: 8px;
+            border-left: 6px solid #ffeeba;
+            margin: 20px 0;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 左側導覽列 -->
+    <nav class="sidebar">
+        <h2>SOP 操作指南</h2>
+        <ul>
+            <li><a href="#intro">零、新手必看：名詞與流程</a></li>
+            <li><a href="#tech">一、我是「技師」</a></li>
+            <li><a href="#cs">二、我是「客服人員」</a></li>
+            <li><a href="#qa">三、我是「管理 / 品保」</a></li>
+            <li><a href="#rules">四、公司規範看這裡</a></li>
+            <li><a href="#faq">五、新手常見問題</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主內容區 -->
+    <div class="main-content">
+        <h1 class="page-title">新手村指南：系統標準作業流程</h1>
+        <p class="page-subtitle">歡迎加入！如果您是第一次使用本系統，不用擔心，這份指南將帶您一步步熟悉日常工作會用到的所有功能。請依照您的「職務角色」來閱讀對應的章節。</p>
+
+        <!-- 第零章 -->
+        <div id="intro" class="section">
+            <h2>🌟 零、新手必看：基本名詞與系統流程</h2>
+            <p>在開始操作之前，先了解幾個系統中常出現的名詞，會幫助您更快進入狀況：</p>
+            <ul>
+                <li><strong>專案流程確認書</strong>：每接下一個客戶的案子，系統裡就會建立一份對應的確認書，這就像是這份工作的「履歷表」，用來記錄這個案子從頭到尾的所有進度。</li>
+                <li><strong>簡易報告書</strong>：當技師到現場完成維修或保養後，用來讓客戶在手機或平板上「電子簽名」確認完工的單據。</li>
+                <li><strong>待派工 / 派單</strong>：客服接到客人電話後，會在系統建立紀錄（此時狀態為待派工），接著主管會把這個任務分配給特定的技師（這就叫派單）。</li>
+            </ul>
+
+            <h3>🗺️ 系統整體運作流程圖</h3>
+            <p>為了讓您有更清楚的「大局觀」，這是一份客戶案件從「進線」到「結案」的完整旅程：</p>
+            
+            <!-- Mermaid 語法區塊 -->
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    graph TD
+                    A([1. 客戶進線報修/安裝]) -->|電話/文字| B(客服部：系統建檔)
+                    B --> C{案件狀態：待派工}
+                    C -->|主管分配| D(技師：接收派單)
+                    D --> E[技師前往現場：拍照打卡]
+                    E --> F[技師完工：填寫簡易報告書]
+                    F --> G([客戶：電子簽名確認])
+                    G --> H{專案流程推進}
+                    H -->|各階段完成| I(品保部：審核資料)
+                    I --> J([結案])
+
+                    classDef customer fill:#f9d0c4,stroke:#333,stroke-width:2px;
+                    classDef cs fill:#fff2cc,stroke:#333,stroke-width:2px;
+                    classDef tech fill:#dae8fc,stroke:#333,stroke-width:2px;
+                    classDef qa fill:#d5e8d4,stroke:#333,stroke-width:2px;
+                    
+                    class A,G customer;
+                    class B,C cs;
+                    class D,E,F tech;
+                    class I,J qa;
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一章 -->
+        <div id="tech" class="section">
+            <h2>👷‍♂️ 一、我是「技師」：我的一天該怎麼做？</h2>
+            <p>身為技師，您的主要工具是<strong>手機版網頁</strong>，請跟著以下步驟完成一天的任務：</p>
+            
+            <h3>☀️ 早上：出勤打卡</h3>
+            <ol>
+                <li>打開手機瀏覽器，進入系統網址並登入您的帳號。</li>
+                <li>在首頁點選大大的 <strong>「上班打卡」</strong> 按鈕。</li>
+            </ol>
+            
+            <!-- 圖片預留區 -->
+            <div class="img-placeholder">
+                📸 圖片預留區：[首頁打卡按鈕截圖]
+                <span>(請開發者將圖片替換此處，例如：&lt;img src="images/checkin.png" style="max-width: 100%;"&gt;)</span>
+            </div>
+            
+            <p>3. 系統會自動記錄您的時間。</p>
+
+            <h3>🚗 白天：接單與現場施作</h3>
+            <ol>
+                <li><strong>查看今日任務</strong>：點擊選單中的 <strong>「今日任務」</strong>，您會看到今天預計要去哪些客戶家。</li>
+                <li><strong>抵達現場拍照</strong>：到達客戶家時，點進該任務，第一步請先點選 <strong>「拍照上傳」</strong> 紀錄現場初始狀況。（系統會自動幫您的照片加上時間與地點浮水印）。</li>
+            </ol>
+            
+            <!-- 圖片預留區 -->
+            <div class="img-placeholder">
+                📸 圖片預留區：[任務詳情與拍照按鈕截圖]
+                <span>(建議使用紅框標示出「拍照上傳」按鈕的位置)</span>
+            </div>
+            
+            <ol start="3">
+                <li><strong>完成工作與客戶簽名</strong>：
+                    <ul>
+                        <li>工作完成後，點擊 <strong>「簡易報告書」</strong>。</li>
+                        <li>勾選您今天做了哪些保養或維修項目。</li>
+                        <li>將手機交給客戶，請客戶在畫面上 <strong>直接手指簽名</strong>，最後點擊送出即可！</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <!-- GIF預留區 -->
+            <div class="img-placeholder">
+                🎥 GIF 動圖預留區：[客戶簽名操作短片]
+                <span>(建議錄製 3~5 秒的操作動圖，讓技師知道簽名板在哪裡，新人一看就懂)</span>
+            </div>
+
+            <h3>🌙 傍晚：下班打卡</h3>
+            <ol>
+                <li>一天的任務都完成後，回到系統首頁。</li>
+                <li>點選 <strong>「下班打卡」</strong> 按鈕，辛苦了！</li>
+            </ol>
+        </div>
+
+        <!-- 第二章 -->
+        <div id="cs" class="section">
+            <h2>🎧 二、我是「客服人員」：如何接單與轉派任務？</h2>
+            <p>身為客服，您是第一線接觸客戶的人員，主要使用<strong>電腦版網頁</strong>操作：</p>
+
+            <h3>📞 步驟 1：接聽來電與建檔</h3>
+            <ol>
+                <li>點擊左側選單的 <strong>「客服部」</strong>。</li>
+                <li>點選右上角的 <strong>「＋新增案件」</strong> 按鈕。</li>
+            </ol>
+            
+            <!-- 圖片預留區 -->
+            <div class="img-placeholder">
+                📸 圖片預留區：[新增案件表單截圖]
+                <span>(建議用紅框標示出哪些是必填欄位，例如姓名、電話)</span>
+            </div>
+            
+            <ol start="3">
+                <li>依序填寫客戶的姓名、電話與反映的問題（例如：機器漏水、需要換濾芯）。</li>
+            </ol>
+
+            <h3>🗣️ 步驟 2：使用「語音轉文字」小工具 (小撇步)</h3>
+            <div class="alert">
+                💡 <strong>效率提升：</strong> 如果客戶講了很多，或是您手邊有電話錄音檔，請點擊旁邊的 <strong>「語音轉文字」</strong> 功能。上傳音檔後系統會幫您打好逐字稿，您可以直接貼上，大幅節省打字時間！
+            </div>
+
+            <h3>➡️ 步驟 3：狀態更改為「待派工」</h3>
+            <ol>
+                <li>紀錄完成後，請將案件狀態下拉選擇為 <strong>「待派工」</strong> 並存檔。</li>
+                <li>這樣技師主管就能在系統裡看到這個案件，並安排對應的技師過去處理了。</li>
+            </ol>
+        </div>
+
+        <!-- 第三章 -->
+        <div id="qa" class="section">
+            <h2>📋 三、我是「管理 / 品保人員」：進度追蹤與報表</h2>
+            
+            <h3>🔍 追蹤專案進度</h3>
+            <ol>
+                <li>進入左側選單的 <strong>「專案流程確認書」</strong>。</li>
+                <li>這裡會顯示所有進行中的案子。您需要確認每個階段（派工、備料、施工、驗收）是否有落實。</li>
+                <li>審核無誤後，由品保部將狀態更改為 <strong>「結案」</strong>。</li>
+            </ol>
+
+            <h3>📊 匯出 / 匯入 Excel 資料</h3>
+            <ul>
+                <li><strong>如何看報表</strong>：點擊「報表中心」，選擇需要的日期區間，點選 <strong>「匯出 Excel」</strong>。</li>
+                <li><strong>如何批次建檔</strong>：如果手邊有很多舊資料要一次放進系統，請將 Excel 存成 ZIP 壓縮檔。點擊 <strong>「批次上傳」</strong>，系統就會幫您自動解壓縮並建檔。</li>
+            </ul>
+        </div>
+
+        <!-- 第四章 -->
+        <div id="rules" class="section">
+            <h2>🚨 四、公司規範看這裡！</h2>
+            <p>為確保服務品質與品牌形象，請全體同仁務必遵守以下規範：</p>
+            <ul>
+                <li><strong>千山品牌注意事項</strong>：包含標準服裝與濾芯更換SOP，請點擊左側「千山布達注意事項」查閱。</li>
+                <li><strong>惟品品牌注意事項</strong>：高端機種的特殊安裝手冊，請點擊「惟品布達注意事項」查閱。</li>
+            </ul>
+        </div>
+
+        <!-- 第五章 -->
+        <div id="faq" class="section">
+            <h2>❓ 五、新手常見問題 (FAQ)</h2>
+            
+            <h3>Q1：網頁看起來怪怪的，有字疊在一起或是版面跑掉怎麼辦？</h3>
+            <p>A：通常是因為瀏覽器記憶了舊的資料。請按鍵盤上的 <code>F5</code> (或 <code>Ctrl+R</code>) 重新整理網頁。如果是手機版，請將網頁往下拉進行重新整理。</p>
+
+            <h3>Q2：忘記密碼或是帳號登不進去怎麼辦？</h3>
+            <p>A：請點選登入頁面的「忘記密碼」並依指示重設。若帳號被鎖住，請直接聯繫資訊部協助解鎖。</p>
+
+            <h3>Q3：到客戶家發現地下室「沒有網路訊號」，無法拍照打卡怎麼辦？</h3>
+            <p>A：遇到無訊號狀況，請先用手機內建相機將現場狀況拍下來。等回到有網路的地方後，再進入系統補傳照片與填寫表單，並在備註欄註明「因現場無網路故補登」即可。</p>
+
+            <h3>Q4：到了現場客戶卻不在家、電話也打不通怎麼辦？</h3>
+            <p>A：請在現場門口拍一張照片（證明您有準時抵達）。接著在系統任務中點選「異常回報」，並立刻通知客服部，由客服後續與客戶重新約定時間，您不需在現場死等。</p>
+
+            <h3>Q5：表單填好卻按不了「送出」？</h3>
+            <p>A：請往上滑，檢查是不是有標示 <strong>紅色星號 (*)</strong> 的必填格子忘記填了。通常補填完畢按鈕就會亮起。</p>
+
+            <h3>Q6：系統出現沒看過的英文錯誤訊息怎麼辦？</h3>
+            <p>A：請勿慌張，先將錯誤畫面 <strong>截圖</strong>（畫面需包含手機上方或電腦右下角的時間），並傳給資訊部或您的主管處理，工程師會依照截圖找出原因。</p>
+
+            <h3>Q7：我不小心上傳了錯誤的現場照片，可以刪除重傳嗎？</h3>
+            <p>A：在「送出表單前」，您可以點擊圖片右上角的「X」或垃圾桶圖示刪除重傳。若您已經按了送出且進入下一階段，請聯繫主管或品保部協助將單據「退回」，您才能重新修改。</p>
+
+            <h3>Q8：客戶趕時間，不想在手機上電子簽名怎麼辦？</h3>
+            <p>A：請委婉向客戶說明這是保障雙方權益的必要流程。若客戶堅決拒簽，請在簽名欄位畫一個「X」，並在表單備註欄詳細寫下「客戶趕時間拒絕簽名」，以免後續產生客訴爭議。</p>
+
+            <h3>Q9：系統可以幫我導航到客戶家嗎？</h3>
+            <p>A：可以的！在您的「今日任務」列表或是任務詳細頁面中，客戶地址旁邊會有一個藍色的「地圖圖示」。點擊後會自動幫您跳轉打開手機的 <strong>Google Maps</strong> 進行路線規劃。</p>
+
+            <h3>Q10：【管理人員專用】批次上傳 Excel 壓縮檔一直顯示失敗？</h3>
+            <p>A：請檢查兩件事：第一，壓縮檔內的 Excel 副檔名必須是 <code>.xlsx</code>；第二，請確認壓縮時沒有把外層資料夾一起壓縮，只選擇檔案進行壓縮。若是 Mac 電腦，請注意不要夾帶隱藏檔。</p>
+
+            <h3>Q11：我覺得系統某個按鈕不好用，可以建議修改嗎？</h3>
+            <p>A：非常歡迎！我們希望讓系統越來越好用。請將您的建議截圖，並具體說明「希望改成什麼樣子」，提交給您的部門主管，我們會定期統整並優化系統！</p>
+
+            <h3>Q12：現場臨時需要額外加裝零件或耗材，單據要怎麼改？</h3>
+            <p>A：請在「簡易報告書」中的「耗材/零件清單」區塊點選新增，將實際用到的零件補上去。若表單已經送出才發現漏填，請聯絡客服人員在後台幫您人工備註，以確保庫存數量正確。</p>
+
+            <h3>Q13：為什麼我的手機網頁無法拍照，相機一直打不開？</h3>
+            <p>A：這通常是因為您不小心按到了「拒絕使用相機」。<br>
+            - <strong>iPhone (Safari)</strong>：請到手機的「設定」>「Safari」>「相機」，改成「允許」。<br>
+            - <strong>Android (Chrome)</strong>：點擊網址列旁邊的「鎖頭圖示」>「權限」，將相機開啟即可。</p>
+
+            <h3>Q14：如果我今天臨時請假或找人代班，系統裡的單子怎麼辦？</h3>
+            <p>A：系統目前不開放技師自行把單子轉給別人。請您務必立刻通知「直屬主管」，由主管在系統後台將您的任務「重新派工」給代班的同事，同事的手機裡才會出現這些任務。</p>
+
+            <h3>Q15：【客服專用】不小心把單子派給 A 技師，但其實應該是 B 技師去？</h3>
+            <p>A：只要該任務的狀態還是「已派工」且技師尚未點選「抵達現場」，您都可以隨時進到該案件中，點擊「重新派工」並選擇正確的技師，系統會自動把單子移轉過去。</p>
+
+            <h3>Q16：【賣場管理】我在後台更新了商品圖片，為什麼網頁上看起來還是舊的？</h3>
+            <p>A：這是因為網頁「快取（Cache）」的關係。請您按 `Ctrl + F5` 強制重新整理，或是開一個「無痕視窗」查看，通常就能看到最新的圖片了。</p>
+
+            <h3>Q17：客戶詢問在平版上簽名，個資安不安全？</h3>
+            <p>A：請安心向客戶保證，本系統採用企業級加密傳輸。客戶的電話、地址等個資僅限「當日負責的技師」與「內部客服主管」可見，完工後技師端也無法隨意調閱歷史個資，絕對保障客戶隱私。</p>
+
+            <h3>Q18：【系統運作】如果在地下室或偏鄉沒有網路，打字的資料會不見嗎？</h3>
+            <p>A：系統具備基礎的「離線暫存」機制。若您在沒網路的地方填寫表單，請<strong>不要關閉瀏覽器分頁</strong>。當您走到有網路的地方時，只要重新點擊送出，資料就會正常傳回伺服器。</p>
+
+            <h3>Q19：【系統運作】為什麼我只是去吃個飯，回來系統就被自動登出了？</h3>
+            <p>A：為了保護公司機密資料，系統設有「閒置自動登出」機制（例如畫面靜止超過 30 分鐘）。遇到此狀況，請直接重新輸入帳號密碼登入即可，不用擔心帳號壞掉。</p>
+
+            <h3>Q20：【系統運作】點擊「匯出報表」時，畫面一直轉圈圈是當機了嗎？</h3>
+            <p>A：若您選擇的日期區間很長（例如匯出一整年的資料），伺服器需要較多時間從幾萬筆資料中撈取並生成 Excel。請耐心等候 1~2 分鐘，<strong>請勿連續狂點按鈕</strong>，以免造成系統重複執行而真的卡死。</p>
+
+            <h3>Q21：【系統運作】我可以用手機跟公司的平板「同時登入」同一個帳號嗎？</h3>
+            <p>A：可以的，但系統會以「最後按送出的那台設備資料」為準。為了避免資料互相覆蓋（例如手機打了一半、平板又去改），建議施作同一張單據時，固定使用同一台設備操作。</p>
+
+            <h3>Q22：【系統運作】以前的舊單據或是歷史資料會被系統自動刪除嗎？</h3>
+            <p>A：不會的。系統每天都會進行自動異地備份，所有完成結案的「專案流程確認書」都會永久封存於雲端資料庫。若遇到兩三年前的客訴，只要有權限的管理員隨時都能調閱出來。</p>
+
+            <h3>Q23：【系統運作】如果遇到「系統維護中」的畫面怎麼辦？</h3>
+            <p>A：資訊部通常會在半夜進行系統升級。若您在正常上班時間看到此畫面，代表系統正在進行緊急修復。請先將工作內容記在紙本或手機備忘錄，待內部群組公告維護完成後，再進系統補登即可。</p>
+        </div>
+    </div>
+
+</body>
+</html>
