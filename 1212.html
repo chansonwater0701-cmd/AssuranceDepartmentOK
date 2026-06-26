@@ -1180,10 +1180,33 @@
             <textarea name="handling" rows="3" placeholder="請輸入處理方式"></textarea>
         </div>
 
-        <!-- 檢修結果 (維修專用) -->
         <div class="question-card hidden-field" id="card-inspection-result">
             <div class="question-title">檢修結果<span class="required">*</span></div>
-            <textarea name="inspection_result" rows="3" placeholder="請輸入檢修結果"></textarea>
+            <select name="inspection_result" id="inspection_result_select" onchange="handleInspectionResultChange(this.value)">
+                <option value="">請選擇</option>
+                <option value="完修">完修</option>
+                <option value="未完修">未完修</option>
+                <option value="拆機店修">拆機店修</option>
+                <option value="其他">其他</option>
+            </select>
+
+            <!-- 未完修：下次無誤時間（分隔線同一格） -->
+            <div id="sub-incomplete" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid #e0e0e0;">
+                <div style="font-size:14px; font-weight:600; color:#555; margin-bottom:8px;">📅 下次無誤時間</div>
+                <input type="date" name="inspection_next_date" id="inspection_next_date" style="width:100%; box-sizing:border-box;">
+            </div>
+
+            <!-- 拆機店修：覆機時間 -->
+            <div id="sub-shoprepair" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid #e0e0e0;">
+                <div style="font-size:14px; font-weight:600; color:#555; margin-bottom:8px;">📅 覆機時間</div>
+                <input type="date" name="inspection_return_date" id="inspection_return_date" style="width:100%; box-sizing:border-box;">
+            </div>
+
+            <!-- 其他：說明 -->
+            <div id="sub-other" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid #e0e0e0;">
+                <div style="font-size:14px; font-weight:600; color:#555; margin-bottom:8px;">📝 說明</div>
+                <textarea name="inspection_other_note" id="inspection_other_note" rows="2" placeholder="請輸入說明" style="width:100%; box-sizing:border-box;"></textarea>
+            </div>
         </div>
 
         <!-- 更換零件 (維修專用) -->
@@ -3694,7 +3717,15 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             console.warn('無法取得螢幕喚醒鎖定:', err.name, err.message);
         }
     }
-
+    function handleInspectionResultChange(val) {
+        document.getElementById('sub-incomplete').style.display  = (val === '未完修')  ? 'block' : 'none';
+        document.getElementById('sub-shoprepair').style.display  = (val === '拆機店修') ? 'block' : 'none';
+        document.getElementById('sub-other').style.display       = (val === '其他')    ? 'block' : 'none';
+        // 切換時清空其他子欄位
+        if (val !== '未完修')  document.getElementById('inspection_next_date').value = '';
+        if (val !== '拆機店修') document.getElementById('inspection_return_date').value = '';
+        if (val !== '其他')    document.getElementById('inspection_other_note').value = '';
+    }
     function releaseWakeLock() {
         if (wakeLock !== null) {
             wakeLock.release().then(() => {
