@@ -5722,11 +5722,22 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             serialInputs.forEach(sInput => { if (sInput.value.trim()) finalSerialValues.push(sInput.value.trim()); });
             if (finalSerialValues.length > 0) data['machine_serial'] = finalSerialValues.join(' \\ ');
         }
-
+                // 合併檢修結果子欄位
+        const irVal = document.getElementById('inspection_result_select')?.value || '';
+        if (irVal === '未完修') {
+            const d = document.getElementById('inspection_next_date').value;
+            if (d) data['inspection_result'] = '未完修 / 下次無誤時間：' + d;
+        } else if (irVal === '拆機店修') {
+            const d = document.getElementById('inspection_return_date').value;
+            if (d) data['inspection_result'] = '拆機店修 / 覆機時間：' + d;
+        } else if (irVal === '其他') {
+            const n = document.getElementById('inspection_other_note').value.trim();
+            if (n) data['inspection_result'] = '其他 / 說明：' + n;
+        }
         data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
         data['service_item'] = document.getElementById('service_item').value || "";
         data['service_detail'] = document.getElementById('service_detail').value || "";
-        return data;
+        return data; 
     }
 
     function handlePrincipleChange() {
