@@ -794,6 +794,32 @@
         <div class="question-card hidden-field" id="card-install-location">
             <div class="question-title">安裝位置<span class="required">*</span></div>
             <input type="text" name="install_location" placeholder="請輸入安裝位置">
+
+            <div class="question-title" style="margin-top: 15px;">是否可以安裝<span class="required">*</span></div>
+            <select name="can_install" id="can_install" onchange="handleCanInstallChange()">
+                <option value="" disabled selected>請選擇...</option>
+                <option value="是">是</option>
+                <option value="否">否</option>
+                <option value="其他">其他</option>
+            </select>
+
+            <!-- 是 -> 預約安裝時間 -->
+            <div class="sub-field hidden-field" id="sub-install-date">
+                <div class="question-title" style="margin-top: 15px;">預約安裝時間<span class="required">*</span></div>
+                <input type="date" name="install_date">
+            </div>
+
+            <!-- 否 -> 原因說明 -->
+            <div class="sub-field hidden-field" id="sub-cannot-install-reason">
+                <div class="question-title" style="margin-top: 15px;">原因說明<span class="required">*</span></div>
+                <textarea name="cannot_install_reason" placeholder="請輸入原因說明"></textarea>
+            </div>
+
+            <!-- 其他 -> 說明 -->
+            <div class="sub-field hidden-field" id="sub-install-other-note">
+                <div class="question-title" style="margin-top: 15px;">說明<span class="required">*</span></div>
+                <textarea name="install_other_note" placeholder="請輸入說明"></textarea>
+            </div>
         </div>
 
 
@@ -4341,7 +4367,23 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         }
         renumberQuestions();
     }
+    function handleCanInstallChange() {
+    const value = document.getElementById('can_install').value;
 
+    // 先全部隱藏
+    document.getElementById('sub-install-date').classList.add('hidden-field');
+    document.getElementById('sub-cannot-install-reason').classList.add('hidden-field');
+    document.getElementById('sub-install-other-note').classList.add('hidden-field');
+
+    // 依選項顯示對應子欄位
+    if (value === '是') {
+        document.getElementById('sub-install-date').classList.remove('hidden-field');
+    } else if (value === '否') {
+        document.getElementById('sub-cannot-install-reason').classList.remove('hidden-field');
+    } else if (value === '其他') {
+        document.getElementById('sub-install-other-note').classList.remove('hidden-field');
+    }
+}
     function handleServiceDetailChange() {
         const detailValue = document.getElementById('service_detail').value;
         if (!detailValue) return;
