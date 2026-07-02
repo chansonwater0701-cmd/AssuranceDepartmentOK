@@ -5779,7 +5779,32 @@ async function uploadInChunks(file, data, btn, fileIndex) {
         data['brand'] = document.querySelector('input[name="brand"]:checked')?.value || "";
         data['service_item'] = document.getElementById('service_item').value || "";
         data['service_detail'] = document.getElementById('service_detail').value || "";
-        return data; 
+
+        // 合併 安裝位置 子欄位 → 存回 install_location
+        // 格式：安裝位置文字／是否可安裝／子選項值
+        // 例：123／是／預約安裝：2026/07/10
+        const canInstallVal = document.getElementById('can_install')?.value || '';
+        if (canInstallVal && data['install_location'] !== undefined) {
+            let merged = data['install_location'] || '';
+            if (canInstallVal === '是') {
+                const d = document.querySelector('input[name="install_date"]')?.value || '';
+                merged += '／是' + (d ? '／預約安裝：' + d : '');
+            } else if (canInstallVal === '否') {
+                const r = document.querySelector('textarea[name="cannot_install_reason"]')?.value || '';
+                merged += '／否' + (r ? '／原因：' + r : '');
+            } else if (canInstallVal === '其他') {
+                const n = document.querySelector('textarea[name="install_other_note"]')?.value || '';
+                merged += '／其他' + (n ? '／說明：' + n : '');
+            }
+            data['install_location'] = merged;
+        }
+        // 子欄位已合併進 install_location，移除獨立 key 避免 GAS 後端寫入空欄位
+        delete data['can_install'];
+        delete data['install_date'];
+        delete data['cannot_install_reason'];
+        delete data['install_other_note'];
+
+        return data;
     }
 
     function handlePrincipleChange() {
