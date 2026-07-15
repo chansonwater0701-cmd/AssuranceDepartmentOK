@@ -4375,9 +4375,14 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     document.getElementById('sub-cannot-install-reason').classList.add('hidden-field');
     document.getElementById('sub-install-other-note').classList.add('hidden-field');
 
+    // 場勘 → 是 → 預約安裝時間；裝機 → 是 → 無子欄位
+    const isSiteSurvey = (currentServiceDetail || '').includes('場勘');
+
     // 依選項顯示對應子欄位
     if (value === '是') {
-        document.getElementById('sub-install-date').classList.remove('hidden-field');
+        if (isSiteSurvey) {
+            document.getElementById('sub-install-date').classList.remove('hidden-field');
+        }
     } else if (value === '否') {
         document.getElementById('sub-cannot-install-reason').classList.remove('hidden-field');
     } else if (value === '其他') {
