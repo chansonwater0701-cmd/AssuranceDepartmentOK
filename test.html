@@ -385,7 +385,7 @@
     </div>
     <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="輸入關鍵字搜尋異常情形或維修建議… (如: 漏水、ER1)">
+        <input type="text" id="searchInput" placeholder="輸入關鍵字搜尋異常情形或維修建議…可用空白隔開多個關鍵字 (如: 600 漏水)">
     </div>
     <div class="result-count" id="resultCount"></div>
 </header>
@@ -2934,20 +2934,31 @@ function esc(str) {
     return str.replace(/[&<>"]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[m]);
 }
 
+// 將搜尋字串拆成多個關鍵字（用空白分隔，如「600 漏水」→ ["600","漏水"]）
+function getKeywords(kw) {
+    return (kw || '').split(/[\s　]+/).map(s => s.trim()).filter(Boolean);
+}
+
 function highlight(text, kw) {
     if (!text) return '';
-    if (!kw) return esc(text);
-    const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return esc(text).replace(new RegExp(escaped, 'gi'),
+    const keywords = getKeywords(kw);
+    if (keywords.length === 0) return esc(text);
+    const pattern = keywords
+        .map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .sort((a, b) => b.length - a.length)
+        .join('|');
+    return esc(text).replace(new RegExp(pattern, 'gi'),
         m => `<span class="keyword-highlight">${m}</span>`);
 }
 
 // 3. 執行搜尋與分流渲染
 function doSearch(kw) {
-    const kwLow = kw.toLowerCase();
+    const keywords = getKeywords(kw).map(k => k.toLowerCase());
+    // 多關鍵字須「全部」出現在同一筆資料裡（AND），不限定同一欄位
+    const matchesAllKeywords = text => keywords.every(k => text.includes(k));
 
     // 影片過濾
-    const filteredVideos = videoData.filter(v => !kw || v.title.toLowerCase().includes(kwLow));
+    const filteredVideos = videoData.filter(v => keywords.length === 0 || matchesAllKeywords(v.title.toLowerCase()));
 
     // 維修資料分流
     let qsItems = [];
@@ -2965,14 +2976,11 @@ function doSearch(kw) {
         if (brand === 'qs' && currentQsMachine !== 'all' && r.machine !== currentQsMachine) return;
         if (brand === 'wp' && currentWpMachine !== 'all' && r.machine !== currentWpMachine) return;
 
-        // 判定是否符合關鍵字搜尋
-        if (kw) {
-            const match = r.symptom.toLowerCase().includes(kwLow) ||
-                          (r.category && r.category.toLowerCase().includes(kwLow)) ||
-                          (r.checks && r.checks.toLowerCase().includes(kwLow)) ||
-                          (r.parts && r.parts.toLowerCase().includes(kwLow)) ||
-                          r.machine.toLowerCase().includes(kwLow);
-            if (!match) return;
+        // 判定是否符合關鍵字搜尋（多個關鍵字時，需全部命中，不限同一欄位）
+        if (keywords.length > 0) {
+            const haystack = [r.symptom, r.category, r.checks, r.parts, r.machine]
+                .filter(Boolean).join(' ').toLowerCase();
+            if (!matchesAllKeywords(haystack)) return;
         }
 
         if (brand === 'qs') qsItems.push(r);
