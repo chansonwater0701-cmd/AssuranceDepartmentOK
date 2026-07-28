@@ -602,7 +602,12 @@
                     style="display: block; background: rgba(255,255,255,0.2); color: #fff; text-decoration: none; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 12px; border: 3px solid rgba(255,255,255,0.3);">
                     <img src="image/Designer.png" alt="icon" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 6px; border-radius: 4px;"> 千山維修技師工具
                 </a>
-
+                <!-- 新增的 惟品庫存回報 -->
+                <a href="https://script.google.com/macros/s/AKfycbw1CZpYvfu8yM202VxP0NkYnXZckKAhRqpLhWPc4Zo72ZRm67YIX9UmPiYv_z-w8xNQ/exec" target="_blank"
+                    style="display: block; background: rgba(255,255,255,0.2); color: #fff; text-decoration: none; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 12px; border: 3px solid rgba(255,255,255,0.3);">
+                    <!-- 若圖片未放在 image 資料夾內，請將 src="image/..." 的 image/ 刪除 -->
+                    <img src="image/clar-inventory-icon-no-border.png" alt="icon" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 6px; border-radius: 4px;"> 惟品庫存回報
+                </a>
                 <div style="display: flex; gap: 8px; margin-bottom: 15px;">
                     <a href="https://chansonwater0701-cmd.github.io/AssuranceDepartmentOK/%E6%83%9F%E5%93%81%E5%B8%83%E9%81%94%E4%BA%8B%E9%A0%85.pptx"
                         target="_blank"
@@ -4375,9 +4380,14 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     document.getElementById('sub-cannot-install-reason').classList.add('hidden-field');
     document.getElementById('sub-install-other-note').classList.add('hidden-field');
 
+    // 場勘 → 是 → 預約安裝時間；裝機 → 是 → 無子欄位
+    const isSiteSurvey = (currentServiceDetail || '').includes('場勘');
+
     // 依選項顯示對應子欄位
     if (value === '是') {
-        document.getElementById('sub-install-date').classList.remove('hidden-field');
+        if (isSiteSurvey) {
+            document.getElementById('sub-install-date').classList.remove('hidden-field');
+        }
     } else if (value === '否') {
         document.getElementById('sub-cannot-install-reason').classList.remove('hidden-field');
     } else if (value === '其他') {
