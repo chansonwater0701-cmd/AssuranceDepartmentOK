@@ -1840,6 +1840,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                         } else if (detailValue === '更換面板') {
                             modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
                             modelSelect.innerHTML += '<option value="WS2-H">WS2-H</option>';
+                            modelSelect.innerHTML += '<option value="WD2-C">WD2-C</option>';
                             modelCard.classList.remove('hidden-field');
                         } else if (detailValue === '換機') {
                             modelSelect.innerHTML += '<option value="WS2-C">WS2-C</option>';
@@ -2502,12 +2503,11 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                         currentRequiredIds = [];
                         showCards([
                             'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type', 'card-photo-upload',
-                            'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
-                            'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                            'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                             'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                             'card-panel-voltage', 'card-battery', 'card-app',
                             'card-repair-reason', 'card-actual-reason', 'card-handling',
-                            'card-inspection-result', 'card-replaced-parts', 'card-parts-payment',
+                            'card-inspection-result', 'card-parts-payment',
                             'card-payment-detail', 'card-wp-note'
                         ]);
                     } else if (currentServiceDetail === '更換面板' && currentModel === 'WS2-H') {
@@ -2515,12 +2515,22 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                         currentRequiredIds = [];
                         showCards([
                             'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type', 'card-photo-upload',
-                            'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
-                            'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                            'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                             'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                             'card-panel-voltage', 'card-battery', 'card-app',
                             'card-repair-reason', 'card-actual-reason', 'card-handling',
-                            'card-inspection-result', 'card-replaced-parts', 'card-parts-payment',
+                            'card-inspection-result', 'card-parts-payment',
+                            'card-payment-detail', 'card-wp-note'
+                        ]);
+                    } else if (currentServiceDetail === '更換面板' && currentModel === 'WD2-C') {
+                        // 更換面板-WD2-C
+                        currentRequiredIds = [];
+                        showCards([
+                            'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type', 'card-photo-upload',
+                            'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                            'card-wp-customer', 'card-firmware-version', 'card-app',
+                            'card-repair-reason', 'card-actual-reason', 'card-handling',
+                            'card-inspection-result', 'card-parts-payment',
                             'card-payment-detail', 'card-wp-note'
                         ]);
                     } else if (currentServiceDetail === '取消' && currentModel === 'WS2-C') {
@@ -5056,12 +5066,11 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
-                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
-                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-panel-voltage', 'card-battery', 'card-app',
                     'card-repair-reason', 'card-actual-reason', 'card-handling',
-                    'card-inspection-result', 'card-replaced-parts', 'card-parts-payment',
+                    'card-inspection-result', 'card-parts-payment',
                     'card-payment-detail', 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '更換面板' && currentModel === 'WS2-H') {
@@ -5069,12 +5078,22 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 currentRequiredIds = [];
                 showCards([
                     'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
-                    'card-machine-serial', 'card-machine-type-repair', 'card-是否加裝Filter-C',
-                    'card-faucet-type', 'card-faucet-label', 'card-customer-code',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
                     'card-wp-customer', 'card-panel-version', 'card-firmware-version',
                     'card-panel-voltage', 'card-battery', 'card-app',
                     'card-repair-reason', 'card-actual-reason', 'card-handling',
-                    'card-inspection-result', 'card-replaced-parts', 'card-parts-payment',
+                    'card-inspection-result', 'card-parts-payment',
+                    'card-payment-detail', 'card-wp-note'
+                ]);
+            } else if (currentServiceDetail === '更換面板' && currentModel === 'WD2-C') {
+                // 更換面板-WD2-C
+                currentRequiredIds = [];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number', 'card-machine-type','card-photo-upload',
+                    'card-machine-serial', 'card-machine-type-repair', 'card-customer-code',
+                    'card-wp-customer', 'card-firmware-version', 'card-app',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-parts-payment',
                     'card-payment-detail', 'card-wp-note'
                 ]);
             } else if (currentServiceDetail === '取消' && currentModel === 'WS2-C') {
