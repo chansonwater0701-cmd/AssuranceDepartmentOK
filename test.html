@@ -499,8 +499,12 @@ function highlight(text, kw) {
 
 // 3. 執行搜尋與分流渲染
 function doSearch(kw) {
-    const keywords = getKeywords(kw).map(k => k.toLowerCase());
-    const matchesAllKeywords = text => keywords.every(k => text.includes(k));
+    const normalizeSearchText = text => String(text || '').toLowerCase().replace(/[\s　]+/g, '');
+    const keywords = getKeywords(kw).map(normalizeSearchText).filter(Boolean);
+    const matchesAllKeywords = text => {
+        const normalizedText = normalizeSearchText(text);
+        return keywords.every(k => normalizedText.includes(k));
+    };
 
     const filteredVideos = videoData.filter(v => keywords.length === 0 || matchesAllKeywords(v.title.toLowerCase()));
     const qsItems = [];
@@ -664,6 +668,17 @@ function renderRepairList(containerId, items, kw, brand) {
 document.getElementById('searchInput').addEventListener('input', e => {
     doSearch(e.target.value.trim());
 });
+
+videoData.unshift(
+    {"title":"TK-8000 TK-9000混水水溫與水量校正方式","url":"https://youtu.be/f0M8VoIB93I"},
+    {"title":"TK-8000 TK-9000出水量校正方式","url":"https://youtu.be/IFZ9ZENXoGA"},
+    {"title":"TK-8000 TK-9000常溫水與冷水出水量校正方式","url":"https://youtube.com/shorts/6temXjIm8Kc"},
+    {"title":"TK-8000 TK-9000 熱水出水量校正與微調方式","url":"https://youtube.com/shorts/FCHEsLGuR44"},
+    {"title":"TK-8000 TK-9000出水量校正值計算方式","url":"https://youtube.com/shorts/ggEg60BMllM"},
+    {"title":"TK-8000 TK-9000 電子龍頭混水功能校正 SOP","url":"https://youtu.be/aKFjKCMqYJc"},
+    {"title":"HeatPure Fast水量校正微調技巧說明","url":"https://youtu.be/0VsfnWsNN-U"},
+    {"title":"HeatPure Fast廚下安裝教學影片","url":"https://youtube.com/shorts/SFjDk6MZub8"}
+);
 
 doSearch('');
 // ====== 替換到這裡結束 ======
