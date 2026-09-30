@@ -1000,6 +1000,16 @@
                 </div>
             </div>
         </div>
+        <!-- 千山韌體版本（單一輸入框） -->
+        <div class="question-card hidden-field" id="card-qianshan-firmware-version">
+            <div class="question-title">韌體版本<span class="required">*</span></div>
+            <input type="text" name="firmware_1" placeholder="請輸入完整韌體版本">
+        </div>
+        <!-- 龍頭韌體版本（千山加熱機型） -->
+        <div class="question-card hidden-field" id="card-faucet-firmware-version">
+            <div class="question-title">龍頭韌體版本<span class="required">*</span></div>
+            <input type="text" name="faucet_firmware_version" placeholder="請輸入龍頭韌體版本">
+        </div>
         <!-- 面板版本 -->
         <div class="question-card hidden-field" id="card-panel-version">
             <div class="question-title">面板版本<span class="required">*</span></div>
@@ -1153,6 +1163,22 @@
         <div class="question-card hidden-field" id="card-calibration">
             <div class="question-title">水量校正方式<span class="required">*</span></div>
             <input type="text" name="calibration" placeholder="請輸入水量校正方式">
+        </div>
+
+        <!-- 千山加熱機型校正值 -->
+        <div class="question-card hidden-field" id="card-hot-water-calibration">
+            <div class="question-title">熱水校正值<span class="required">*</span></div>
+            <input type="text" name="hot_water_calibration_value" inputmode="decimal" placeholder="請輸入熱水校正值">
+        </div>
+
+        <div class="question-card hidden-field" id="card-warm-water-calibration">
+            <div class="question-title">溫水校正值<span class="required">*</span></div>
+            <input type="text" name="warm_water_calibration_value" inputmode="decimal" placeholder="請輸入溫水校正值">
+        </div>
+
+        <div class="question-card hidden-field" id="card-cold-water-calibration">
+            <div class="question-title">冰水校正值<span class="required">*</span></div>
+            <input type="text" name="cold_water_calibration_value" inputmode="decimal" placeholder="請輸入冰水校正值">
         </div>
 
         <!-- 電池款式 -->
@@ -4391,10 +4417,10 @@ async function uploadInChunks(file, data, btn, fileIndex) {
 
         if (currentBrand === '千山') {
             if (item === '裝機') {
-                detailSelect.innerHTML += '<option value="一般裝機">一般裝機</option><option value="全戶裝機">全戶裝機</option><option value="取消">取消</option>';
+                detailSelect.innerHTML += '<option value="一般裝機">一般裝機</option><option value="加熱機型裝機">加熱機型裝機</option><option value="全戶裝機">全戶裝機</option><option value="取消">取消</option>';
                 detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
             } else if (item === '維修') {
-                detailSelect.innerHTML += '<option value="一般維修">一般維修</option><option value="全戶維修">全戶維修</option><option value="拖修">拖修</option><option value="取消">取消</option>';
+                detailSelect.innerHTML += '<option value="一般維修">一般維修</option><option value="加熱機型維修">加熱機型維修</option><option value="全戶維修">全戶維修</option><option value="拖修">拖修</option><option value="取消">取消</option>';
                 detailCard.classList.remove('hidden-field'); modelCard.classList.add('hidden-field');
             } else if (item === '售服') {
                 detailSelect.innerHTML += '<option value="一般場勘">一般場勘</option><option value="全戶場勘">全戶場勘</option><option value="空值">空值(手動輸入)</option><option value="取消">取消</option>';
@@ -4514,6 +4540,19 @@ async function uploadInChunks(file, data, btn, fileIndex) {
 
 
                 ]);
+            } else if (detail === '加熱機型裝機') {
+                currentRequiredIds = [...qsInstallRequired];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number',
+                    'card-customer-code', 'card-wp-customer',
+                    'card-machine-type', 'card-machine-serial', 'card-photo-upload',
+                    'card-qianshan-firmware-version', 'card-faucet-firmware-version',
+                    'card-original-pressure', 'card-raw-tds', 'card-site-voltage',
+                    'card-principle', 'card-taste', 'card-leak-circuit',
+                    'card-pressure-pump', 'card-install-location',
+                    'card-hot-water-calibration', 'card-warm-water-calibration',
+                    'card-cold-water-calibration', 'card-wp-note',
+                ]);
             } else if (detail === '全戶裝機') {
                 currentRequiredIds = [];
                 showCards([
@@ -4540,6 +4579,20 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-leak-circuit','card-leak-reason','card-parts-payment',
                     'card-pressure-pump','card-drainage-type','card-taste','card-wp-note','card-handling',
                     'card-inspection-result','card-is-payment','card-machine-type',
+                ]);
+            } else if (detail === '加熱機型維修') {
+                currentRequiredIds = [...qsRepairRequired];
+                showCards([
+                    'card-name', 'card-service-date', 'card-invoice-number',
+                    'card-customer-code', 'card-wp-customer',
+                    'card-machine-type', 'card-machine-serial', 'card-photo-upload',
+                    'card-qianshan-firmware-version', 'card-faucet-firmware-version',
+                    'card-original-pressure', 'card-raw-tds', 'card-site-voltage',
+                    'card-taste', 'card-leak-circuit', 'card-pressure-pump',
+                    'card-repair-reason', 'card-actual-reason', 'card-handling',
+                    'card-inspection-result', 'card-is-payment', 'card-parts-payment',
+                    'card-hot-water-calibration', 'card-warm-water-calibration',
+                    'card-cold-water-calibration', 'card-wp-note',
                 ]);
             } else if (detail === '全戶維修') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
@@ -5788,7 +5841,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 } else {
                     if (inputs.length > 0) {
                         inputs.forEach(input => {
-                            if (input.value.trim() || input.name.startsWith('firmware_')) hasValue = true;
+                            if (input.value.trim() || (card.id === 'card-firmware-version' && input.name.startsWith('firmware_'))) hasValue = true;
                         });
                     }
                     if (radios.length > 0) {
@@ -5872,7 +5925,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             inputs.forEach(input => {
                 if (!input.name || (input.type === 'radio' && !input.checked)) return;
                 let finalValue = input.value;
-                if (input.name.startsWith('firmware_') && finalValue.trim() === '') finalValue = '00';
+                if (card.id === 'card-firmware-version' && input.name.startsWith('firmware_') && finalValue.trim() === '') finalValue = '00';
                 data[input.name] = data[input.name] ? data[input.name] + " - " + finalValue : finalValue;
             });
         });
@@ -5983,7 +6036,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 else if (allInputs.length > 0) {
                     value = Array.from(allInputs).map(i => {
                         let val = i.value.trim();
-                        if (i.name.startsWith('firmware_')) {
+                        if (card.id === 'card-firmware-version' && i.name.startsWith('firmware_')) {
                             if (val === '') return "00";
                             if (val.length === 1) return "0" + val;
                         }
