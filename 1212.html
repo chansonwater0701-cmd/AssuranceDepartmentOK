@@ -690,6 +690,16 @@
             </select>
         </div>
 
+        <div class="question-card hidden-field" id="card-heater-model">
+            <div class="question-title">機器型式 <span class="required">*</span></div>
+            <select name="machine_type" id="qianshan_heater_model" onchange="handleHeaterModelChange()">
+                <option value="">請選擇</option>
+                <option value="TK-8000">TK-8000</option>
+                <option value="TK-9000">TK-9000</option>
+                <option value="HeatPure Fast">HeatPure Fast</option>
+            </select>
+        </div>
+
         <!-- 2-2. 手動輸入服務細項 (當選擇"其他"時顯示) -->
         <div class="question-card hidden-field" id="card-manual-input">
             <div class="question-title">請輸入服務細項</div>
@@ -1167,18 +1177,51 @@
 
         <!-- 千山加熱機型校正值 -->
         <div class="question-card hidden-field" id="card-hot-water-calibration">
-            <div class="question-title">熱水校正值<span class="required">*</span></div>
-            <input type="text" name="hot_water_calibration_value" inputmode="decimal" placeholder="請輸入熱水校正值">
+            <div class="question-title">熱水量校正值<span class="required">*</span></div>
+            <input type="text" name="hot_water_calibration_value" inputmode="decimal" placeholder="請輸入 AHWCor 校正設定值">
+            <div class="small-note">提醒：請輸入『AHWCor』校正設定值</div>
         </div>
 
         <div class="question-card hidden-field" id="card-warm-water-calibration">
-            <div class="question-title">溫水校正值<span class="required">*</span></div>
-            <input type="text" name="warm_water_calibration_value" inputmode="decimal" placeholder="請輸入溫水校正值">
+            <div class="question-title">溫水量校正值<span class="required">*</span></div>
+            <input type="text" name="warm_water_calibration_value" inputmode="decimal" placeholder="請輸入 ARWCor 校正設定值">
+            <div class="small-note">提醒：請輸入『ARWCor』校正設定值</div>
         </div>
 
         <div class="question-card hidden-field" id="card-cold-water-calibration">
-            <div class="question-title">冰水校正值<span class="required">*</span></div>
-            <input type="text" name="cold_water_calibration_value" inputmode="decimal" placeholder="請輸入冰水校正值">
+            <div class="question-title">冰水量校正值<span class="required">*</span></div>
+            <input type="text" name="cold_water_calibration_value" inputmode="decimal" placeholder="請輸入 AIWCor 校正設定值">
+            <div class="small-note">提醒：請輸入『AIWCor』校正設定值</div>
+        </div>
+
+        <div class="question-card hidden-field" id="card-hot-water-low-flow-calibration">
+            <div class="question-title">熱水低水量校正值<span class="required">*</span></div>
+            <input type="text" name="hot_water_low_flow_calibration_value" inputmode="decimal" placeholder="請輸入 HotWV 校正設定值">
+            <div class="small-note">提醒：請輸入『HotWV』校正設定值</div>
+        </div>
+
+        <div class="question-card hidden-field" id="card-mixed-water-temperature-calibration">
+            <div class="question-title">混水水溫校正值<span class="required">*</span></div>
+            <input type="text" name="mixed_water_temperature_calibration_value" inputmode="decimal" placeholder="請輸入 MiXWT 校正設定值">
+            <div class="small-note">提醒：請輸入『MiXWT』校正設定值</div>
+        </div>
+
+        <div class="question-card hidden-field" id="card-mixed-water-flow-calibration">
+            <div class="question-title">混水水量校正值<span class="required">*</span></div>
+            <input type="text" name="mixed_water_flow_calibration_value" inputmode="decimal" placeholder="請輸入 MiXWV 校正設定值">
+            <div class="small-note">提醒：請輸入『MiXWV』校正設定值</div>
+        </div>
+
+        <div class="question-card hidden-field" id="card-heatpure-power-setting">
+            <div class="question-title">功率設定值<span class="required">*</span></div>
+            <input type="text" name="heatpure_power_setting_value" inputmode="decimal" placeholder="請輸入功率設定校正設定值">
+            <div class="small-note">提醒：請輸入『功率設定』校正設定值</div>
+        </div>
+
+        <div class="question-card hidden-field" id="card-heatpure-water-flow-ratio">
+            <div class="question-title">水量校正值<span class="required">*</span></div>
+            <input type="text" name="heatpure_water_flow_ratio_value" inputmode="decimal" placeholder="請輸入水量校正比例(%)設定值">
+            <div class="small-note">提醒：請輸入『水量校正』比例(%)設定值</div>
         </div>
 
         <!-- 電池款式 -->
@@ -4385,6 +4428,8 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             if (input.type === 'radio' || input.type === 'checkbox') input.checked = false;
             else input.value = '';
         });
+        document.getElementById('machine_qty').value = '1';
+        generateMachineInputs();
         document.getElementById('card-manual-input')?.classList.add('hidden-field');
         document.getElementById('card-waste-note')?.classList.add('hidden-field');
         document.getElementById('card-reduced-pressure')?.classList.add('hidden-field');
@@ -4543,15 +4588,14 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             } else if (detail === '加熱機型裝機') {
                 currentRequiredIds = [...qsInstallRequired];
                 showCards([
+                    'card-heater-model',
                     'card-name', 'card-service-date', 'card-invoice-number',
                     'card-customer-code', 'card-wp-customer',
                     'card-machine-type', 'card-machine-serial', 'card-photo-upload',
                     'card-qianshan-firmware-version', 'card-faucet-firmware-version',
                     'card-original-pressure', 'card-raw-tds', 'card-site-voltage',
                     'card-principle', 'card-taste', 'card-leak-circuit',
-                    'card-pressure-pump', 'card-install-location',
-                    'card-hot-water-calibration', 'card-warm-water-calibration',
-                    'card-cold-water-calibration', 'card-wp-note',
+                    'card-pressure-pump', 'card-install-location', 'card-wp-note',
                 ]);
             } else if (detail === '全戶裝機') {
                 currentRequiredIds = [];
@@ -4583,6 +4627,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             } else if (detail === '加熱機型維修') {
                 currentRequiredIds = [...qsRepairRequired];
                 showCards([
+                    'card-heater-model',
                     'card-name', 'card-service-date', 'card-invoice-number',
                     'card-customer-code', 'card-wp-customer',
                     'card-machine-type', 'card-machine-serial', 'card-photo-upload',
@@ -4590,9 +4635,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-original-pressure', 'card-raw-tds', 'card-site-voltage',
                     'card-taste', 'card-leak-circuit', 'card-pressure-pump',
                     'card-repair-reason', 'card-actual-reason', 'card-handling',
-                    'card-inspection-result', 'card-is-payment', 'card-parts-payment',
-                    'card-hot-water-calibration', 'card-warm-water-calibration',
-                    'card-cold-water-calibration', 'card-wp-note',
+                    'card-inspection-result', 'card-is-payment', 'card-parts-payment', 'card-wp-note',
                 ]);
             } else if (detail === '全戶維修') {
                 currentRequiredIds = ['card-name', 'card-service-date', 'card-customer', 'card-phone'];
@@ -4693,6 +4736,53 @@ async function uploadInChunks(file, data, btn, fileIndex) {
             ]);
             }
         }
+    }
+
+    function updateHeaterCalibrationCards(clearValues = false) {
+        const calibrationCardIds = [
+            'card-hot-water-calibration',
+            'card-warm-water-calibration',
+            'card-cold-water-calibration',
+            'card-hot-water-low-flow-calibration',
+            'card-mixed-water-temperature-calibration',
+            'card-mixed-water-flow-calibration',
+            'card-heatpure-power-setting',
+            'card-heatpure-water-flow-ratio'
+        ];
+        calibrationCardIds.forEach(id => {
+            const card = document.getElementById(id);
+            card?.classList.add('hidden-field');
+            if (clearValues) card?.querySelectorAll('input').forEach(input => { input.value = ''; });
+        });
+
+        const isHeaterService = currentBrand === '千山' &&
+            ['加熱機型裝機', '加熱機型維修'].includes(currentServiceDetail);
+        if (!isHeaterService) return;
+
+        const heaterModel = document.getElementById('qianshan_heater_model')?.value || '';
+        const visibleIds = heaterModel === 'HeatPure Fast'
+            ? ['card-heatpure-power-setting', 'card-heatpure-water-flow-ratio']
+            : ['TK-8000', 'TK-9000'].includes(heaterModel)
+                ? [
+                    'card-hot-water-calibration',
+                    'card-warm-water-calibration',
+                    ...(heaterModel === 'TK-9000' ? ['card-cold-water-calibration'] : []),
+                    'card-hot-water-low-flow-calibration',
+                    'card-mixed-water-temperature-calibration',
+                    'card-mixed-water-flow-calibration'
+                ]
+                : [];
+        visibleIds.forEach(id => document.getElementById(id)?.classList.remove('hidden-field'));
+    }
+
+    function handleHeaterModelChange() {
+        const heaterModel = document.getElementById('qianshan_heater_model')?.value || '';
+        if (heaterModel) {
+            const firstMachineModel = document.querySelector('#machine_inputs_container .dynamic-model-input');
+            if (firstMachineModel) firstMachineModel.value = heaterModel;
+        }
+        updateHeaterCalibrationCards(true);
+        renumberQuestions();
     }
 
     // 顯示惟品欄位(根據需求更新)
@@ -5814,6 +5904,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
 
                 let htmlContent = "";
                 if (card.id === 'card-service-detail') htmlContent = `1-1. ${text}`;
+                else if (card.id === 'card-heater-model') htmlContent = `1-2. ${text}`;
                 else if (card.id === 'card-manual-input' && previousCardId === 'card-service-detail') htmlContent = `1-2. ${text}`;
                 else if (card.id === 'card-waste-note' && previousCardId === 'card-waste-type') htmlContent = `${count - 1}-1. ${text}`;
                 else if (card.id === 'card-leak-reason' && previousCardId === 'card-leak-circuit') htmlContent = `${count - 1}-1. ${text}`;
@@ -6110,11 +6201,13 @@ async function uploadInChunks(file, data, btn, fileIndex) {
     function generateMachineInputs() {
         const qty = parseInt(document.getElementById('machine_qty').value);
         const modelContainer = document.getElementById('machine_inputs_container');
-        const currentModelVal = modelContainer.querySelector('input')?.value || '';
+        const modelValues = Array.from(modelContainer.querySelectorAll('.dynamic-model-input'), input => input.value);
         modelContainer.innerHTML = '';
 
         const serialContainer = document.getElementById('machine_serial_container');
-        const currentSerialVal = serialContainer?.querySelector('input')?.value || '';
+        const serialValues = serialContainer
+            ? Array.from(serialContainer.querySelectorAll('.dynamic-serial-input'), input => input.value)
+            : [];
         if (serialContainer) serialContainer.innerHTML = '';
 
         for (let i = 1; i <= qty; i++) {
@@ -6126,11 +6219,12 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 sInput.type = 'text'; sInput.className = 'dynamic-serial-input'; sInput.style.marginBottom = '8px';
             }
             if (i === 1) {
-                mInput.value = currentModelVal; mInput.placeholder = "請輸入機器型號 (例: 222)";
-                if (sInput) { sInput.value = currentSerialVal; sInput.placeholder = "請輸入機器序號 (例: 1111)"; }
+                mInput.value = modelValues[0] || ''; mInput.placeholder = "請輸入機器型號 (例: 222)";
+                if (sInput) { sInput.value = serialValues[0] || ''; sInput.placeholder = "請輸入機器序號 (例: 1111)"; }
             } else {
-                mInput.value = currentModelVal; mInput.placeholder = `第 ${i} 台型號`;
-                if (sInput) sInput.placeholder = `請輸入第 ${i} 台機器序號`;
+                mInput.value = modelValues[i - 1] || '';
+                mInput.placeholder = `第 ${i} 台型號`;
+                if (sInput) { sInput.value = serialValues[i - 1] || ''; sInput.placeholder = `請輸入第 ${i} 台機器序號`; }
             }
             modelContainer.appendChild(mInput);
             if (serialContainer && sInput) serialContainer.appendChild(sInput);
