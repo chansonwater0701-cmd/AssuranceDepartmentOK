@@ -6129,7 +6129,8 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                 });
                 value = groupText;
             } else {
-                const allInputs = card.querySelectorAll('input:not([type="radio"]), select, textarea');
+                const allInputs = Array.from(card.querySelectorAll('input:not([type="radio"]), select, textarea'))
+                    .filter(input => !(currentBrand === '惟品' && card.id === 'card-machine-type' && input.id === 'machine_qty'));
                 const checkedRadio = card.querySelector('input[type="radio"]:checked');
                 if (checkedRadio) value = checkedRadio.parentElement.innerText.trim();
                 else if (allInputs.length > 0) {
