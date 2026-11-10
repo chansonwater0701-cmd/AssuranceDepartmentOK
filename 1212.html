@@ -1010,15 +1010,15 @@
                 </div>
             </div>
         </div>
-        <!-- 千山韌體版本（單一輸入框） -->
-        <div class="question-card hidden-field" id="card-qianshan-firmware-version">
-            <div class="question-title">韌體版本<span class="required">*</span></div>
-            <input type="text" name="firmware_1" placeholder="請輸入完整韌體版本">
-        </div>
         <!-- 龍頭韌體版本（千山加熱機型） -->
         <div class="question-card hidden-field" id="card-faucet-firmware-version">
             <div class="question-title">龍頭韌體版本<span class="required">*</span></div>
-            <input type="text" name="faucet_firmware_version" placeholder="請輸入龍頭韌體版本">
+            <input type="text" name="faucet_firmware_version" placeholder="請輸入龍頭韌體（ＵＮ）版本">
+        </div>
+        <!-- 千山韌體版本（單一輸入框） -->
+        <div class="question-card hidden-field" id="card-qianshan-firmware-version">
+            <div class="question-title">韌體版本<span class="required">*</span></div>
+            <input type="text" name="firmware_1" placeholder="請輸入完整韌體（ＭＮ）版本">
         </div>
         <!-- 面板版本 -->
         <div class="question-card hidden-field" id="card-panel-version">
@@ -4592,7 +4592,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-name', 'card-service-date', 'card-invoice-number',
                     'card-customer-code', 'card-wp-customer',
                     'card-machine-type', 'card-machine-serial', 'card-photo-upload',
-                    'card-qianshan-firmware-version', 'card-faucet-firmware-version',
+                    'card-faucet-firmware-version', 'card-qianshan-firmware-version',
                     'card-original-pressure', 'card-raw-tds', 'card-site-voltage',
                     'card-principle', 'card-taste', 'card-leak-circuit',
                     'card-pressure-pump', 'card-install-location', 'card-wp-note',
@@ -4631,7 +4631,7 @@ async function uploadInChunks(file, data, btn, fileIndex) {
                     'card-name', 'card-service-date', 'card-invoice-number',
                     'card-customer-code', 'card-wp-customer',
                     'card-machine-type', 'card-machine-serial', 'card-photo-upload',
-                    'card-qianshan-firmware-version', 'card-faucet-firmware-version',
+                    'card-faucet-firmware-version', 'card-qianshan-firmware-version',
                     'card-original-pressure', 'card-raw-tds', 'card-site-voltage',
                     'card-taste', 'card-leak-circuit', 'card-pressure-pump',
                     'card-repair-reason', 'card-actual-reason', 'card-handling',
